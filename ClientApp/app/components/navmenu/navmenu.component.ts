@@ -19,7 +19,7 @@ export class NavMenuComponent {
     }
 
     selectEvent(file: File, uploadComponent: TdFileUploadComponent): void {
-        if (file.type !== "application/x-bittorent") {
+        if (file.type !== ".torrent") {
             uploadComponent.cancel();
 
             this.service.error("File Type Error",
