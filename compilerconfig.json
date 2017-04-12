@@ -1,0 +1,18 @@
+﻿[
+  {
+    "outputFile": "ClientApp/app/components/puzzle/puzzle.component.css",
+    "inputFile": "ClientApp/app/components/puzzle/puzzle.component.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/resources/themes/_theme.css",
+    "inputFile": "wwwroot/css/resources/themes/_theme.scss"
+  },
+  {
+    "outputFile": "ClientApp/app/components/uploadfile/upload.component.css",
+    "inputFile": "ClientApp/app/components/uploadfile/upload.component.scss"
+  },
+  {
+    "outputFile": "ClientApp/app/components/navmenu/navmenu.component.css",
+    "inputFile": "ClientApp/app/components/navmenu/navmenu.component.scss"
+  }
+]

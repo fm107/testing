@@ -1,0 +1,10 @@
+﻿<ul class="list list--material">
+    <li class="list__header list__header--material" *ngFor="let column of columns" [class]="selectedClass(column.variable)" (click)="changeSorting(column.variable)">
+        {{column.display}}
+    </li>
+    <li class="list__item list__item--material" *ngFor="let object of data | orderBy : convertSorting()">
+        <div class="list__item__center list__item--material__center">
+            <div class="list__item__subtitle list__item--material__subtitle" *ngFor="let column of columns">{{object[column.variable] | format : column.filter}}</div>
+        </div>
+    </li>
+</ul>

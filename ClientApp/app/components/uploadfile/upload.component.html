@@ -1,0 +1,14 @@
+﻿<p-growl [value]="msgs"></p-growl>
+
+<app-dialog [visible]="showDialog" (visibleChange)="onVisibleChange($event)">
+    <p-fileUpload name="files" url="api/Torrent/UploadFile" (onUpload)="onUpload($event)"
+                  multiple="multiple" accept="application/x-bittorrent" maxFileSize="1000000" >
+        <template pTemplate="content">
+            <ul *ngIf="uploadedFiles.length">
+                <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+            </ul>
+        </template>
+    </p-fileUpload>
+    <button pButton type="button" (click)="onclick()" label="Download" icon="fa-cloud-download" iconPos="left"></button>
+</app-dialog>
+

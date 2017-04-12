@@ -1,0 +1,124 @@
+<!--<md-list class="list">
+    <md-list-item>
+        <li class="list__item list__item--tappable">
+            <div class="list__item__center">
+                <md-icon md-list-icon>folder</md-icon>
+                Tappable Item
+            </div>
+        </li>
+    </md-list-item>
+    <md-list-item>
+        <li class="list__item list__item--tappable">
+            <div class="list__item__center">Tappable Item 2</div>
+        </li>
+    </md-list-item>
+    <md-list-item>
+        <li class="list__item list__item--tappable">
+            <div class="list__item__center">
+                <p md-line>
+                    <span> message.subject </span>
+                    <span> message.content </span>
+                </p>
+            </div>
+        </li>
+    </md-list-item>
+</md-list>-->
+
+<!--<md-card class="border">
+    <div layout="row" layout-align="start center" class="pad-left-sm pad-right-sm">
+        <span *ngIf="!searchBox.searchVisible" class="push-left-sm">
+            <span class="md-title">Title here</span>
+        </span>
+        <td-search-box #searchBox backIcon="arrow_back" class="push-right-sm" placeholder="Search here" (searchDebounce)="search($event)" flex>
+        </td-search-box>
+        <span>
+            <button md-icon-button [mdMenuTriggerFor]="toolbarMenu"><md-icon>more_vert</md-icon></button>
+            <md-menu #toolbarMenu="mdMenu">
+                <button md-menu-item>
+                    <md-icon>settings</md-icon>
+                    <span>Settings</span>
+                </button>
+            </md-menu>
+        </span>
+    </div>
+    <md-divider></md-divider>
+    <md-list>
+        <md-list-item>
+            <md-icon md-list-avatar>apps</md-icon>
+            <h3 md-line>App Name</h3>
+            <span flex></span>
+            <span hide-xs flex="30" class="pad-left md-body-1 tc-grey-500">Owner</span>
+            <span hide-xs class="md-sort-header" flex="40" layout="row" layout-align="center center" class="pad-left md-body-1 tc-grey-500">
+                <md-select flex="90" [(ngModel)]="sortKey">
+                    <md-option *ngFor="let option of columnOptions" [value]="option.value" (click)="sortBy(sortKey)">
+                        {{option.name}}
+                    </md-option>
+                </md-select>
+            </span>
+            <a hide-xs class="md-sort-header" (click)="sortBy(sortKey)">
+                <span layout="row" layout-align="start center" flex>
+                    <md-icon class="md-sort-icon">{{headers[sortKey] === 'asc'? 'arrow_upward' : 'arrow_downward'}}</md-icon>
+                </span>
+            </a>
+        </md-list-item>
+        <md-divider></md-divider>
+        <template let-item let-last="last" ngFor [ngForOf]="cars">
+
+            <md-list-item>
+                <md-icon md-list-avatar>desktop_mac</md-icon>
+                <h3 md-line> {{item.year}} </h3>
+                <span flex></span>
+                <span hide-xs flex="10">
+                    {{item.owner}}
+                </span>
+                <span hide-xs flex="60" class="text-right md-body-1 tc-grey-500 pad-right">
+                    {{item[sortKey] | date:'short'}}
+                </span>
+            </md-list-item>
+            <md-divider *ngIf="!last" md-inset></md-divider>
+        </template>
+    </md-list>
+    <md-divider></md-divider>
+    <td-paging-bar #pagingBar [pageSizes]="[5, 10, 15, 20]" total="20">
+        <span td-paging-bar-label hide-xs>Row per page:</span>
+        {{pagingBar.range}} <span hide-xs>of {{pagingBar.total}}</span>
+    </td-paging-bar>
+</md-card>-->
+
+
+
+<ul class="indent list list__item--nodivider">
+    <li class="list__item list__item--nodivider list__header list__header--material active ">
+        <div class="list__item--nodivider__center list__item__center list__item--material__center">
+            NAME
+        </div>
+        <div class="list__item--nodivider__center list__item__right list__item--material__right">
+            SIZE
+        </div>
+        <div class="list__item--nodivider__center list__item__right list__item--material__right">
+            LAST CHANGED 
+        </div>
+    </li>
+    <li *ngIf="parent != uploads" class="list__item list__item--nodivider list__header list__header--material active ">
+        <a (click)="OnClick(parent)">
+            <md-icon>arrow_drop_up</md-icon> Folder Up
+        </a>
+    </li>
+
+    <li class="list__item--hover list__item list__item--tappable list__item--nodivider list__item--material" *ngFor="let content of collection">
+        <div class="list__item__left">
+            <img *ngIf="content.type == 'folder'" class="list__item__thumbnail" src="/img/documents-icon.png">
+            <img *ngIf="content.type == 'file'" class="list__item__thumbnail" src="/img/document-movie-icon.png">
+        </div>
+
+        <div class="list__item--nodivider__center list__item__center list__item--material__center" (click)="OnClick(content)">
+            <font class="sliding-middle-out" color="#616161">{{content.name}}</font>
+        </div>
+        <div class="list__item--nodivider__center list__item__right list__item--material__right">
+            <font color="#616161">{{content.size | fileSize}}</font>
+        </div>
+        <div class="list__item--nodivider__center list__item__right list__item--material__right">
+            <font color="#616161">{{content.lastChanged | date :'short'}}</font>
+        </div>
+    </li>
+</ul>

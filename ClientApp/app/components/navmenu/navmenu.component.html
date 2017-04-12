@@ -1,0 +1,135 @@
+<!--<div class='main-nav'>
+    <div class='navbar navbar-inverse'>
+        <div class='navbar-header'>
+            <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-collapse'>
+                <span class='sr-only'>Toggle navigation</span>
+                <span class='icon-bar'></span>
+                <span class='icon-bar'></span>
+                <span class='icon-bar'></span>
+            </button>
+            <a class='navbar-brand' [routerLink]="['/home']">Web Torrent</a>
+        </div>
+        <div class='clearfix'></div>
+        <div class='navbar-collapse collapse'>
+            <ul class='nav navbar-nav'>
+                <li [routerLinkActive]="['link-active']">
+                    <a [routerLink]="['/home']">
+                        <span class='glyphicon glyphicon-home'></span> Home
+                    </a>
+                </li>
+                <li [routerLinkActive]="['link-active']">
+                    <a [routerLink]="['/counter']">
+                        <span class='glyphicon glyphicon-education'></span> Counter
+                    </a>
+                </li>
+                <li [routerLinkActive]="['link-active']">
+                    <a [routerLink]="['/fetch-data']">
+                        <span class='glyphicon glyphicon-th-list'></span> Fetch data
+                    </a>
+                </li>
+                <li [routerLinkActive]="['link-active']">
+                    <a [routerLink]="['/upload']">
+                        <span class='glyphicon glyphicon-th-list'></span> Upload File
+                    </a>
+                </li>
+                <li [routerLinkActive]="['link-active']">
+                    <a [routerLink]="['/puzzle']">
+                        <span class='glyphicon glyphicon-th-list'></span> Start a Puzzle
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>-->
+
+
+<!--<div>
+    <p-toolbar class='prim-main-nav'>
+        <div class='clearfix'></div>
+        <ul class='nav navbar-nav'>
+            <li [routerLinkActive]="['link-active']">
+                <a [routerLink]="['/home']">
+                    <span class='glyphicon glyphicon-home'></span> Home
+                </a>
+            </li>
+            <li [routerLinkActive]="['link-active']">
+                <a [routerLink]="['/counter']">
+                    <span class='glyphicon glyphicon-education'></span> Counter
+                </a>
+            </li>
+            <li [routerLinkActive]="['link-active']">
+                <a [routerLink]="['/fetch-data']">
+                    <span class='glyphicon glyphicon-th-list'></span> Fetch data
+                </a>
+            </li>
+            <li [routerLinkActive]="['link-active']">
+                <a [routerLink]="['/puzzle']">
+                    <span class='glyphicon glyphicon-th-list'></span> Start a Puzzle
+                </a>
+            </li>
+        </ul>
+        <div class="ui-toolbar-group-right" id="dialog">
+            <upload #dialog></upload>
+            <button pButton type="button" icon="fa fa-upload" (click)="dialog.showDialog=true"></button>
+        </div>
+    </p-toolbar>
+</div>-->
+
+<div layout="row" layout-align="space-around center">
+    <nav md-tab-nav-bar class="navigation-bar--material prim-main-nav">
+        <a md-tab-link class="topper"
+           [routerLink]="['/home']"
+           [routerLinkActive]="['link-active']">
+           <md-icon>home</md-icon>
+        </a>
+
+        <!--<a md-mini-fab routerLink="." class="btnposition"><i class="fa fa-upload topper"></i></a>-->
+        
+        <div layout="row" layout-align="space-around center" class="upload-btn-position2">
+            
+            <md-input-container flex class="mat-input-element topper">
+                <input mdInput placeholder="Paste torrent URL">
+            </md-input-container>
+
+            <div class="divider"></div>
+
+            <td-file-upload #fileUpload defaultColor="accent" activeColor="warn" cancelColor="primary" (select)="selectEvent($event, fileUpload)"
+                            (upload)="uploadEvent($event, fileUpload)" accept=".torrent" multiple>
+                <md-icon>file_upload</md-icon><span>{{ fileUpload.files?.name }}</span>
+                <template td-file-input-label>
+                    <md-icon>attach_file</md-icon>
+                    <!--<span>Choose a file...</span>-->
+                </template>
+            </td-file-upload>
+
+        </div>
+        
+        <simple-notifications></simple-notifications>
+    </nav>
+
+
+    <!--<md-tab-group>
+        <md-tab>
+            <template md-tab-label>
+                <nav md-tab-nav-bar class="prim-main-nav">
+                    <a md-tab-link
+                       [routerLink]="['/puzzle']"
+                       [routerLinkActive]="['link-active']">
+                        <span class='topper'>Start a Puzzle</span>
+                    </a>
+
+                    <a md-mini-fab routerLink="." class="btnposition"><md-icon>check</md-icon></a>
+                </nav>
+                </template>
+</md-tab>
+</md-tab-group>-->
+
+    
+
+    <!--<a md-mini-fab routerLink="home" class="btn-success btnposition" style="margin-left:20%;"><md-icon>check</md-icon></a>
+
+        <a md-mini-fab routerLink="." class="btnposition"><md-icon>check</md-icon></a>-->
+
+</div>
+
+
