@@ -17,6 +17,9 @@ namespace WebTorrent.Controllers
         public ContentController(IHostingEnvironment environment)
         {
             _environment = environment;
+
+            if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "uploads")))
+                Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "uploads"));
         }
 
         [HttpGet("[action]")]
