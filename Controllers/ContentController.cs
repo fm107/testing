@@ -63,7 +63,19 @@ namespace WebTorrent.Controllers
 
             return Json(content);
         }
+        
+        [HttpGet("[action]")]
+        public string ShowDirectory()
+        {
+            string ret = null;
+            foreach (string file in Directory.EnumerateFiles(Path.Combine(_environment.WebRootPath, "uploads"), "*",SearchOption.AllDirectories))
+            {
+                ret += string.Format("{0} Size: {1}",file, new FileInfo(file).Length) + Environment.NewLine;
 
+            }
+            return ret;
+        }
+        
         // GET: api/values
         [HttpGet]
         public IEnumerable<string> Get()
