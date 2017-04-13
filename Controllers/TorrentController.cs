@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,41 +14,33 @@ namespace WebTorrent.Controllers
     [Route("api/[controller]")]
     public class TorrentController : Controller
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly string _uploads;
 
         public TorrentController(IHostingEnvironment environment)
         {
-            _environment = environment;
+            _uploads = Path.Combine(environment.WebRootPath, "uploads");
+
+            if (!Directory.Exists(_uploads))
+                Directory.CreateDirectory(_uploads);
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> UploadFile(ICollection<IFormFile> file)
         {
-            var uploads = Path.Combine(_environment.WebRootPath, "uploads");
             string fileName = null;
-
-            Directory.CreateDirectory(uploads);
-
             foreach (var uploadedFile in file)
-            {
                 if (uploadedFile.Length > 0)
                 {
-                    fileName = Path.Combine(uploads, uploadedFile.FileName.Split('\\').LastOrDefault());
+                    fileName = Path.Combine(_uploads, uploadedFile.FileName.Split('\\').LastOrDefault());
+
                     using (var fileStream = new FileStream(fileName, FileMode.Create))
                     {
                         await uploadedFile.CopyToAsync(fileStream);
                     }
                 }
-            }
-            try
-            {
-                var torrent = new TorrentTransfer(fileName, uploads);
-                torrent.Start();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            var torrent = new TorrentTransfer(fileName, _uploads);
+            torrent.Start();
+
             return Accepted();
         }
     }

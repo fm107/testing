@@ -54,7 +54,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ClientApp\app\components\uploadfile\" />
     <Folder Include="ClientApp\app\pipes\" />
     <Folder Include="Properties\" />
     <Folder Include="Properties\" />

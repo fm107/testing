@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Http } from "@angular/http";
 
 import { IContent, IFileSystem} from "./Component";
@@ -24,18 +24,13 @@ export class HomeComponent implements OnInit {
     OnClick(item) {
 
         if (item.type) {
-
             if (item.type === "file") {
-
                 lity(item.fullName);
-
             } else {
-
                 const request = `?folder=${item.fullName}`;
                 this.getCollection(request);
             }
         } else {
-
             const request = `?folder=${item}`;
             this.getCollection(request);
         }

@@ -1,0 +1,8 @@
+﻿<td-file-upload #fileUpload defaultColor="accent" activeColor="warn" cancelColor="primary" (select)="selectEvent($event, fileUpload)"
+                (upload)="uploadEvent($event, fileUpload)" accept=".torrent" multiple>
+    <md-icon>file_upload</md-icon><span>{{ fileUpload.files?.name }}</span>
+    <template td-file-input-label>
+        <md-icon>attach_file</md-icon>
+        <!--<span>Choose a file...</span>-->
+    </template>
+</td-file-upload>
