@@ -27,7 +27,7 @@ namespace WebTorrent.Controllers
         [HttpGet("[action]")]
         public IActionResult ShowFileSystem([FromQuery] string folder)
         {
-            var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder?.TrimStart('\u005C') ?? UploadFolder));
+            var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder?.TrimStart('\u005C', '\u002F') ?? UploadFolder));
 
             if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
                 return Forbid();
