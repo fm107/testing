@@ -102,6 +102,7 @@ namespace Torrent.Client
             try
             {
                 var response = request.GetResponseAsync().Result;
+
                 byte[] trackerResponse;
                 using (var reader = new BinaryReader(response.GetResponseStream()))
                 {
@@ -117,7 +118,7 @@ namespace Torrent.Client
                 response.Dispose();
                 return new TrackerResponse(trackerResponse);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

@@ -14,19 +14,20 @@ namespace WebTorrent.Controllers
     public class ContentController : Controller
     {
         private readonly IHostingEnvironment _environment;
+        private const string UploadFolder = "uploads";
 
         public ContentController(IHostingEnvironment environment)
         {
             _environment = environment;
 
-            if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "uploads")))
-                Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "uploads"));
+            if (!Directory.Exists(Path.Combine(_environment.WebRootPath, UploadFolder)))
+                Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, UploadFolder));
         }
 
         [HttpGet("[action]")]
         public IActionResult ShowFileSystem([FromQuery] string folder)
         {
-            var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? "uploads"));
+            var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
 
             if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
                 return Forbid();
@@ -55,8 +56,9 @@ namespace WebTorrent.Controllers
 
             var content = new Content
             {
+                CurrentFolder = folder ?? UploadFolder,
                 Contents = listComponents,
-                Parent = folder == null || folder == "uploads"
+                Parent = folder == null || folder == UploadFolder
                     ? null
                     : directoryInfo.Parent.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C')
             };
@@ -68,7 +70,7 @@ namespace WebTorrent.Controllers
         public string ShowDirectory()
         {
             string ret = null;
-            foreach (string file in Directory.EnumerateFiles(Path.Combine(_environment.WebRootPath, "uploads"), "*",SearchOption.AllDirectories))
+            foreach (string file in Directory.EnumerateFiles(Path.Combine(_environment.WebRootPath, UploadFolder), "*",SearchOption.AllDirectories))
             {
                 ret += string.Format("{0} Size: {1}",file, new FileInfo(file).Length) + Environment.NewLine;
 

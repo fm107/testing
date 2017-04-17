@@ -86,39 +86,39 @@
 </md-card>-->
 
 
+    <ul class=" list list__item--nodivider">
+        <li class="list__item list__item--nodivider list__header list__header--material active ">
+            <div class="list__item--nodivider__center list__item__center list__item--material__center">
+                NAME
+            </div>
+            <div class="list__item--nodivider__center list__item__right list__item--material__right">
+                SIZE
+            </div>
+            <div class="list__item--nodivider__center list__item__right list__item--material__right">
+                LAST CHANGED 
+            </div>
+        </li>
+        <li *ngIf="parent != uploads" class="list__item list__item--nodivider list__header list__header--material active ">
+            <a (click)="OnClick(parent)">
+                <md-icon>arrow_drop_up</md-icon> Folder Up
+            </a>
+        </li>
 
-<ul class="indent list list__item--nodivider">
-    <li class="list__item list__item--nodivider list__header list__header--material active ">
-        <div class="list__item--nodivider__center list__item__center list__item--material__center">
-            NAME
-        </div>
-        <div class="list__item--nodivider__center list__item__right list__item--material__right">
-            SIZE
-        </div>
-        <div class="list__item--nodivider__center list__item__right list__item--material__right">
-            LAST CHANGED 
-        </div>
-    </li>
-    <li *ngIf="parent != uploads" class="list__item list__item--nodivider list__header list__header--material active ">
-        <a (click)="OnClick(parent)">
-            <md-icon>arrow_drop_up</md-icon> Folder Up
-        </a>
-    </li>
+        <li class="list__item--hover list__item list__item--tappable list__item--nodivider list__item--material" *ngFor="let content of fileSystemContent">
+            <div class="list__item__left">
+                <img *ngIf="content.type == 'folder'" class="list__item__thumbnail" src="/img/documents-icon.png">
+                <img *ngIf="content.type == 'file'" class="list__item__thumbnail" src="/img/document-movie-icon.png">
+            </div>
 
-    <li class="list__item--hover list__item list__item--tappable list__item--nodivider list__item--material" *ngFor="let content of collection">
-        <div class="list__item__left">
-            <img *ngIf="content.type == 'folder'" class="list__item__thumbnail" src="/img/documents-icon.png">
-            <img *ngIf="content.type == 'file'" class="list__item__thumbnail" src="/img/document-movie-icon.png">
-        </div>
+            <div class="list__item--nodivider__center list__item__center list__item--material__center" (click)="OnClick(content)">
+                <font class="sliding-middle-out" color="#616161">{{content.name}}</font>
+            </div>
+            <div class="list__item--nodivider__center list__item__right list__item--material__right">
+                <font color="#616161">{{content.size | fileSize}}</font>
+            </div>
+            <div class="list__item--nodivider__center list__item__right list__item--material__right">
+                <font color="#616161">{{content.lastChanged | date :'short'}}</font>
+            </div>
+        </li>
+    </ul>
 
-        <div class="list__item--nodivider__center list__item__center list__item--material__center" (click)="OnClick(content)">
-            <font class="sliding-middle-out" color="#616161">{{content.name}}</font>
-        </div>
-        <div class="list__item--nodivider__center list__item__right list__item--material__right">
-            <font color="#616161">{{content.size | fileSize}}</font>
-        </div>
-        <div class="list__item--nodivider__center list__item__right list__item--material__right">
-            <font color="#616161">{{content.lastChanged | date :'short'}}</font>
-        </div>
-    </li>
-</ul>

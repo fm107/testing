@@ -1,24 +1,22 @@
-﻿.indent {
+﻿
+
+.indent {
     margin-left: 5%;
     margin-right: 5%;
     margin-top: 1%;
 }
-
 .popup-dialog-content {
     display: block;
     margin: auto;
     width: 40%;
 }
-
 .popup-dialog { top: 40% }
-
 
 .sliding-middle-out {
     display: inline-block;
     padding-bottom: 3px;
     position: relative;
 }
-
 .sliding-middle-out:after {
     background: transparent;
     content: '';
@@ -33,7 +31,6 @@
     background: rgb(228, 135, 172);
     width: 100%;
 }
-
 
 .list__item--hover {
     -moz-border-radius: 4px;

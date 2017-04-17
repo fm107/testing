@@ -14,6 +14,7 @@ namespace WebTorrent.Model
 
     public class Content
     {
+        public string CurrentFolder { get; set; }
         public string Parent { get; set; }
         public List<FileSystem> Contents { get; set; }
     }

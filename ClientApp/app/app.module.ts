@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { UniversalModule } from 'angular2-universal';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 
 import { AppComponent } from './components/app/app.component'
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
@@ -13,19 +13,21 @@ import { UploadButtonComponent } from "./components/upload-button/upload-button.
 import { MaterialModule } from '@angular/material';
 
 import { CovalentCoreModule } from '@covalent/core';
+import { CovalentFileModule } from '@covalent/file-upload';
 
 import { SimpleNotificationsModule } from 'angular2-notifications';
 
 import { FileSizePipe } from './pipes/filesize.pipe';
-
+import { DataService } from "./components/data-service/data.service";
+import {UploadButtonUrlComponent} from "./components/upload-button-url/upload-button-url.component";
 
 @NgModule({
-    bootstrap: [ AppComponent ],
+    bootstrap: [AppComponent],
     declarations: [
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        UploadButtonComponent, DialogComponent, FileSizePipe
+        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, FileSizePipe
     ],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
@@ -42,7 +44,8 @@ import { FileSizePipe } from './pipes/filesize.pipe';
             { path: 'home', component: HomeComponent },
             { path: '**', redirectTo: 'home' }
         ])
-    ]
+    ],
+    providers: [DataService]
 })
 export class AppModule {
 }

@@ -1,6 +1,6 @@
 /* Keep the nav menu independent of scrolling and on top of other items */
 .prim-main-nav {
-    background-color: whitesmoke;
+    background-color: snow;
     position: fixed;
     top: 0;
     left: 0;
@@ -38,6 +38,7 @@ li.link-active a:focus {
         height: 100%;
         width: calc(25% - 20px);
     }
+    
     .navbar {
         border-radius: 0px;
         border-width: 0px;
@@ -70,18 +71,8 @@ li.link-active a:focus {
         text-overflow: ellipsis;
     }
 }
-.upload-btn-position {
-    top: 2px;
-    right: 20px;
-    bottom: auto;
-    left: auto;
-    position: fixed;
-    z-index: 1;
-    margin-left: 10%
-    /*height: 30px;
-    width: 30px;*/
-}
-.upload-btn-position2 {
+
+.nav-btn-position {
     top: auto;
     right: 1%;
     bottom: auto;
@@ -94,7 +85,12 @@ li.link-active a:focus {
 }
 .topper {
     bottom: 3px;
-    top: 6px;
+    top: 8px;
+    position: relative;
+}
+.topper-up {
+    bottom: 3px;
+    top: 5px;
     position: relative;
 }
 .divider {

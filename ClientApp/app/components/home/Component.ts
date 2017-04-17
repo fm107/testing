@@ -7,6 +7,7 @@
 }
 
 export interface IContent {
+    currentFolder: string;
     parent?: string;
     contents: IFileSystem[];
 }

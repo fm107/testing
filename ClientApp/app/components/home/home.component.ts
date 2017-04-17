@@ -1,7 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Output } from "@angular/core";
 import { Http } from "@angular/http";
 
-import { IContent, IFileSystem} from "./Component";
+import { IContent, IFileSystem } from "./Component";
+import { DataService } from "../data-service/data.service";
 
 declare var lity: any;
 
@@ -11,36 +12,37 @@ declare var lity: any;
     styleUrls: ["./home.component.css"]
 })
 export class HomeComponent implements OnInit {
-    collection: IFileSystem[];
+    fileSystemContent: IFileSystem[];
     parent: string;
+    currentFolder: string;
 
-    constructor(private http: Http) {
+    constructor(private http: Http,
+        private data: DataService) {
     }
 
     ngOnInit() {
-        this.getCollection("");
+        this.getContent("");
+        this.data.homeComponent = this;
     }
 
     OnClick(item) {
-
         if (item.type) {
-            if (item.type === "file") {
+            if (item.type == "file") {
                 lity(item.fullName);
             } else {
-                const request = `?folder=${item.fullName}`;
-                this.getCollection(request);
+                this.getContent(item.fullName);
             }
         } else {
-            const request = `?folder=${item}`;
-            this.getCollection(request);
+            this.getContent(item);
         }
     }
 
-    getCollection(request: string) {
-        this.http.get(`/api/content/showfilesystem${request}`).subscribe(result => {
-            this.collection = (result.json() as IContent).contents;
-            this.parent = (result.json() as IContent).parent;
-            console.log(`parent: ${this.parent}`);
+    getContent(request: string) {
+        this.data.getFolderContent(request).subscribe(result => {
+            const res = result.json() as IContent;
+            this.fileSystemContent = res.contents;
+            this.parent = res.parent;
+            this.currentFolder = res.currentFolder;
         });
     }
 }
