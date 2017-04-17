@@ -27,7 +27,7 @@ namespace WebTorrent.Controllers
         [HttpGet("[action]")]
         public IActionResult ShowFileSystem([FromQuery] string folder)
         {
-            var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
+            var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder?.TrimStart('\u005C') ?? UploadFolder));
 
             if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
                 return Forbid();
@@ -35,7 +35,7 @@ namespace WebTorrent.Controllers
             var listComponents = new List<FileSystem>(directoryInfo.GetFiles("*", SearchOption.TopDirectoryOnly)
                 .Select(file => new FileSystem
                 {
-                    FullName = file.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C'),
+                    FullName = file.FullName.Replace(_environment.WebRootPath, string.Empty),
                     Name = file.Name,
                     Size = file.Length,
                     LastChanged = file.LastWriteTime,
@@ -45,7 +45,7 @@ namespace WebTorrent.Controllers
             listComponents.AddRange(directoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly)
                 .Select(directory => new FileSystem
                     {
-                        FullName = directory.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C'),
+                        FullName = directory.FullName.Replace(_environment.WebRootPath, string.Empty),
                         Name = directory.Name,
                         Size = new DirectoryInfo(directory.FullName).GetFiles("*", SearchOption.AllDirectories)
                             .Sum(f => f.Length),
@@ -60,7 +60,7 @@ namespace WebTorrent.Controllers
                 Contents = listComponents,
                 Parent = folder == null || folder == UploadFolder
                     ? null
-                    : directoryInfo.Parent.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C')
+                    : directoryInfo.Parent.FullName.Replace(_environment.WebRootPath, string.Empty)
             };
 
             return Json(content);
