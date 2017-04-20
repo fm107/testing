@@ -97,9 +97,9 @@ namespace WebTorrent.Controllers
                     var logger = _loggerFactory.CreateLogger(ControllerContext.ActionDescriptor.ActionName);
                     logger.LogInformation("Starting torrent manager");
                     logger.LogInformation("file path is {0}", _fileName);
-                    var processInfo = new ProcessStartInfo("bash")
+                    var processInfo = new ProcessStartInfo("ffmpeg")
                     {
-                        Arguments = string.Format("ffmpeg -i {0} -vcodec copy -acodec copy {1}", _fileName,
+                        Arguments = string.Format("-i {0} -vcodec copy -acodec copy {1}", _fileName,
                             string.Format("{0}.mp4", Path.GetFileNameWithoutExtension(_fileName)))
                     };
                     Process.Start(processInfo);
