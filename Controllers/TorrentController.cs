@@ -130,7 +130,7 @@ namespace WebTorrent.Controllers
                                 var processInfo = new ProcessStartInfo("ffmpeg")
                                 {
                                     Arguments = string.Format("-i {0} -vcodec copy -acodec copy {1}", fileToConvert,
-                                        string.Format("{0}.mp4", Path.GetFileNameWithoutExtension(fileToConvert)))
+                                        string.Format("{0}.mp4", Path.ChangeExtension(fileToConvert, null)))
                                 };
 
                                 Process.Start(processInfo);
