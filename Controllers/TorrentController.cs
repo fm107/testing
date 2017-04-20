@@ -4,10 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Torrent.Client;
 using Torrent.Client.Events;
 
@@ -22,10 +24,12 @@ namespace WebTorrent.Controllers
         private readonly IHostingEnvironment _environment;
         private string _fileName;
         private TorrentTransfer _torrent;
+        ILoggerFactory _loggerFactory;
 
-        public TorrentController(IHostingEnvironment environment)
+        public TorrentController(IHostingEnvironment environment, ILoggerFactory loggerFactory)
         {
             _environment = environment;
+            _loggerFactory = loggerFactory;
             _client = new HttpClient();
         }
 
@@ -90,6 +94,9 @@ namespace WebTorrent.Controllers
                 case TorrentState.Seeding:
                     _torrent.Stop();
                     _torrent.StateChanged -= TorrentStateChanged;
+                    var logger = _loggerFactory.CreateLogger(ControllerContext.ActionDescriptor.ActionName);
+                    logger.LogInformation("Starting torrent manager");
+                    logger.LogInformation("file path is {0}", _fileName);
                     var processInfo = new ProcessStartInfo("bash")
                     {
                         Arguments = string.Format("ffmpeg -i {0} -vcodec copy -acodec copy {1}", _fileName,
