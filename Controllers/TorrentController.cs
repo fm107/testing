@@ -6,12 +6,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Torrent.Client;
 using Torrent.Client.Events;
+using WebTorrent.Extensions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,15 +23,15 @@ namespace WebTorrent.Controllers
     {
         private readonly HttpClient _client;
         private readonly IHostingEnvironment _environment;
+        private readonly ILog _log;
         private string _fileName;
         private TorrentTransfer _torrent;
-        ILoggerFactory _loggerFactory;
 
-        public TorrentController(IHostingEnvironment environment, ILoggerFactory loggerFactory)
+        public TorrentController(IHostingEnvironment environment)
         {
             _environment = environment;
-            _loggerFactory = loggerFactory;
             _client = new HttpClient();
+            _log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "TorrentController");
         }
 
         [HttpPost("[action]")]
@@ -49,10 +50,20 @@ namespace WebTorrent.Controllers
                 }
             }
 
-            _torrent = new TorrentTransfer(_fileName, uploads);
-            _torrent.StateChanged += TorrentStateChanged;
-            _torrent.ReportStats += TorrentReportStats;
-            _torrent.Start();
+            _log.Info("Starting torrent manager");
+            _log.InfoFormat("file path is {0}", _fileName);
+
+            try
+            {
+                _torrent = new TorrentTransfer(_fileName, uploads);
+                _torrent.StateChanged += TorrentStateChanged;
+                _torrent.ReportStats += TorrentReportStats;
+                _torrent.Start();
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception);
+            }
 
             return Ok("{}");
         }
@@ -74,10 +85,20 @@ namespace WebTorrent.Controllers
                 await response.Content.CopyToAsync(fileStream);
             }
 
-            _torrent = new TorrentTransfer(_fileName, uploads);
-            _torrent.StateChanged += TorrentStateChanged;
-            _torrent.ReportStats += TorrentReportStats;
-            _torrent.Start();
+            _log.Info("Starting torrent manager");
+            _log.InfoFormat("file path is {0}", _fileName);
+
+            try
+            {
+                _torrent = new TorrentTransfer(_fileName, uploads);
+                _torrent.StateChanged += TorrentStateChanged;
+                _torrent.ReportStats += TorrentReportStats;
+                _torrent.Start();
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception);
+            }
 
             return Ok(Path.GetFileName(_fileName));
         }
@@ -94,15 +115,35 @@ namespace WebTorrent.Controllers
                 case TorrentState.Seeding:
                     _torrent.Stop();
                     _torrent.StateChanged -= TorrentStateChanged;
-                    var logger = _loggerFactory.CreateLogger(ControllerContext.ActionDescriptor.ActionName);
-                    logger.LogInformation("Starting torrent manager");
-                    logger.LogInformation("file path is {0}", _fileName);
-                    var processInfo = new ProcessStartInfo("ffmpeg")
+
+                    _log.Info("Starting ffmpeg");
+
+                    try
                     {
-                        Arguments = string.Format("-i {0} -vcodec copy -acodec copy {1}", _fileName,
-                            string.Format("{0}.mp4", Path.GetFileNameWithoutExtension(_fileName)))
-                    };
-                    Process.Start(processInfo);
+                        foreach (var file in _torrent.Data.Files)
+                            if (file.IsMedia() && Path.GetExtension(file.Name) != ".mp4")
+                            {
+                                var fileToConvert = Directory.EnumerateFiles(_environment.ContentRootPath, file.Name,
+                                        SearchOption.AllDirectories)
+                                    .FirstOrDefault();
+
+                                var processInfo = new ProcessStartInfo("ffmpeg")
+                                {
+                                    Arguments = string.Format("-i {0} -vcodec copy -acodec copy {1}", fileToConvert,
+                                        string.Format("{0}.mp4", Path.GetFileNameWithoutExtension(fileToConvert)))
+                                };
+
+                                Process.Start(processInfo);
+
+                                _log.InfoFormat("file {0} has been converted",
+                                    Path.GetFileNameWithoutExtension(file.Name));
+                            }
+                    }
+                    catch (Exception exception)
+                    {
+                        _log.Error(exception);
+                    }
+
                     break;
             }
         }
