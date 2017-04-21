@@ -115,9 +115,7 @@ namespace WebTorrent.Controllers
                 case TorrentState.Seeding:
                     _torrent.Stop();
                     _torrent.StateChanged -= TorrentStateChanged;
-
                     _log.Info("Starting ffmpeg");
-
                     try
                     {
                         foreach (var file in _torrent.Data.Files)
