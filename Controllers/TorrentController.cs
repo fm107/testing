@@ -127,7 +127,7 @@ namespace WebTorrent.Controllers
 
                                 var processInfo = new ProcessStartInfo("ffmpeg")
                                 {
-                                    Arguments = string.Format(@"-i {0} -f mp4 -vcodec libx264 -preset ultrafast 
+                                    Arguments = string.Format(@"-i {0} -f mp4 -vcodec libx264  
                                                                 -movflags faststart -profile:v main -acodec aac {1} -hide_banner", 
                                                                 fileToConvert, string.Format("{0}.mp4", Path.ChangeExtension(fileToConvert, null)))
                                 };
