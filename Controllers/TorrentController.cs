@@ -105,7 +105,7 @@ namespace WebTorrent.Controllers
 
         private void TorrentReportStats(object sender, StatsEventArgs e)
         {
-            Console.WriteLine("Total peers: " + e.TotalPeers);
+            //Console.WriteLine("Total peers: " + e.TotalPeers);
         }
 
         private void TorrentStateChanged(object sender, EventArgs<TorrentState> e)
@@ -128,16 +128,14 @@ namespace WebTorrent.Controllers
                                 var processInfo = new ProcessStartInfo("/app/vendor/ffmpeg/ffmpeg")
                                 {
                                     Arguments = string.Format(@"-i {0} -f mp4 -vcodec libx264 -preset ultrafast 
-                                                                -movflags faststart -profile:v main -acodec aac {1} -hide_banner", 
-                                                                fileToConvert, string.Format("{0}.mp4", Path.ChangeExtension(fileToConvert, null)))
+                                                                -movflags faststart -profile:v main -acodec aac {1} -hide_banner",
+                                        fileToConvert,
+                                        string.Format("{0}.mp4", Path.ChangeExtension(fileToConvert, null)))
                                 };
 
-                                Process.Start(processInfo);
-
+                                var process = Process.Start(processInfo);
+                                process.Exited += Process_Exited;
                                 //System.IO.File.Delete(fileToConvert);
-
-                                _log.InfoFormat("file {0} has been converted",
-                                    Path.GetFileNameWithoutExtension(file.Name));
                             }
                     }
                     catch (Exception exception)
@@ -147,6 +145,15 @@ namespace WebTorrent.Controllers
 
                     break;
             }
+        }
+
+        private async void Process_Exited(object sender, EventArgs e)
+        {
+            var process = (Process)sender;
+            _log.Info(await process.StandardOutput.ReadToEndAsync());
+
+            if (process.ExitCode == 0)
+                _log.Info("file has been converted");
         }
     }
 }
