@@ -125,7 +125,7 @@ namespace WebTorrent.Controllers
                                         SearchOption.AllDirectories)
                                     .FirstOrDefault();
 
-                                var processInfo = new ProcessStartInfo("ffmpeg")
+                                var processInfo = new ProcessStartInfo("/app/vendor/ffmpeg/ffmpeg")
                                 {
                                     Arguments = string.Format(@"-i {0} -f mp4 -vcodec libx264 -preset ultrafast 
                                                                 -movflags faststart -profile:v main -acodec aac {1} -hide_banner", 
