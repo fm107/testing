@@ -47,6 +47,7 @@ namespace WebTorrent
             }
 
             app.UseStaticFiles();
+            app.UseWebSockets();
 
             app.UseMvc(routes =>
             {

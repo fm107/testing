@@ -12,14 +12,15 @@ import { UploadButtonComponent } from "./components/upload-button/upload-button.
 
 import { MaterialModule } from '@angular/material';
 
-import { CovalentCoreModule } from '@covalent/core';
-import { CovalentFileModule } from '@covalent/file-upload';
+import { CovalentCoreModule, TdLoadingService } from '@covalent/core';
 
 import { SimpleNotificationsModule } from 'angular2-notifications';
 
 import { FileSizePipe } from './pipes/filesize.pipe';
 import { DataService } from "./components/data-service/data.service";
-import {UploadButtonUrlComponent} from "./components/upload-button-url/upload-button-url.component";
+import { UploadButtonUrlComponent } from "./components/upload-button-url/upload-button-url.component";
+import { WebSocketService } from "./components/data-service/websocket.service";
+ 
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -38,6 +39,7 @@ import {UploadButtonUrlComponent} from "./components/upload-button-url/upload-bu
 
         SimpleNotificationsModule.forRoot(),
         CovalentCoreModule,
+        
 
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -45,7 +47,7 @@ import {UploadButtonUrlComponent} from "./components/upload-button-url/upload-bu
             { path: '**', redirectTo: 'home' }
         ])
     ],
-    providers: [DataService]
+    providers: [DataService, WebSocketService, TdLoadingService]
 })
 export class AppModule {
 }

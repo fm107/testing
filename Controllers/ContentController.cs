@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using MimeMapping;
+using Newtonsoft.Json;
 using WebTorrent.Extensions;
 using WebTorrent.Model;
 
@@ -116,5 +121,10 @@ namespace WebTorrent.Controllers
         public void Delete(int id)
         {
         }
+    }
+
+    class MyClass
+    {
+        public string message { get; set; }
     }
 }

@@ -4,12 +4,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.WebSockets;
 using System.Reflection;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Torrent.Client;
 using Torrent.Client.Events;
 using WebTorrent.Extensions;
@@ -101,6 +105,33 @@ namespace WebTorrent.Controllers
             }
 
             return Ok(Path.GetFileName(_fileName));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Notifications()
+        {
+            if (HttpContext.WebSockets.IsWebSocketRequest)
+            {
+                var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                while (webSocket.State == WebSocketState.Open)
+                {
+                    var token = CancellationToken.None;
+                    var buffer = new ArraySegment<byte>(new byte[4096]);
+                    var received = await webSocket.ReceiveAsync(buffer, token);
+
+                    switch (received.MessageType)
+                    {
+                        case WebSocketMessageType.Text:
+                            var request = new MyClass() { message = "Testinggg" };
+                            var type = WebSocketMessageType.Text;
+                            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request));
+                            buffer = new ArraySegment<byte>(data);
+                            await webSocket.SendAsync(buffer, type, true, token);
+                            break;
+                    }
+                }
+            }
+            return Ok();
         }
 
         private void TorrentReportStats(object sender, StatsEventArgs e)
