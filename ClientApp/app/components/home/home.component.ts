@@ -7,7 +7,6 @@ import { IContent, IFileSystem } from "./Component";
 import { DataService } from "../data-service/data.service";
 import { WebSocketService } from "../data-service/websocket.service";
 import { IMessage } from "../data-service/message";
-import { UpdateDataService } from "../data-service/update-data.service";
 
 declare var lity: any;
 

@@ -118,6 +118,7 @@ namespace WebTorrent.Controllers
                     var token = CancellationToken.None;
                     var buffer = new ArraySegment<byte>(new byte[4096]);
                     var received = await webSocket.ReceiveAsync(buffer, token);
+                    _log.Info("recieved message from websocket");
 
                     switch (received.MessageType)
                     {
