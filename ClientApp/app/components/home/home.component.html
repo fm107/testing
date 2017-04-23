@@ -1,30 +1,4 @@
-<!--<md-list class="list">
-    <md-list-item>
-        <li class="list__item list__item--tappable">
-            <div class="list__item__center">
-                <md-icon md-list-icon>folder</md-icon>
-                Tappable Item
-            </div>
-        </li>
-    </md-list-item>
-    <md-list-item>
-        <li class="list__item list__item--tappable">
-            <div class="list__item__center">Tappable Item 2</div>
-        </li>
-    </md-list-item>
-    <md-list-item>
-        <li class="list__item list__item--tappable">
-            <div class="list__item__center">
-                <p md-line>
-                    <span> message.subject </span>
-                    <span> message.content </span>
-                </p>
-            </div>
-        </li>
-    </md-list-item>
-</md-list>-->
-
-<!--<md-card class="border">
+﻿<!--<md-card class="border">
     <div layout="row" layout-align="start center" class="pad-left-sm pad-right-sm">
         <span *ngIf="!searchBox.searchVisible" class="push-left-sm">
             <span class="md-title">Title here</span>
@@ -84,40 +58,89 @@
         {{pagingBar.range}} <span hide-xs>of {{pagingBar.total}}</span>
     </td-paging-bar>
 </md-card>-->
+<!--<ul class="list list__item--nodivider">
+    <li class="list__item list__item--nodivider list__header list__header--material active ">
+        <div class="list__item--nodivider__center list__item__center list__item--material__center">
+            NAME
+        </div>
+        <div class="size-column list__item--nodivider__center list__item__right list__item--material__right">
+            SIZE
+        </div>
+        <div class="last-change-column list__item--nodivider__center list__item__right list__item--material__right">
+            LAST CHANGED
+        </div>
+    </li>
+    <li *ngIf="parent != uploads" class="list__item list__item--nodivider list__header list__header--material active ">
+        <a (click)="OnClick(parent)">
+            <md-icon>arrow_drop_up</md-icon> Folder Up
+        </a>
+    </li>
+
+    <li class="animated fadeInDown list__item--hover list__item list__item--tappable list__item--nodivider list__item--material" *ngFor="let content of fileSystemContent">
+        <div class="list__item__left">
+            <img *ngIf="content.type == 'folder'" class="list__item__thumbnail" src="/img/documents-icon.png">
+            <img *ngIf="content.type == 'file'" class="list__item__thumbnail" src="/img/document-movie-icon.png">
+        </div>
+
+        <div class="txt_alignment list__item--nodivider__center list__item__center list__item--material__center" (click)="OnClick(content)">
+            <font class="sliding-middle-out" color="#616161">{{content.name}}</font>
+        </div>
+        <div class="txt_alignment size-column list__item--nodivider__center list__item__right list__item--material__right">
+            <font color="#616161">{{content.size | fileSize}}</font>
+        </div>
+        <div class="txt_alignment last-change-column list__item--nodivider__center list__item__right list__item--material__right">
+            <font color="#616161">{{content.lastChanged | date :'short'}}</font>
+        </div>
+    </li>
+</ul>-->
 
 
-    <ul class="list list__item--nodivider">
-        <li class="list__item list__item--nodivider list__header list__header--material active ">
-            <div class="list__item--nodivider__center list__item__center list__item--material__center">
-                NAME
-            </div>
-            <div class="size-column list__item--nodivider__center list__item__right list__item--material__right">
-                SIZE
-            </div>
-            <div class="last-change-column list__item--nodivider__center list__item__right list__item--material__right">
-                LAST CHANGED 
-            </div>
-        </li>
-        <li *ngIf="parent != uploads" class="list__item list__item--nodivider list__header list__header--material active ">
-            <a (click)="OnClick(parent)">
-                <md-icon>arrow_drop_up</md-icon> Folder Up
-            </a>
-        </li>
-
-        <li class="animated fadeInDown list__item--hover list__item list__item--tappable list__item--nodivider list__item--material" *ngFor="let content of fileSystemContent">
-            <div class="list__item__left">
-                <img *ngIf="content.type == 'folder'" class="list__item__thumbnail" src="/img/documents-icon.png">
-                <img *ngIf="content.type == 'file'" class="list__item__thumbnail" src="/img/document-movie-icon.png">
-            </div>
-
-            <div class="txt_alignment list__item--nodivider__center list__item__center list__item--material__center" (click)="OnClick(content)">
-                <font class="sliding-middle-out" color="#616161">{{content.name}}</font>
-            </div>
-            <div class="txt_alignment size-column list__item--nodivider__center list__item__right list__item--material__right">
-                <font color="#616161">{{content.size | fileSize}}</font>
-            </div>
-            <div class="txt_alignment last-change-column list__item--nodivider__center list__item__right list__item--material__right">
-                <font color="#616161">{{content.lastChanged | date :'short'}}</font>
-            </div>
-        </li>
-    </ul>
+<div layout="row" layout-align="start center" class="pad-left-sm pad-right-sm">
+    <span *ngIf="!searchBox.searchVisible" class="push-left-sm">
+        <span class="md-title">WebTorrent</span>
+    </span>
+    <td-search-box #searchBox backIcon="arrow_back" class="push-right-sm" placeholder="Search here" (searchDebounce)="search($event)" flex>
+    </td-search-box>
+</div>
+<md-divider></md-divider>
+<table td-data-table>
+    <tr td-data-table-row>
+        <th width="68%" td-data-table-column
+            [name]="name.name"
+            [active]="name.sortable && name.name === sortBy"
+            [sortable]="name.sortable"
+            [sortOrder]="sortOrder"
+            (sortChange)="sort($event)">
+            <span mdTooltip="{{name.tooltip}}">{{name.label}}</span>
+        </th>
+        <th class="indent-column" width="15%" td-data-table-column
+            [name]="size.name"
+            [active]="size.sortable && size.name === sortBy"
+            [sortable]="size.sortable"
+            [sortOrder]="sortOrder"
+            (sortChange)="sort($event)">
+            <span mdTooltip="{{size.tooltip}}">{{size.label}}</span>
+        </th>
+        <th width="20%" td-data-table-column
+            [name]="changed.name"
+            [active]="changed.sortable && changed.name === sortBy"
+            [sortable]="changed.sortable"
+            [sortOrder]="sortOrder"
+            (sortChange)="sort($event)">
+            <span mdTooltip="{{changed.tooltip}}">{{changed.label}}</span>
+        </th>
+    </tr>
+    <tr td-data-table-row *ngIf="parent != uploads">
+        <a (click)="OnClick(parent)">
+            <md-icon>arrow_drop_up</md-icon> Folder Up
+        </a>
+    </tr>
+    <tr class="animated fadeInDown list__item--hover" td-data-table-row *ngFor="let content of filteredData">
+        <td td-data-table-cell (click)="OnClick(content)">{{content.name}}</td>
+        <td td-data-table-cell>{{content.size | fileSize}}</td>
+        <td td-data-table-cell>{{content.lastChanged | date :'short'}}</td>
+    </tr>
+</table>
+<div class="md-padding" *ngIf="" layout="row" layout-align="center center">
+    <h3>No results</h3>
+</div>
