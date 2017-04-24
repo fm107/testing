@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Torrent;
 using Torrent.Client.Bencoding;
 using Torrent.Client.Extensions;
 
@@ -66,6 +67,14 @@ namespace Torrent.Client
                     throw new TorrentException("Cannot read peers list.");
                 }
             }
+        }
+        
+        public TrackerResponse(BaseScraper.ScrapeInfo scrapeInfo, BaseScraper.AnnounceInfo announceInfo)
+        {
+            Interval = announceInfo.WaitTime;
+            Complete = (int) scrapeInfo.Complete;
+            Incomplete = (int) scrapeInfo.Incomplete;
+            Endpoints = announceInfo.Peers.ToList();
         }
 
         /// <summary>

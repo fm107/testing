@@ -103,44 +103,49 @@
     </td-search-box>
 </div>
 <md-divider></md-divider>
-<table td-data-table>
-    <tr td-data-table-row>
-        <th width="68%" td-data-table-column
-            [name]="name.name"
-            [active]="name.sortable && name.name === sortBy"
-            [sortable]="name.sortable"
-            [sortOrder]="sortOrder"
-            (sortChange)="sort($event)">
-            <span mdTooltip="{{name.tooltip}}">{{name.label}}</span>
-        </th>
-        <th class="indent-column" width="15%" td-data-table-column
-            [name]="size.name"
-            [active]="size.sortable && size.name === sortBy"
-            [sortable]="size.sortable"
-            [sortOrder]="sortOrder"
-            (sortChange)="sort($event)">
-            <span mdTooltip="{{size.tooltip}}">{{size.label}}</span>
-        </th>
-        <th width="20%" td-data-table-column
-            [name]="changed.name"
-            [active]="changed.sortable && changed.name === sortBy"
-            [sortable]="changed.sortable"
-            [sortOrder]="sortOrder"
-            (sortChange)="sort($event)">
-            <span mdTooltip="{{changed.tooltip}}">{{changed.label}}</span>
-        </th>
-    </tr>
-    <tr td-data-table-row *ngIf="parent != uploads">
-        <a (click)="OnClick(parent)">
-            <md-icon>arrow_drop_up</md-icon> Folder Up
-        </a>
-    </tr>
-    <tr class="animated fadeInDown list__item--hover" td-data-table-row *ngFor="let content of filteredData">
-        <td td-data-table-cell (click)="OnClick(content)">{{content.name}}</td>
-        <td td-data-table-cell>{{content.size | fileSize}}</td>
-        <td td-data-table-cell>{{content.lastChanged | date :'short'}}</td>
-    </tr>
-</table>
+<div layout="column" layout-align="start center" class="pad-left-sm pad-right-sm">
+    <div flex="100">
+        <table td-data-table>
+            <tr td-data-table-row>
+                <th width="68%" td-data-table-column
+                    [name]="name.name"
+                    [active]="name.sortable && name.name === sortBy"
+                    [sortable]="name.sortable"
+                    [sortOrder]="sortOrder"
+                    (sortChange)="sort($event)">
+                    <span mdTooltip="{{name.tooltip}}">{{name.label}}</span>
+                </th>
+                <th class="indent-column" width="15%" td-data-table-column
+                    [name]="size.name"
+                    [active]="size.sortable && size.name === sortBy"
+                    [sortable]="size.sortable"
+                    [sortOrder]="sortOrder"
+                    (sortChange)="sort($event)">
+                    <span mdTooltip="{{size.tooltip}}">{{size.label}}</span>
+                </th>
+                <th width="20%" td-data-table-column
+                    [name]="changed.name"
+                    [active]="changed.sortable && changed.name === sortBy"
+                    [sortable]="changed.sortable"
+                    [sortOrder]="sortOrder"
+                    (sortChange)="sort($event)">
+                    <span mdTooltip="{{changed.tooltip}}">{{changed.label}}</span>
+                </th>
+            </tr>
+            <tr td-data-table-row *ngIf="parent != uploads">
+                <a (click)="OnClick(parent)">
+                    <md-icon>arrow_drop_up</md-icon> Folder Up
+                </a>
+            </tr>
+            <tr class="animated fadeInDown list__item--hover" td-data-table-row *ngFor="let content of filteredData">
+                <td td-data-table-cell (click)="OnClick(content)">{{content.name}}</td>
+                <td td-data-table-cell>{{content.size | fileSize}}</td>
+                <td td-data-table-cell>{{content.lastChanged | date :'short'}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
 <div class="md-padding" *ngIf="" layout="row" layout-align="center center">
     <h3>No results</h3>
 </div>

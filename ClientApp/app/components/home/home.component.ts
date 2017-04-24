@@ -87,7 +87,7 @@ export class HomeComponent implements OnInit {
             this.fileSystemContent = res.contents;
             this.parent = res.parent;
             this.currentFolder = res.currentFolder;
-            this.filter(null);
+            this.updateDataTable(null);
         });
     }
 
@@ -97,16 +97,16 @@ export class HomeComponent implements OnInit {
         this.sortOrder = sortEvent.order === TdDataTableSortingOrder.Ascending ?
             TdDataTableSortingOrder.Descending : TdDataTableSortingOrder.Ascending;
         console.log(sortEvent);
-        this.filter("sort");
+        this.updateDataTable("sort");
     }
 
     search(searchTerm: string): void {
         this.searchTerm = searchTerm;
-        this.filter("filter");
+        this.updateDataTable("filter");
     }
 
 
-    filter(action: string): void {
+    updateDataTable(action: string): void {
         const newData: any[] = this.fileSystemContent;
 
         switch (action) {

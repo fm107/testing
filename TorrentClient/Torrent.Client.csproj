@@ -17,4 +17,8 @@
     <Prefer32Bit>False</Prefer32Bit>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="UDPTrackerClient\" />
+  </ItemGroup>
+
 </Project>

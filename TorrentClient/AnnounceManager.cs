@@ -20,7 +20,8 @@ namespace Torrent.Client
             //връзка с отделни тракери и заявки до тях
             _trackers = new List<TrackerInfo>();
             //прибавяне на HTTP тракерите от подадения списък с адреси
-            _trackers.AddRange(announceUrls.Where(u => u.StartsWith("http")).Select(u => new TrackerInfo(u)));
+            //_trackers.AddRange(announceUrls.Where(u => u.StartsWith("http")).Select(u => new TrackerInfo(u)));
+            _trackers.AddRange(announceUrls.Select(u => new TrackerInfo(u)));
             //прикачане на събитието PeersReceived към всеки от тракерите (TrackerInfo)
             _trackers.ForEach(t => t.PeersReceived += (sender, args) => OnPeersReceived(args.Value));
             Monitor = monitor;

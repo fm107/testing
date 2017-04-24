@@ -11,6 +11,7 @@ import { DialogComponent } from './components/dialog/dialog.component';
 import { UploadButtonComponent } from "./components/upload-button/upload-button.component";
 
 import { MaterialModule } from '@angular/material';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { CovalentCoreModule, TdLoadingService } from '@covalent/core';
 
@@ -36,6 +37,7 @@ import { WebSocketService } from "./components/data-service/websocket.service";
         CommonModule,
 
         MaterialModule,
+        FlexLayoutModule,   
 
         SimpleNotificationsModule.forRoot(),
         CovalentCoreModule,

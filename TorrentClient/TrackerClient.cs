@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
+using System.Net.Torrent;
 using System.Text;
+using System.Threading.Tasks;
 using Torrent.Client.Extensions;
 
 namespace Torrent.Client
@@ -29,7 +32,7 @@ namespace Torrent.Client
 
         public string PreferredAnnounce { get; private set; }
 
-        private string UrlEncode(byte[] source)
+        private static string UrlEncode(byte[] source)
         {
             var builder = new StringBuilder();
             var hex = BitConverter.ToString(source).Replace("-", string.Empty);
@@ -96,6 +99,11 @@ namespace Torrent.Client
             if (!announceUrl.Contains("?")) announceUrl += "?";
             else announceUrl += "&";
 
+            if (announceUrl.Contains("udp://"))
+            {
+                return GetUdpResponse(announceUrl, requestData);
+            }
+            
             var request = (HttpWebRequest) WebRequest.Create(announceUrl + urlBuilder);
             request.Method = "GET";
 
@@ -122,6 +130,17 @@ namespace Torrent.Client
             {
                 return null;
             }
+        }
+
+        private static TrackerResponse GetUdpResponse(string announceUrl, TrackerRequest urlBuilder)
+        {
+            var cl = new UDPTrackerClient(5000);
+            BaseScraper.AnnounceInfo resp = cl.Announce(announceUrl, urlBuilder.InfoHash.ToString(), urlBuilder.PeerId, urlBuilder);
+
+            IDictionary<string, BaseScraper.ScrapeInfo> scrap = cl.Scrape(announceUrl, new[] {urlBuilder.InfoHash.ToString()}, urlBuilder);
+
+            var scr = scrap.Values.FirstOrDefault();
+            return new TrackerResponse(scr, resp);
         }
     }
 }
