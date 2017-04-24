@@ -1,5 +1,5 @@
 ﻿import { Injectable } from "@angular/core";
-import { Http, URLSearchParams } from "@angular/http";
+import { Http, URLSearchParams, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { AsyncSubject } from "rxjs/AsyncSubject";
@@ -37,6 +37,7 @@ export class DataService {
             this.http.get(`/api/content/showfilesystem`, { search: params }).subscribe(
                 result => observer.next(result),
                 error => {
+                    this.loadingService.resolve("query");
                     console.error(`Error during retriving data: ${error}`);
                 },
                 () => {
@@ -56,17 +57,15 @@ export class DataService {
 
         const options = new RequestOptions({ search: params, headers: headers });
 
-        return Observable.create(observer => {
-            this.loadingService.register("query");
-            this.http.post(`api/torrent/UploadFileUrl`, params.toString(), options).subscribe(
-                result => observer.next(result),
-                error => {
-                    console.error(`Error during submiting torrent Url: ${error}`);
-                },
-                () => {
-                    this.loadingService.resolve("query");
-                    observer.complete();
-                });
-        });
+        this.loadingService.register("query");
+        return this.http.post(`api/torrent/UploadFileUrl`, params.toString(), options)
+            .map((response: Response) => {
+                this.loadingService.resolve("query");
+                return response.json();
+            })
+            .catch(error => {
+                this.loadingService.resolve("query");
+                return Observable.throw(error.json().error || 'Server error');
+            });
     }
 }
