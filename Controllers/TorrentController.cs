@@ -73,7 +73,7 @@ namespace WebTorrent.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> UploadFileUrl([FromQuery] string url, [FromQuery] string folder)
+        public async Task<IActionResult> UploadFromUrl([FromQuery] string url, [FromQuery] string folder)
         {
             var response = await _client.GetAsync(url, HttpCompletionOption.ResponseContentRead);
 
@@ -167,7 +167,7 @@ namespace WebTorrent.Controllers
 
                                 var process = Process.Start(processInfo);
                                 process.Exited += Process_Exited;
-                                //System.IO.File.Delete(fileToConvert);
+                                System.IO.File.Delete(fileToConvert);
                             }
                     }
                     catch (Exception exception)

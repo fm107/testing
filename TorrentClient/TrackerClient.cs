@@ -32,7 +32,7 @@ namespace Torrent.Client
 
         public string PreferredAnnounce { get; private set; }
 
-        private static string UrlEncode(byte[] source)
+        private string UrlEncode(byte[] source)
         {
             var builder = new StringBuilder();
             var hex = BitConverter.ToString(source).Replace("-", string.Empty);

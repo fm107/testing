@@ -32,7 +32,7 @@ namespace WebTorrent.Controllers
         }
 
         [HttpGet("[action]")]
-        public IActionResult ShowFileSystem([FromQuery] string folder)
+        public IActionResult GetFolder([FromQuery] string folder)
         {
             var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
 

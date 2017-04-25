@@ -34,10 +34,12 @@ export class DataService {
 
         return Observable.create(observer => {
             this.loadingService.register("query");
-            this.http.get(`/api/content/showfilesystem`, { search: params }).subscribe(
+
+            this.http.get(`api/Content/GetFolder`, { search: params }).subscribe(
                 result => observer.next(result),
                 error => {
                     this.loadingService.resolve("query");
+                    observer.error(error);
                     console.error(`Error during retriving data: ${error}`);
                 },
                 () => {
@@ -47,7 +49,7 @@ export class DataService {
         });
     }
 
-    submitTorrentUrl(url: string, folder: string) {
+    submitTorrentUrl(url: string, folder: string): Observable<Response> {
         const headers = new Headers({ 'Content-Type': "application/json" });
         //headers.append('Access-Control-Allow-Origin', '*');
 
@@ -58,14 +60,15 @@ export class DataService {
         const options = new RequestOptions({ search: params, headers: headers });
 
         this.loadingService.register("query");
-        return this.http.post(`api/torrent/UploadFileUrl`, params.toString(), options)
+        return this.http.post(`api/Torrent/UploadFromUrl`, params.toString(), options)
             .map((response: Response) => {
-                this.loadingService.resolve("query");
-                return response.json();
+                return response;
             })
             .catch(error => {
+                return Observable.throw(error.json().error || "Server error");
+            })
+            .finally(() => {
                 this.loadingService.resolve("query");
-                return Observable.throw(error.json().error || 'Server error');
             });
     }
 }

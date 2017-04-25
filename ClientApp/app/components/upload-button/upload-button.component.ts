@@ -57,22 +57,20 @@ export class UploadButtonComponent {
         };
 
         this.fileUploadService.upload(options).subscribe(
-            response => {
-                console.log(`this is response :${response}`);
-            },
-            error => console.error(`Error while file uploading: ${error}`),
             () => {
-                this.service.success("File Uploaded",
-                    `${file.name} uploaded successfully`,
-                    {
-                        timeOut: 5000,
-                        showProgressBar: true,
-                        pauseOnHover: true,
-                        clickToClose: true,
-                        maxLength: 100
-                    });
-                this.data.homeComponent.getContent(this.data.homeComponent.currentFolder);
-            });
+                    this.service.success("File Uploaded",
+                        `${file.name} uploaded successfully`,
+                        {
+                            timeOut: 5000,
+                            showProgressBar: true,
+                            pauseOnHover: true,
+                            clickToClose: true,
+                            maxLength: 100
+                        });
+
+                    this.data.homeComponent.getContent(this.data.homeComponent.currentFolder);
+            },
+            error => console.error(`Error while file uploading: ${error}`));
 
         uploadComponent.cancel();
     };

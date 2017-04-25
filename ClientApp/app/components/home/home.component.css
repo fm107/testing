@@ -1,27 +1,32 @@
 ﻿table, tr, td, th {
     border: none !important;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 .mat-table-container {
     border: none !important;
 }
+.icon-column {
+    width: 5px;
+    /*margin-left: 6%;*/
+}
 .name-column {
-    width: 10%;
-    margin-left: 6%;
+    width: 65%;
+    /*margin-left: 6%;*/
 }
 
 .size-column {
-    width: 10%;
-    margin-left: 70%;
+    width: 15%;
+    /*margin-left: 70%;
     position: absolute;
-    z-index: 2;
+    z-index: 2;*/
 }
 
 .last-change-column {
-    width: 20%;
-    margin-left: 80%;
+    width: 25%;
+    /*margin-left: 80%;
     position: absolute;
-    z-index: 2;
+    z-index: 2;*/
 }
 
 .txt_alignment {
@@ -30,8 +35,7 @@
 }
 
 .indent-column {
-    margin-left: 2%;
-    margin-right: 2%; 
+    margin-left: 20%; 
 } 
 .indent {
     margin-left: 5%;
