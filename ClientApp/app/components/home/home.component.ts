@@ -17,7 +17,8 @@ import { IPageChangeEvent } from "@covalent/core";
 @Component({
     selector: "home",
     templateUrl: "./home.component.html",
-    styleUrls: ["./home.component.css"], providers: [TdDataTableService]
+    styleUrls: ["./home.component.css"], 
+    providers: [TdDataTableService]
 })
 
 export class HomeComponent implements OnInit {
@@ -54,7 +55,7 @@ export class HomeComponent implements OnInit {
         this.data.homeComponent = this;
 
         this.messagesObs = (this.wsService
-            .connect("ws://localhost:60917/api/Torrent/Notifications")
+            .connect("ws://window.location.hostname:80/api/Torrent/Notifications")
             .map((response: MessageEvent): IMessage => {
                 const msg = JSON.parse(response.data);
                 return {
