@@ -7,11 +7,11 @@ using Torrent.Client;
 
 namespace System.Net.Torrent
 {
-    public class UDPTrackerClient : BaseScraper
+    public class UdpTrackerClient : BaseScraper
     {
         private byte[] _currentConnectionId;
 
-        public UDPTrackerClient(Int32 timeout) 
+        public UdpTrackerClient(Int32 timeout) 
             : base(timeout)
         {
             _currentConnectionId = BaseCurrentConnectionId;

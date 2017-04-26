@@ -8,6 +8,7 @@ using System.Net.Torrent;
 using System.Text;
 using System.Threading.Tasks;
 using Torrent.Client.Extensions;
+using Torrent.Client.UDPTrackerClient;
 
 namespace Torrent.Client
 {
@@ -134,7 +135,7 @@ namespace Torrent.Client
 
         private static TrackerResponse GetUdpResponse(string announceUrl, TrackerRequest urlBuilder)
         {
-            var cl = new UDPTrackerClient(5000);
+            var cl = new UdpTrackerClient(5000);
             BaseScraper.AnnounceInfo resp = cl.Announce(announceUrl, urlBuilder.InfoHash.ToString(), urlBuilder.PeerId, urlBuilder);
 
             IDictionary<string, BaseScraper.ScrapeInfo> scrap = cl.Scrape(announceUrl, new[] {urlBuilder.InfoHash.ToString()}, urlBuilder);

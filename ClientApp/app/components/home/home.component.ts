@@ -3,16 +3,14 @@ import { Http } from "@angular/http";
 import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
 
+import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn } from "@covalent/core";
+
 import { IContent, IFileSystem } from "./Component";
 import { DataService } from "../data-service/data.service";
 import { WebSocketService } from "../data-service/websocket.service";
 import { IMessage } from "../data-service/message";
 
 declare var lity: any;
-
-
-import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn } from "@covalent/core";
-import { IPageChangeEvent } from "@covalent/core";
 
 @Component({
     selector: "home",
@@ -55,7 +53,7 @@ export class HomeComponent implements OnInit {
         this.data.homeComponent = this;
 
         this.messagesObs = (this.wsService
-            .connect("ws://window.location.hostname:80/api/Torrent/Notifications")
+            .connect(`ws://${window.location.hostname}:${window.location.port}/api/Torrent/Notifications`)
             .map((response: MessageEvent): IMessage => {
                 const msg = JSON.parse(response.data);
                 return {
@@ -92,7 +90,6 @@ export class HomeComponent implements OnInit {
         });
     }
 
-
     sort(sortEvent: ITdDataTableSortChangeEvent): void {
         this.sortBy = sortEvent.name;
         this.sortOrder = sortEvent.order === TdDataTableSortingOrder.Ascending ?
@@ -105,7 +102,6 @@ export class HomeComponent implements OnInit {
         this.searchTerm = searchTerm;
         this.updateDataTable("filter");
     }
-
 
     updateDataTable(action: string): void {
         const newData: any[] = this.fileSystemContent;
@@ -123,14 +119,3 @@ export class HomeComponent implements OnInit {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-

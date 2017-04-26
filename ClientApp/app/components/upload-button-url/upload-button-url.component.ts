@@ -16,11 +16,20 @@ export class UploadButtonUrlComponent {
     }
 
     onClick(url: any) {
-        let response: string;
-
         this.data.submitTorrentUrl(url.value, this.data.homeComponent.currentFolder).subscribe(
             (res: Response) => {
-                response = res.text();
+                if (res.status === 200) {
+                    this.service.success("File Uploaded",
+                        `${res.text()} uploaded successfully`,
+                        {
+                            timeOut: 5000,
+                            showProgressBar: true,
+                            pauseOnHover: true,
+                            clickToClose: true,
+                            maxLength: 100
+                        });
+                    this.data.homeComponent.getContent(this.data.homeComponent.currentFolder);
+                }
             },
             error => {
                 console.error(`Error while file uploading: ${error}`);
@@ -33,18 +42,6 @@ export class UploadButtonUrlComponent {
                         clickToClose: true,
                         maxLength: 100
                     });
-            },
-            () => {
-                this.service.success("File Uploaded",
-                    `${response} uploaded successfully`,
-                    {
-                        timeOut: 5000,
-                        showProgressBar: true,
-                        pauseOnHover: true,
-                        clickToClose: true,
-                        maxLength: 100
-                    });
-                this.data.homeComponent.getContent(this.data.homeComponent.currentFolder);
             });
 
         url.value = "";

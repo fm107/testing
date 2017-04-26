@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Torrent;
 using Torrent.Client.Bencoding;
 using Torrent.Client.Extensions;
+using Torrent.Client.UDPTrackerClient;
 
 namespace Torrent.Client
 {

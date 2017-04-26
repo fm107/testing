@@ -57,7 +57,7 @@ export class UploadButtonComponent {
         };
 
         this.fileUploadService.upload(options).subscribe(
-            () => {
+            response => {
                     this.service.success("File Uploaded",
                         `${file.name} uploaded successfully`,
                         {

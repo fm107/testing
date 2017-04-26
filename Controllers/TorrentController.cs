@@ -7,15 +7,18 @@ using System.Net.Http;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MimeMapping;
 using Newtonsoft.Json;
 using Torrent.Client;
 using Torrent.Client.Events;
+using UTorrent.Api;
 using WebTorrent.Extensions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -79,14 +82,19 @@ namespace WebTorrent.Controllers
 
             var uploads = Path.Combine(_environment.WebRootPath, folder);
 
-            _fileName = Path.Combine(uploads,
+            _fileName = Path.Combine(uploads, RemoveInvalidFilePathCharacters(
                 response.Content.Headers.ContentDisposition != null
                     ? response.Content.Headers.ContentDisposition.FileName.Trim('\u0022')
-                    : response.RequestMessage.RequestUri.Segments.LastOrDefault());
+                    : response.RequestMessage.RequestUri.Segments.LastOrDefault(), "_"));
 
             using (var fileStream = new FileStream(_fileName, FileMode.Create))
             {
                 await response.Content.CopyToAsync(fileStream);
+            }
+
+            if (MimeTypes.GetMimeMapping(_fileName)!= "application/x-bittorrent")
+            {
+                return BadRequest("Not application/x-bittorrent Mime type");
             }
 
             _log.Info("Starting torrent manager");
@@ -186,6 +194,13 @@ namespace WebTorrent.Controllers
 
             if (process.ExitCode == 0)
                 _log.Info("file has been converted");
+        }
+
+        public static string RemoveInvalidFilePathCharacters(string filename, string replaceChar)
+        {
+            var invalidChars = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            var regex = new Regex(string.Format("[{0}]", Regex.Escape(invalidChars)));
+            return regex.Replace(filename, replaceChar);
         }
     }
 }
