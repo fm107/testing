@@ -174,7 +174,7 @@ namespace WebTorrent.Controllers
 
                                 var process = Process.Start(processInfo);
                                 process.Exited += Process_Exited;
-                                System.IO.File.Delete(fileToConvert);
+                                //System.IO.File.Delete(fileToConvert);
                             }
                     }
                     catch (Exception exception)
