@@ -18,7 +18,6 @@ using MimeMapping;
 using Newtonsoft.Json;
 using Torrent.Client;
 using Torrent.Client.Events;
-using UTorrent.Api;
 using WebTorrent.Extensions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

@@ -1,4 +1,6 @@
-﻿namespace System.Net.Torrent.Misc
+﻿using System;
+
+namespace Torrent.Client.UDPTrackerClient.Misc
 {
     public static class Utils
     {

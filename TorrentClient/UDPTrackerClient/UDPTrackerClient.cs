@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
-using System.Net.Torrent.Misc;
 using System.Text;
-using Torrent.Client;
+using Torrent.Client.UDPTrackerClient.Misc;
 
-namespace System.Net.Torrent
+namespace Torrent.Client.UDPTrackerClient
 {
     public class UdpTrackerClient : BaseScraper
     {

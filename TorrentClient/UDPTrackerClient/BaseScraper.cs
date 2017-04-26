@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Text.RegularExpressions;
 
-namespace System.Net.Torrent
+namespace Torrent.Client.UDPTrackerClient
 {
     public abstract class BaseScraper
     {

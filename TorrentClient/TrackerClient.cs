@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Net.Torrent;
 using System.Text;
-using System.Threading.Tasks;
 using Torrent.Client.Extensions;
 using Torrent.Client.UDPTrackerClient;
 
