@@ -4,7 +4,7 @@
     <Description>this is library about bit torrent. It's based on monotorrent. It targets .net core, .net standard libray and Universal windows platform and .net framework</Description>
     <Copyright>Copyright .NET Foundation. All rights reserved.</Copyright>
     <Authors>Mark Kang</Authors>
-    <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.5</TargetFrameworks>
     <NoWarn>$(NoWarn);CS1591;CS1574;CS1573</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
