@@ -62,7 +62,6 @@
   <ItemGroup>
     <ProjectReference Include="BitTorrent.Dht\BitTorrent.Dht.csproj" />
     <ProjectReference Include="BitTorrent\BitTorrent.csproj" />
-    <ProjectReference Include="TorrentClient\Torrent.Client.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="ClientApp\app\components\TestComponent\file.ts">
@@ -76,11 +75,6 @@
     <Folder Include="ClientApp\app\pipes\" />
     <Folder Include="Properties\" />
     <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Collections.Specialized">
-      <HintPath>C:\Users\Alexander\.nuget\packages\system.collections.specialized\4.3.0\ref\netstandard1.3\System.Collections.Specialized.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
