@@ -3,13 +3,27 @@
     border-collapse: collapse;
     table-layout: fixed;
 }
+
 .mat-table-container {
     border: none !important;
 }
+
+.md-icon--home {
+    font-size: 16px;
+    margin-bottom: 2px;
+    font-style: bold;
+}
+
 .icon-column {
     width: 5px;
     /*margin-left: 6%;*/
 }
+
+.info-column {
+    width: 90px;
+    margin-top: 20px;
+}
+
 .name-column {
     width: 65%;
     /*margin-left: 6%;*/
@@ -35,8 +49,9 @@
 }
 
 .indent-column {
-    margin-left: 20%; 
-} 
+    margin-left: 20%;
+}
+
 .indent {
     margin-left: 5%;
     margin-right: 5%;

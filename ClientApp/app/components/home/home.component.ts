@@ -63,6 +63,7 @@ export class HomeComponent implements OnInit {
 
 
         this.messagesObs.subscribe(response => {
+            console.log(response);
             this.messages.push(response);
         });
     }

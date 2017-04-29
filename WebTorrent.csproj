@@ -4,6 +4,9 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP1_1</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DotNet.Contracts" Version="1.10.20606.1" />
     <PackageReference Include="log4net" Version="2.0.8" />
@@ -24,25 +27,32 @@
   <ItemGroup>
     <!-- Files not to show in IDE -->
     <None Remove=".gitignore" />
-    <None Remove="log4net.config" />
     <None Remove="README.md" />
     <None Remove="yarn.lock" />
+    <Compile Remove="BitTorrent.Dht\**" />
+    <Compile Remove="BitTorrent\**" />
     <Compile Remove="ClientApp\app\listSortable\**" />
     <Compile Remove="ClientApp\dist\**" />
     <Compile Remove="TorrentClient\**" />
     <Compile Remove="Torrent\**" />
     <Compile Remove="wwwroot\css\themes\**" />
+    <Content Remove="BitTorrent.Dht\**" />
+    <Content Remove="BitTorrent\**" />
 
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
     <Content Remove="ClientApp\**" />
     <Content Remove="TorrentClient\**" />
     <Content Remove="Torrent\**" />
     <Content Remove="wwwroot\css\themes\**" />
+    <EmbeddedResource Remove="BitTorrent.Dht\**" />
+    <EmbeddedResource Remove="BitTorrent\**" />
     <EmbeddedResource Remove="ClientApp\app\listSortable\**" />
     <EmbeddedResource Remove="ClientApp\dist\**" />
     <EmbeddedResource Remove="TorrentClient\**" />
     <EmbeddedResource Remove="Torrent\**" />
     <EmbeddedResource Remove="wwwroot\css\themes\**" />
+    <None Remove="BitTorrent.Dht\**" />
+    <None Remove="BitTorrent\**" />
     <None Remove="ClientApp\app\listSortable\**" />
     <None Remove="ClientApp\dist\**" />
     <None Remove="TorrentClient\**" />
@@ -50,9 +60,8 @@
     <None Remove="wwwroot\css\themes\**" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="log4net.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="BitTorrent.Dht\BitTorrent.Dht.csproj" />
+    <ProjectReference Include="BitTorrent\BitTorrent.csproj" />
     <ProjectReference Include="TorrentClient\Torrent.Client.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +76,11 @@
     <Folder Include="ClientApp\app\pipes\" />
     <Folder Include="Properties\" />
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Collections.Specialized">
+      <HintPath>C:\Users\Alexander\.nuget\packages\system.collections.specialized\4.3.0\ref\netstandard1.3\System.Collections.Specialized.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
