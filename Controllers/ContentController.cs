@@ -57,15 +57,15 @@ namespace WebTorrent.Controllers
 
             listComponents.AddRange(directoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly)
                 .Select(directory => new FileSystem
-                    {
-                        FullName = directory.FullName.Replace(_environment.WebRootPath, string.Empty)
+                {
+                    FullName = directory.FullName.Replace(_environment.WebRootPath, string.Empty)
                             .TrimStart('\u005C', '\u002F'),
-                        Name = directory.Name,
-                        Size = new DirectoryInfo(directory.FullName).GetFiles("*", SearchOption.AllDirectories)
+                    Name = directory.Name,
+                    Size = new DirectoryInfo(directory.FullName).GetFiles("*", SearchOption.AllDirectories)
                             .Sum(f => f.Length),
-                        LastChanged = directory.LastWriteTime,
-                        Type = "folder"
-                    }
+                    LastChanged = directory.LastWriteTime,
+                    Type = "folder"
+                }
                 ));
 
             var content = new Content
@@ -85,7 +85,7 @@ namespace WebTorrent.Controllers
         public string ShowDirectory()
         {
             string ret = null;
-            foreach (var file in Directory.EnumerateFiles(Path.Combine(_environment.WebRootPath, UploadFolder), "*",
+            foreach (var file in Directory.EnumerateFiles("app", "*",
                 SearchOption.AllDirectories))
                 ret += string.Format("{0} Size: {1}", file, new FileInfo(file).Length) + Environment.NewLine;
             return ret;
@@ -97,7 +97,10 @@ namespace WebTorrent.Controllers
             var processInfo = new ProcessStartInfo("/app/utorrent-server/utserver")
             {
                 Arguments = "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true
             };
             var process = Process.Start(processInfo);
             return Ok(await process.StandardOutput.ReadToEndAsync());
@@ -109,7 +112,10 @@ namespace WebTorrent.Controllers
             var processInfo = new ProcessStartInfo("ps")
             {
                 Arguments = "-ef",
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true
             };
 
             var process = Process.Start(processInfo);
@@ -121,7 +127,7 @@ namespace WebTorrent.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new[] {"value1", "value2"};
+            return new[] { "value1", "value2" };
         }
 
         // GET api/values/5
