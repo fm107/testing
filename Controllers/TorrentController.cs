@@ -99,7 +99,7 @@ namespace WebTorrent.Controllers
 
                 UTorrentClient client = new UTorrentClient("admin", "");
 
-                var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), @"test");
+                var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), uploads);
                 var torrent = response2.AddedTorrent;
 
                 var set = client.GetSettings().Result;
