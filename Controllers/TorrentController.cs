@@ -141,7 +141,7 @@ namespace WebTorrent.Controllers
                             run = !Directory.EnumerateFiles(torrent.Path, "*.mp4", SearchOption.AllDirectories).All(f => f.EndsWith("mp4"));
                             Thread.Sleep(TimeSpan.FromSeconds(10));
                         }
-                    } while (run);
+                    } while (true);
                      
                  });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
