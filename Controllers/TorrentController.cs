@@ -29,6 +29,7 @@ using System.Net.BitTorrent.Client.Tracker;
 using System.Net.BitTorrent.Dht;
 using System.Net.BitTorrent.Dht.Listeners;
 using System.Runtime.Loader;
+using UTorrent.Api;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -96,20 +97,18 @@ namespace WebTorrent.Controllers
                 //_torrent.ReportStats += TorrentReportStats;
                 //_torrent.Start();
 
-                basePath = Directory.GetCurrentDirectory();//Environment.CurrentDirectory;						// This is the directory we are currently in
-                torrentsPath = uploads;             // This is the directory we will save .torrents to
-                downloadsPath = uploads;            // This is the directory we will save downloads to
-                fastResumeFile = Path.Combine(torrentsPath, "fastresume.data");
-                dhtNodeFile = Path.Combine(torrentsPath, "DhtNodes");
-                torrents = new List<TorrentManager>();                          // This is where we will store the torrentmanagers
-                listener = new Top10Listener(10);
+                UTorrentClient client = new UTorrentClient("admin", "admin");
 
-                // We need to cleanup correctly when the user closes the window by using ctrl-c
-                // or an unhandled exception happens
-                Console.CancelKeyPress += delegate { shutdown(); };
-                AssemblyLoadContext.Default.Unloading += Default_Unloading;
+                var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), @"test");
+                var torrent = response2.AddedTorrent;
 
-                StartEngine();
+                var set = client.GetSettings();
+                var resp = client.GetList();
+                var torrents = resp.Result.Torrents;
+                foreach (var tor in torrents)
+                {
+                    Console.WriteLine(tor);
+                }
             }
             catch (Exception exception)
             {
