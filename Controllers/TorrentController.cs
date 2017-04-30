@@ -102,9 +102,16 @@ namespace WebTorrent.Controllers
                 var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), @"test");
                 var torrent = response2.AddedTorrent;
 
-                var set = client.GetSettings();
+                var set = client.GetSettings().Result;
                 var resp = client.GetList();
                 var torrents = resp.Result.Torrents;
+
+                foreach (var tor in torrents)
+                {
+                    Console.WriteLine(tor.Path);
+                    Console.WriteLine(tor.Name);
+                    Console.WriteLine(tor.Remaining);
+                }
                 
             }
             catch (Exception exception)
