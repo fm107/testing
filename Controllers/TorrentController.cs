@@ -109,12 +109,12 @@ namespace WebTorrent.Controllers
                     bool run = false;
                     do
                     {
-                        Console.WriteLine("Torrent info");
+                        Console.WriteLine("---Torrent info---");
                         var torrents = client.GetList().Result.Torrents;
-                        run = !Directory.EnumerateFiles(torrent.Path, ".mp4", SearchOption.AllDirectories).Any();
+                        run = !Directory.EnumerateFiles(torrent.Path, "*.mp4", SearchOption.AllDirectories).Any();
                         foreach (Torrent tor in torrents)
                         {
-                            Console.WriteLine(tor.Progress);
+                            Console.WriteLine(tor.Progress/10);
                             Console.WriteLine(tor.Path);
                             Console.WriteLine(tor.Name);
                             Console.WriteLine(tor.Remaining);
@@ -123,9 +123,7 @@ namespace WebTorrent.Controllers
                                 foreach (var file in tor.Files)
                                     if (Path.GetExtension(file.Name) != ".mp4")
                                     {
-                                        var fileToConvert = Directory.EnumerateFiles(_environment.ContentRootPath, file.Name,
-                                                SearchOption.AllDirectories)
-                                            .FirstOrDefault();
+                                        var fileToConvert = Path.Combine(tor.Path, tor.Name);
 
                                         var processInfo = new ProcessStartInfo("/app/vendor/ffmpeg/ffmpeg")
                                         {
