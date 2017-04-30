@@ -105,10 +105,7 @@ namespace WebTorrent.Controllers
                 var set = client.GetSettings();
                 var resp = client.GetList();
                 var torrents = resp.Result.Torrents;
-                foreach (var tor in torrents)
-                {
-                    Console.WriteLine(tor);
-                }
+                
             }
             catch (Exception exception)
             {
