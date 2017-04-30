@@ -98,7 +98,7 @@ namespace WebTorrent.Controllers
                 //_torrent.ReportStats += TorrentReportStats;
                 //_torrent.Start();
 
-                UTorrentClient client = new UTorrentClient("admin", "admin");
+                UTorrentClient client = new UTorrentClient("admin", "");
 
                 var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), "wwwroot/uploads/");
                 var torrent = response2.AddedTorrent;
