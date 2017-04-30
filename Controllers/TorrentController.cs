@@ -98,66 +98,11 @@ namespace WebTorrent.Controllers
                 //_torrent.ReportStats += TorrentReportStats;
                 //_torrent.Start();
 
-                UTorrentClient client = new UTorrentClient("admin", "");
+                var client = new UTorrentClient("admin", "");
 
                 var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), Path.Combine("wwwroot/uploads", Path.GetFileNameWithoutExtension(_fileName)));
                 var torrent = response2.AddedTorrent;
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                Task.Factory.StartNew(() =>
-                {
-                    bool run = false;
-                    do
-                    {
-                        Console.WriteLine("---Torrent info---");
-                        var torrents = client.GetList().Result.Torrents;
-                        
-                        foreach (Torrent tor in torrents)
-                        {
-                            Console.WriteLine(tor.Progress/10);
-                            Console.WriteLine(tor.Path);
-                            Console.WriteLine(tor.Name);
-                            Console.WriteLine(tor.Remaining);
-                            if (tor.Progress == 1000)
-                            {
-                                foreach (var file in tor.Files)
-                                    if (Path.GetExtension(file.Name) != ".mp4")
-                                    {
-                                        var fileToConvert = Path.Combine(tor.Path, tor.Name);
-
-                                        var processInfo = new ProcessStartInfo("/app/vendor/ffmpeg/ffmpeg")
-                                        {
-                                            Arguments = string.Format(@"-i {0} -f mp4 -vcodec libx264 -preset ultrafast 
-                                                                                     -movflags faststart -profile:v main -acodec aac {1} -hide_banner",
-                                                fileToConvert,
-                                                string.Format("{0}.mp4", Path.ChangeExtension(fileToConvert, null)))
-                                        };
-
-                                        var process = Process.Start(processInfo);
-                                        process.WaitForExit();
-                                        System.IO.File.Delete(fileToConvert);
-                                    }
-                            }
-                            run = !Directory.EnumerateFiles(torrent.Path, "*.mp4", SearchOption.AllDirectories).All(f => f.EndsWith("mp4"));
-                            Thread.Sleep(TimeSpan.FromSeconds(10));
-                        }
-                    } while (true);
-                     
-                 });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-                //var set = client.GetSettings().Result;
-                //var resp = client.GetList();
-                //var torrents = resp.Result.Torrents;
-
-                //foreach (var tor in torrents)
-                //{
-                //    Console.WriteLine(tor.Status);
-                //    Console.WriteLine(tor.Path);
-                //    Console.WriteLine(tor.Name);
-                //    Console.WriteLine(tor.Remaining);
-                //}
-
+                
             }
             catch (Exception exception)
             {
@@ -166,6 +111,44 @@ namespace WebTorrent.Controllers
             }
 
             return Ok(Path.GetFileName(_fileName));
+        }
+
+        [HttpGet("[action]")]
+        public string GetTorrentInfo()
+        {
+            Console.WriteLine("---Torrent info---");
+
+            var client = new UTorrentClient("admin", "");
+            var torrents = client.GetList().Result.Torrents;
+
+            string ret = null;
+
+            foreach (var tor in torrents)
+            {
+                ret += $"{tor.Name} Progress: {tor.Progress / 10.0} Path: {tor.Path} Remaining: {tor.Remaining}" + Environment.NewLine;
+
+                if (tor.Progress != 1000 || tor.Files.All(file => Path.GetExtension(file.Name) == ".mp4")) continue;
+                Task.Factory.StartNew(() =>
+                {
+                    var fileToConvert = Path.Combine(tor.Path, tor.Name);
+
+                    var processInfo = new ProcessStartInfo("/app/vendor/ffmpeg/ffmpeg")
+                    {
+                        Arguments = string.Format(@"-i {0} -f mp4 -vcodec libx264 -preset ultrafast 
+                                                                                     -movflags faststart -profile:v main -acodec aac {1} -hide_banner",
+                            fileToConvert,
+                            string.Format("{0}.mp4", Path.ChangeExtension(fileToConvert, null)))
+                    };
+
+                    var process = Process.Start(processInfo);
+                    process.WaitForExit();
+                    System.IO.File.Delete(fileToConvert);
+                });
+
+                return ret + "Converting";
+            }
+
+            return ret;
         }
 
         [HttpPost("[action]")]
@@ -232,7 +215,7 @@ namespace WebTorrent.Controllers
             EngineSettings engineSettings = new EngineSettings(downloadsPath, port);
             engineSettings.PreferEncryption = false;
             engineSettings.AllowedEncryption = EncryptionTypes.All;
-            
+
 
             // Create the default settings which a torrent will have.
             // 4 Upload slots - a good ratio is one slot per 5kB of upload speed
@@ -325,13 +308,15 @@ namespace WebTorrent.Controllers
             foreach (TorrentManager manager in torrents)
             {
                 // Every time a piece is hashed, this is fired.
-                manager.PieceHashed += delegate (object o, PieceHashedEventArgs e) {
+                manager.PieceHashed += delegate (object o, PieceHashedEventArgs e)
+                {
                     lock (listener)
                         listener.WriteLine(string.Format("Piece Hashed: {0} - {1}", e.PieceIndex, e.HashPassed ? "Pass" : "Fail"));
                 };
 
                 // Every time the state changes (Stopped -> Seeding -> Downloading -> Hashing) this is fired
-                manager.TorrentStateChanged += delegate (object o, TorrentStateChangedEventArgs e) {
+                manager.TorrentStateChanged += delegate (object o, TorrentStateChangedEventArgs e)
+                {
                     lock (listener)
                         listener.WriteLine("OldState: " + e.OldState.ToString() + " NewState: " + e.NewState.ToString());
                 };
@@ -341,7 +326,8 @@ namespace WebTorrent.Controllers
                 {
                     foreach (System.Net.BitTorrent.Client.Tracker.Tracker t in tier.Trackers)
                     {
-                        t.AnnounceComplete += delegate (object sender, AnnounceResponseEventArgs e) {
+                        t.AnnounceComplete += delegate (object sender, AnnounceResponseEventArgs e)
+                        {
                             listener.WriteLine(string.Format("{0}: {1}", e.Successful, e.Tracker.ToString()));
                         };
                     }
@@ -400,7 +386,7 @@ namespace WebTorrent.Controllers
                     }
                     Console.Clear();
                     Console.WriteLine(sb.ToString());
-                    
+
                 }
 
                 System.Threading.Thread.Sleep(500);
@@ -502,14 +488,14 @@ namespace WebTorrent.Controllers
         //    //{
         //    //    var token = CancellationToken.None;
         //    //    var buffer = new ArraySegment<byte>(new byte[4096]);
-                
+
         //    //            var request = new MyClass() { message = total.ToString() };
         //    //            var type = WebSocketMessageType.Text;
         //    //            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request));
         //    //            buffer = new ArraySegment<byte>(data);
         //    //            await _webSocket.SendAsync(buffer, type, true, token);
         //    //}
-            
+
         //    Console.WriteLine("Total peers: " + e.TotalPeers);
         //}
 
