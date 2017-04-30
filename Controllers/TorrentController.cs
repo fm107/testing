@@ -117,6 +117,7 @@ namespace WebTorrent.Controllers
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
+                throw;
                 _log.Error(exception);
             }
 
