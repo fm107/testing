@@ -100,7 +100,7 @@ namespace WebTorrent.Controllers
 
                 UTorrentClient client = new UTorrentClient("admin", "");
 
-                var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), "wwwroot/uploads/");
+                var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), Path.Combine("wwwroot/uploads", Path.GetFileNameWithoutExtension(_fileName)));
                 var torrent = response2.AddedTorrent;
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
