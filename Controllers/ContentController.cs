@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
@@ -88,6 +89,31 @@ namespace WebTorrent.Controllers
                 SearchOption.AllDirectories))
                 ret += string.Format("{0} Size: {1}", file, new FileInfo(file).Length) + Environment.NewLine;
             return ret;
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> RunUTorrent()
+        {
+            var processInfo = new ProcessStartInfo("/app/utorrent-server/utserver")
+            {
+                Arguments = "-configfile utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon"
+            };
+
+            var process = Process.Start(processInfo);
+            return Ok(await process.StandardOutput.ReadToEndAsync());
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ShowProcess()
+        {
+            var processInfo = new ProcessStartInfo("ps")
+            {
+                Arguments = "-ef"
+            };
+
+            var process = Process.Start(processInfo);
+
+            return Ok(await process.StandardOutput.ReadToEndAsync());
         }
 
         // GET: api/values
