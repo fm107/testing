@@ -4,9 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using MimeMapping;
@@ -23,10 +25,12 @@ namespace WebTorrent.Controllers
     {
         private const string UploadFolder = "uploads";
         private readonly IHostingEnvironment _environment;
+        private ILog _log;
 
         public ContentController(IHostingEnvironment environment)
         {
             _environment = environment;
+            _log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "ContentController");
 
             if (!Directory.Exists(Path.Combine(_environment.WebRootPath, UploadFolder)))
                 Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, UploadFolder));
@@ -85,14 +89,14 @@ namespace WebTorrent.Controllers
         public string ShowDirectory()
         {
             string ret = null;
-            foreach (var file in Directory.EnumerateFiles("app", "*",
+            foreach (var file in Directory.EnumerateFiles("", "*",
                 SearchOption.AllDirectories))
                 ret += string.Format("{0} Size: {1}", file, new FileInfo(file).Length) + Environment.NewLine;
             return ret;
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> RunUTorrent()
+        public IActionResult RunUTorrent()
         {
             var processInfo = new ProcessStartInfo("/app/utorrent-server/utserver")
             {
@@ -102,12 +106,18 @@ namespace WebTorrent.Controllers
                 RedirectStandardInput = true,
                 CreateNoWindow = true
             };
-            var process = Process.Start(processInfo);
-            return Ok(await process.StandardOutput.ReadToEndAsync());
+
+            Process.Start(processInfo).StandardOutput.ReadToEndAsync()
+                .ContinueWith(response =>
+                {
+                    _log.Info(response.Result);
+                }); 
+
+            return Ok();
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> ShowProcess()
+        public IActionResult ShowProcess()
         {
             var processInfo = new ProcessStartInfo("ps")
             {
@@ -120,7 +130,7 @@ namespace WebTorrent.Controllers
 
             var process = Process.Start(processInfo);
 
-            return Ok(await process.StandardOutput.ReadToEndAsync());
+            return Ok(process.StandardOutput.ReadToEnd());
         }
 
         // GET: api/values

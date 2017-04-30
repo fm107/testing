@@ -99,7 +99,7 @@ namespace WebTorrent.Controllers
 
                 UTorrentClient client = new UTorrentClient("admin", "");
 
-                var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), "wwwroot/uploads/"+Path.GetFileNameWithoutExtension(_fileName));
+                var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), "wwwroot/uploads/");
                 var torrent = response2.AddedTorrent;
 
                 var set = client.GetSettings().Result;
@@ -116,8 +116,8 @@ namespace WebTorrent.Controllers
             }
             catch (Exception exception)
             {
-                throw;
                 _log.Error(exception);
+                throw;
             }
 
             return Ok(Path.GetFileName(_fileName));
