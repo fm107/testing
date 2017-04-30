@@ -30,6 +30,7 @@ using System.Net.BitTorrent.Dht;
 using System.Net.BitTorrent.Dht.Listeners;
 using System.Runtime.Loader;
 using UTorrent.Api;
+using Torrent = UTorrent.Api.Data.Torrent;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -97,22 +98,62 @@ namespace WebTorrent.Controllers
                 //_torrent.ReportStats += TorrentReportStats;
                 //_torrent.Start();
 
-                UTorrentClient client = new UTorrentClient("admin", "");
+                UTorrentClient client = new UTorrentClient("admin", "admin");
 
                 var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open), "wwwroot/uploads/");
                 var torrent = response2.AddedTorrent;
 
-                var set = client.GetSettings().Result;
-                var resp = client.GetList();
-                var torrents = resp.Result.Torrents;
-
-                foreach (var tor in torrents)
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Task.Factory.StartNew(() =>
                 {
-                    Console.WriteLine(tor.Path);
-                    Console.WriteLine(tor.Name);
-                    Console.WriteLine(tor.Remaining);
-                }
-                
+                    bool run = false;
+                    do
+                    {
+                        Console.WriteLine("Torrent info");
+                        var torrents = client.GetList().Result.Torrents;
+                        run = !Directory.EnumerateFiles(torrent.Path, ".mp4", SearchOption.AllDirectories).Any();
+                        foreach (Torrent tor in torrents)
+                        {
+                            if (tor.Progress == 1000)
+                            {
+                                foreach (var file in tor.Files)
+                                    if (Path.GetExtension(file.Name) != ".mp4")
+                                    {
+                                        var fileToConvert = Directory.EnumerateFiles(_environment.ContentRootPath, file.Name,
+                                                SearchOption.AllDirectories)
+                                            .FirstOrDefault();
+
+                                        var processInfo = new ProcessStartInfo("/app/vendor/ffmpeg/ffmpeg")
+                                        {
+                                            Arguments = string.Format(@"-i {0} -f mp4 -vcodec libx264 -preset ultrafast 
+                                                                                     -movflags faststart -profile:v main -acodec aac {1} -hide_banner",
+                                                fileToConvert,
+                                                string.Format("{0}.mp4", Path.ChangeExtension(fileToConvert, null)))
+                                        };
+
+                                        var process = Process.Start(processInfo);
+                                        process.WaitForExit();
+                                        System.IO.File.Delete(fileToConvert);
+                                    }
+                            }
+                        }
+                    } while (run);
+                     
+                 });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                //var set = client.GetSettings().Result;
+                //var resp = client.GetList();
+                //var torrents = resp.Result.Torrents;
+
+                //foreach (var tor in torrents)
+                //{
+                //    Console.WriteLine(tor.Status);
+                //    Console.WriteLine(tor.Path);
+                //    Console.WriteLine(tor.Name);
+                //    Console.WriteLine(tor.Remaining);
+                //}
+
             }
             catch (Exception exception)
             {

@@ -89,7 +89,7 @@ namespace WebTorrent.Controllers
         public string ShowDirectory()
         {
             string ret = null;
-            foreach (var file in Directory.EnumerateFiles("", "*",
+            foreach (var file in Directory.EnumerateFiles(_environment.ContentRootPath, "*",
                 SearchOption.AllDirectories))
                 ret += string.Format("{0} Size: {1}", file, new FileInfo(file).Length) + Environment.NewLine;
             return ret;
