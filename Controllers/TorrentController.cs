@@ -114,6 +114,10 @@ namespace WebTorrent.Controllers
                         run = !Directory.EnumerateFiles(torrent.Path, ".mp4", SearchOption.AllDirectories).Any();
                         foreach (Torrent tor in torrents)
                         {
+                            Console.WriteLine(tor.Progress);
+                            Console.WriteLine(tor.Path);
+                            Console.WriteLine(tor.Name);
+                            Console.WriteLine(tor.Remaining);
                             if (tor.Progress == 1000)
                             {
                                 foreach (var file in tor.Files)
@@ -136,6 +140,7 @@ namespace WebTorrent.Controllers
                                         System.IO.File.Delete(fileToConvert);
                                     }
                             }
+                            Thread.Sleep(TimeSpan.FromSeconds(30));
                         }
                     } while (run);
                      
