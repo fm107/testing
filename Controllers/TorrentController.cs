@@ -111,7 +111,7 @@ namespace WebTorrent.Controllers
                     {
                         Console.WriteLine("---Torrent info---");
                         var torrents = client.GetList().Result.Torrents;
-                        run = !Directory.EnumerateFiles(torrent.Path, "*.mp4", SearchOption.AllDirectories).Any();
+                        
                         foreach (Torrent tor in torrents)
                         {
                             Console.WriteLine(tor.Progress/10);
@@ -138,7 +138,8 @@ namespace WebTorrent.Controllers
                                         System.IO.File.Delete(fileToConvert);
                                     }
                             }
-                            Thread.Sleep(TimeSpan.FromSeconds(30));
+                            run = !Directory.EnumerateFiles(torrent.Path, "*.mp4", SearchOption.AllDirectories).All(f => f.EndsWith("mp4"));
+                            Thread.Sleep(TimeSpan.FromSeconds(10));
                         }
                     } while (run);
                      
