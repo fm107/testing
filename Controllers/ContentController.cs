@@ -96,7 +96,7 @@ namespace WebTorrent.Controllers
         {
             var processInfo = new ProcessStartInfo("/app/utorrent-server/utserver")
             {
-                Arguments = "-configfile utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
+                Arguments = "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
                 RedirectStandardOutput = true
             };
             var process = Process.Start(processInfo);
