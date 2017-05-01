@@ -1,14 +1,10 @@
-using System.IO;
-using System.Reflection;
-using log4net;
-using log4net.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebTorrent.Controllers;
+using WebTorrent.Services;
 
 namespace WebTorrent
 {
@@ -29,17 +25,16 @@ namespace WebTorrent
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<TorrentController, TorrentController>();
+            services.AddSingleton<FsInfo, FsInfo>();
+            services.AddSingleton<TorrentClient, TorrentClient>();
+
             // Add framework services.
-            services.AddMvc().AddControllersAsServices();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-            XmlConfigurator.Configure(logRepository, new FileInfo(Path.Combine(env.ContentRootPath, "log4net.config")));
-
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 

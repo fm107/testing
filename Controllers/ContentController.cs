@@ -15,6 +15,7 @@ using MimeMapping;
 using Newtonsoft.Json;
 using WebTorrent.Extensions;
 using WebTorrent.Model;
+using WebTorrent.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,16 +25,17 @@ namespace WebTorrent.Controllers
     public class ContentController : Controller
     {
         private const string UploadFolder = "uploads";
-        private readonly IHostingEnvironment _environment;
-        private ILog _log;
 
-        public ContentController(IHostingEnvironment environment)
+        private readonly IHostingEnvironment _environment;
+        private readonly ILog _log;
+        private readonly FsInfo _fsInfo;
+
+        public ContentController(IHostingEnvironment environment, FsInfo fsInfo)
         {
             _environment = environment;
+            _fsInfo = fsInfo;
             _log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "ContentController");
 
-            if (!Directory.Exists(Path.Combine(_environment.WebRootPath, UploadFolder)))
-                Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, UploadFolder));
         }
 
         [HttpGet("[action]")]
@@ -43,46 +45,8 @@ namespace WebTorrent.Controllers
 
             if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
                 return Forbid();
-
-            var listComponents = new List<FileSystem>(directoryInfo
-                .GetFilesByExtensions(SearchOption.TopDirectoryOnly, MimeTypes.TypeMap
-                    .Where(t => t.Value.Contains("video") | t.Value.Contains("audio"))
-                    .Select(f => "*." + f.Key)
-                    .ToArray())
-                .Select(file => new FileSystem
-                {
-                    FullName = file.FullName.Replace(_environment.WebRootPath, string.Empty)
-                        .TrimStart('\u005C', '\u002F'),
-                    Name = file.Name,
-                    Size = file.Length,
-                    LastChanged = file.LastWriteTime,
-                    Type = "file"
-                }));
-
-            listComponents.AddRange(directoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly)
-                .Select(directory => new FileSystem
-                {
-                    FullName = directory.FullName.Replace(_environment.WebRootPath, string.Empty)
-                            .TrimStart('\u005C', '\u002F'),
-                    Name = directory.Name,
-                    Size = new DirectoryInfo(directory.FullName).GetFiles("*", SearchOption.AllDirectories)
-                            .Sum(f => f.Length),
-                    LastChanged = directory.LastWriteTime,
-                    Type = "folder"
-                }
-                ));
-
-            var content = new Content
-            {
-                CurrentFolder = folder ?? UploadFolder,
-                Contents = listComponents,
-                Parent = folder == null || folder == UploadFolder
-                    ? null
-                    : directoryInfo.Parent.FullName.Replace(_environment.WebRootPath, string.Empty)
-                        .TrimStart('\u005C', '\u002F')
-            };
-
-            return Json(content);
+            
+            return Json(_fsInfo.GetFolderContent(folder));
         }
 
         [HttpGet("[action]")]
@@ -117,7 +81,7 @@ namespace WebTorrent.Controllers
         }
 
         [HttpGet("[action]")]
-        public IActionResult ShowProcess()
+        public async Task<IActionResult> ShowProcess()
         {
             var processInfo = new ProcessStartInfo("ps")
             {
@@ -130,7 +94,7 @@ namespace WebTorrent.Controllers
 
             var process = Process.Start(processInfo);
 
-            return Ok(process.StandardOutput.ReadToEnd());
+            return Ok(await process.StandardOutput.ReadToEndAsync());
         }
 
         // GET: api/values

@@ -35,7 +35,6 @@
     <Compile Remove="ClientApp\app\listSortable\**" />
     <Compile Remove="ClientApp\dist\**" />
     <Compile Remove="TorrentClient\**" />
-    <Compile Remove="Torrent\**" />
     <Compile Remove="UTorrentClientApi\**" />
     <Compile Remove="wwwroot\css\themes\**" />
     <Content Remove="BitTorrent.Dht\**" />
@@ -44,7 +43,6 @@
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
     <Content Remove="ClientApp\**" />
     <Content Remove="TorrentClient\**" />
-    <Content Remove="Torrent\**" />
     <Content Remove="UTorrentClientApi\**" />
     <Content Remove="wwwroot\css\themes\**" />
     <EmbeddedResource Remove="BitTorrent.Dht\**" />
@@ -52,7 +50,6 @@
     <EmbeddedResource Remove="ClientApp\app\listSortable\**" />
     <EmbeddedResource Remove="ClientApp\dist\**" />
     <EmbeddedResource Remove="TorrentClient\**" />
-    <EmbeddedResource Remove="Torrent\**" />
     <EmbeddedResource Remove="UTorrentClientApi\**" />
     <EmbeddedResource Remove="wwwroot\css\themes\**" />
     <None Remove="BitTorrent.Dht\**" />
@@ -60,7 +57,6 @@
     <None Remove="ClientApp\app\listSortable\**" />
     <None Remove="ClientApp\dist\**" />
     <None Remove="TorrentClient\**" />
-    <None Remove="Torrent\**" />
     <None Remove="UTorrentClientApi\**" />
     <None Remove="wwwroot\css\themes\**" />
   </ItemGroup>
@@ -68,8 +64,6 @@
     <Content Include="log4net.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="BitTorrent.Dht\BitTorrent.Dht.csproj" />
-    <ProjectReference Include="BitTorrent\BitTorrent.csproj" />
     <ProjectReference Include="UTorrentClientApi\UTorrentClientApi.csproj" />
   </ItemGroup>
   <ItemGroup>
