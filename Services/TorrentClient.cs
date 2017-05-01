@@ -87,7 +87,7 @@ namespace WebTorrent.Services
 
                                     var process = Process.Start(processInfo);
                                     process.WaitForExit();
-                                    File.Delete(fileToConvert);
+                                    //File.Delete(fileToConvert);
                                 });
                             }
                         }
