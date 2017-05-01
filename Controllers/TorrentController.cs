@@ -53,7 +53,7 @@ namespace WebTorrent.Controllers
 
             if (url.StartsWith("magnet:?xt=urn:btih:"))
             {
-                torrent = _torrentClient.AddUrlTorrent(url, uploads);
+                torrent = _torrentClient.AddUrlTorrent(url, "wwwroot/uploads");
 
                 return Ok(torrent.Name);
             }
@@ -64,7 +64,7 @@ namespace WebTorrent.Controllers
             if (!_torrentClient.IsTorrentType(content))
                 return BadRequest("Not application/x-bittorrent Mime type");
 
-            torrent = _torrentClient.AddTorrent(content, uploads);
+            torrent = _torrentClient.AddTorrent(content, "wwwroot/uploads");
 
             return Ok(torrent.Name);
 
@@ -129,7 +129,7 @@ namespace WebTorrent.Controllers
                 if (!_torrentClient.IsTorrentType(content))
                     return BadRequest("Not application/x-bittorrent Mime type");
 
-                var torrent = _torrentClient.AddTorrent(content, uploads);
+                var torrent = _torrentClient.AddTorrent(content, "wwwroot/uploads");
             }
 
             //foreach (var uploadedFile in file)
