@@ -1,56 +1,37 @@
 import { Component, OnInit, Output } from "@angular/core";
-import { Http } from "@angular/http";
+
 import { Subject } from "rxjs/Subject";
-import { Observable } from "rxjs/Observable";
+import { TdDataTableService } from "@covalent/core";
 
-import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn } from "@covalent/core";
-
-import { IContent, IFileSystem } from "./Component";
-import { DataService } from "../data-service/data.service";
-import { WebSocketService } from "../data-service/websocket.service";
-import { IMessage } from "../data-service/message";
+import { IMessage } from "../../services/message";
+import { WebSocketService } from "../../services/websocket.service";
+import { ContentService } from "../../services/content.service";
 
 declare var lity: any;
 
 @Component({
     selector: "home",
     templateUrl: "./home.component.html",
-    styleUrls: ["./home.component.css"], 
+    styleUrls: ["./home.component.css"],
     providers: [TdDataTableService]
 })
 
 export class HomeComponent implements OnInit {
-    fileSystemContent: IFileSystem[];
-    parent: string;
-    currentFolder: string;
-    filteredData: any[] = this.fileSystemContent;
-    searchTerm: string;
-    sortBy: string;
-    sortOrder: TdDataTableSortingOrder = TdDataTableSortingOrder.Descending;
+    fsItems = this.content.metaData;
+    parentFolder = this.content.parentFolder;
+    currentFolder = this.content.currentFolder;
 
     private messages: IMessage[] = new Array();
 
     messagesObs: Subject<IMessage>;
 
-    constructor(private http: Http,
-        private data: DataService,
+    constructor(private content: ContentService,
         private wsService: WebSocketService,
         private dataTableService: TdDataTableService) {
     }
 
-    private name: ITdDataTableColumn = {
-        name: "name", label: "NAME #", tooltip: "Folder or file name", sortable: true
-    }
-    private size: ITdDataTableColumn = {
-        name: "size", label: "SIZE", tooltip: "Folder or file size", sortable: true, numeric: true, format: v => v.toFixed(2)
-    }
-    private changed: ITdDataTableColumn = {
-        name: "lastChanged", label: "LAST CHANGED", tooltip: "Folder or file last changed date", sortable: true, numeric: true
-    }
-
     ngOnInit() {
-        this.getContent("");
-        this.data.homeComponent = this;
+        this.content.getContent("");
 
         this.messagesObs = (this.wsService
             .connect(`ws://${window.location.hostname}:${window.location.port}/api/Torrent/Notifications`)
@@ -68,55 +49,12 @@ export class HomeComponent implements OnInit {
         });
     }
 
-    OnClick(item) {
+    onClick(item) {
         //this.messagesObs.next({ message: "Test message" });
-        if (item.type) {
-            if (item.type == "file") {
-                lity(item.fullName);
-            } else {
-                this.getContent(item.fullName);
-            }
-        } else {
-            this.getContent(item);
+        if (item.type == "file") {
+            lity(item.itemName);
         }
-    }
 
-    getContent(request: string) {
-        this.data.getFolderContent(request).subscribe(result => {
-            const res = result.json() as IContent;
-            this.fileSystemContent = res.contents;
-            this.parent = res.parent;
-            this.currentFolder = res.currentFolder;
-            this.updateDataTable(null);
-        });
-    }
-
-    sort(sortEvent: ITdDataTableSortChangeEvent): void {
-        this.sortBy = sortEvent.name;
-        this.sortOrder = sortEvent.order === TdDataTableSortingOrder.Ascending ?
-            TdDataTableSortingOrder.Descending : TdDataTableSortingOrder.Ascending;
-        console.log(sortEvent);
-        this.updateDataTable("sort");
-    }
-
-    search(searchTerm: string): void {
-        this.searchTerm = searchTerm;
-        this.updateDataTable("filter");
-    }
-
-    updateDataTable(action: string): void {
-        const newData: any[] = this.fileSystemContent;
-
-        switch (action) {
-            case "filter":
-                this.filteredData = this.dataTableService.filterData(newData, this.searchTerm, true);
-                break;
-            case "sort":
-                this.filteredData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
-                break;
-            default:
-                this.filteredData = newData;
-                break;
-        }
+        this.content.getContent(item.itemName);
     }
 }

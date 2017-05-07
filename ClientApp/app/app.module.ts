@@ -4,24 +4,23 @@ import { UniversalModule } from 'angular2-universal';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+import { MaterialModule } from '@angular/material';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { CovalentCoreModule, TdLoadingService } from '@covalent/core';
+import { SimpleNotificationsModule } from 'angular2-notifications';
+import { SimpleTimer } from 'ng2-simple-timer';
+
 import { AppComponent } from './components/app/app.component'
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { UploadButtonComponent } from "./components/upload-button/upload-button.component";
-
-import { MaterialModule } from '@angular/material';
-import { FlexLayoutModule } from '@angular/flex-layout';
-
-import { CovalentCoreModule, TdLoadingService } from '@covalent/core';
-
-import { SimpleNotificationsModule } from 'angular2-notifications';
-
 import { FileSizePipe } from './pipes/filesize.pipe';
-import { DataService } from "./components/data-service/data.service";
 import { UploadButtonUrlComponent } from "./components/upload-button-url/upload-button-url.component";
-import { WebSocketService } from "./components/data-service/websocket.service";
- 
+import { DataService } from "./services/data.service";
+import { WebSocketService } from "./services/websocket.service";
+import { DataPresenterComponent } from "./components/data-presenter/data-presenter.component";
+import { ContentService } from "./services/content.service";
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -29,7 +28,7 @@ import { WebSocketService } from "./components/data-service/websocket.service";
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, FileSizePipe
+        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, FileSizePipe, DataPresenterComponent
     ],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
@@ -37,11 +36,11 @@ import { WebSocketService } from "./components/data-service/websocket.service";
         CommonModule,
 
         MaterialModule,
-        FlexLayoutModule,   
+        FlexLayoutModule,
 
         SimpleNotificationsModule.forRoot(),
         CovalentCoreModule,
-        
+
 
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -49,7 +48,7 @@ import { WebSocketService } from "./components/data-service/websocket.service";
             { path: '**', redirectTo: 'home' }
         ])
     ],
-    providers: [DataService, WebSocketService, TdLoadingService]
+    providers: [DataService, ContentService, WebSocketService, TdLoadingService, SimpleTimer]
 })
 export class AppModule {
 }

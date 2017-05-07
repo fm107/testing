@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MimeMapping;
 using UTorrent.Api;
+using UTorrent.Api.Data;
+using WebTorrent.Model;
+using WebTorrent.Repository;
 
 namespace WebTorrent.Services
 {
@@ -13,17 +17,22 @@ namespace WebTorrent.Services
     {
         private readonly UTorrentClient _client;
         private Timer _timer;
-
-        public TorrentClient()
+        private readonly FsInfo _fsInfo;
+        private readonly IContentRecordRepository _repository;
+        public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository)
         {
+            _fsInfo = fsInfo;
+            _repository = repository;
             _client = new UTorrentClient("admin", "");
-            _timer = new Timer(ConvertVideo, null, 0, (int)TimeSpan.FromSeconds(10).TotalMilliseconds);
+            //_timer = new Timer(ConvertVideo, null, 0, (int)TimeSpan.FromSeconds(10).TotalMilliseconds);
         }
 
-        public UTorrent.Api.Data.Torrent AddTorrent(Stream file, string path)
+        public async Task<Content> AddTorrent(Stream file, string path)
         {
             var response = _client.PostTorrent(file, path);
-            return response.AddedTorrent;
+            var torrent = response.AddedTorrent;
+            var content =  _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
+            return content;
         }
 
         public UTorrent.Api.Data.Torrent AddUrlTorrent(string url, string path)
@@ -45,6 +54,22 @@ namespace WebTorrent.Services
             }
 
             return buffer.SequenceEqual(torrentType);
+        }
+
+        public List<object> GetTorrent()
+        {
+            var items = new List<object>();
+            foreach (var torrent in _client.GetList().Result.Torrents)
+            {
+                items.Add(new {torrent.Name, Progress = torrent.Progress / 10.0, torrent.Remaining});
+            }
+            return items;
+        }
+
+        public async Task<ICollection<FileCollection>> GetFiles(string hash)
+        {
+            var response = await _client.GetFilesAsync(hash);
+            return response.Result.Files.Values;
         }
 
         public string GetTorrentInfo()
@@ -87,7 +112,7 @@ namespace WebTorrent.Services
 
                                     var process = Process.Start(processInfo);
                                     process.WaitForExit();
-                                    File.Delete(fileToConvert);
+                                    //File.Delete(fileToConvert);
                                 });
                             }
                         }

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MimeMapping;
 using Newtonsoft.Json;
+using WebTorrent.Model;
 using WebTorrent.Services;
 
 
@@ -26,6 +27,7 @@ namespace WebTorrent.Controllers
     [Route("api/[controller]")]
     public class TorrentController : Controller
     {
+        private const string DownLoadFolder = "wwwroot/uploads";
         private readonly HttpClient _client;
         private readonly IHostingEnvironment _environment;
         private readonly ILog _log;
@@ -47,13 +49,9 @@ namespace WebTorrent.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> UploadFromUrl([FromQuery] string url, [FromQuery] string folder)
         {
-            var uploads = Path.Combine(_environment.WebRootPath, folder);
-
-            UTorrent.Api.Data.Torrent torrent;
-
             if (url.StartsWith("magnet:?xt=urn:btih:"))
             {
-                torrent = _torrentClient.AddUrlTorrent(url, "wwwroot/uploads");
+                var torrent = _torrentClient.AddUrlTorrent(url, DownLoadFolder);
 
                 return Ok(torrent.Name);
             }
@@ -64,9 +62,7 @@ namespace WebTorrent.Controllers
             if (!_torrentClient.IsTorrentType(content))
                 return BadRequest("Not application/x-bittorrent Mime type");
 
-            torrent = _torrentClient.AddTorrent(content, "wwwroot/uploads");
-
-            return Ok(torrent.Name);
+            return Json(_torrentClient.AddTorrent(content, DownLoadFolder));
 
             //var response = await _client.GetAsync(url, HttpCompletionOption.ResponseContentRead);
 
@@ -115,11 +111,15 @@ namespace WebTorrent.Controllers
             return _torrentClient.GetTorrentInfo();
         }
 
-        [HttpPost("[action]")]
-        public IActionResult UploadFile(ICollection<IFormFile> file, string folder)
+        [HttpGet("[action]")]
+        public IActionResult GetTorrent()
         {
-            var uploads = Path.Combine(_environment.WebRootPath, folder);
+            return Content(JsonConvert.SerializeObject(_torrentClient.GetTorrent()));
+        }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UploadFile(ICollection<IFormFile> file, string folder)
+        {
             foreach (var uploadedFile in file)
             {
                 if (uploadedFile.Length <= 0) continue;
@@ -129,7 +129,8 @@ namespace WebTorrent.Controllers
                 if (!_torrentClient.IsTorrentType(content))
                     return BadRequest("Not application/x-bittorrent Mime type");
 
-                var torrent = _torrentClient.AddTorrent(content, "wwwroot/uploads");
+                return Json(new List<Content>{await _torrentClient.AddTorrent(content, DownLoadFolder)});
+                
             }
 
             //foreach (var uploadedFile in file)
@@ -158,7 +159,8 @@ namespace WebTorrent.Controllers
             //    _log.Error(exception);
             //}
 
-            return Ok("{}");
+
+            return null;
         }
 
         [HttpGet("[action]")]

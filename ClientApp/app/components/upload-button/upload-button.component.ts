@@ -1,9 +1,10 @@
-﻿import { Component, AfterContentInit } from "@angular/core";
+﻿import { Component } from "@angular/core";
 
 import { TdFileService, IUploadOptions, TdFileUploadComponent } from "@covalent/file-upload";
 import { NotificationsService, SimpleNotificationsComponent, PushNotificationsService } from "angular2-notifications";
 
-import { DataService } from "../data-service/data.service";
+import { ContentService } from "../../services/content.service";
+import {DataService} from "../../services/data.service";
 
 @Component({
     selector: "upload-button",
@@ -15,7 +16,7 @@ export class UploadButtonComponent {
 
     constructor(private service: NotificationsService,
         private fileUploadService: TdFileService,
-        private data: DataService) {
+        private content: ContentService, private data: DataService) {
     }
 
     selectEvent(file: File, uploadComponent: TdFileUploadComponent): void {
@@ -51,24 +52,25 @@ export class UploadButtonComponent {
 
     uploadEvent(file: File, uploadComponent: TdFileUploadComponent) {
         const options: IUploadOptions = {
-            url: `api/Torrent/UploadFile?folder=${this.data.homeComponent.currentFolder}`,
+            url: `api/Torrent/UploadFile?folder=${this.content.currentFolder.getValue()}`,
             method: "post",
             file: file
         };
 
         this.fileUploadService.upload(options).subscribe(
             response => {
-                    this.service.success("File Uploaded",
-                        `${file.name} uploaded successfully`,
-                        {
-                            timeOut: 5000,
-                            showProgressBar: true,
-                            pauseOnHover: true,
-                            clickToClose: true,
-                            maxLength: 100
-                        });
+                this.service.success("File Uploaded",
+                    `${file.name} uploaded successfully`,
+                    {
+                        timeOut: 5000,
+                        showProgressBar: true,
+                        pauseOnHover: true,
+                        clickToClose: true,
+                        maxLength: 100
+                    });
 
-                    this.data.homeComponent.getContent(this.data.homeComponent.currentFolder);
+                this.data.folderContent.next(JSON.stringify(response));
+                this.content.getContent(this.content.currentFolder.getValue());
             },
             error => console.error(`Error while file uploading: ${error}`));
 

@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WebTorrent.Data;
+using WebTorrent.Repository;
 using WebTorrent.Services;
 
 namespace WebTorrent
@@ -25,6 +28,11 @@ namespace WebTorrent
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ContentDbContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
+
+            services.AddScoped<IContentRecordRepository, ContentRecordRepository>();
+
             services.AddSingleton<FsInfo, FsInfo>();
             services.AddSingleton<TorrentClient, TorrentClient>();
 

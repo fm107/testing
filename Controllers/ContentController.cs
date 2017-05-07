@@ -41,12 +41,13 @@ namespace WebTorrent.Controllers
         [HttpGet("[action]")]
         public IActionResult GetFolder([FromQuery] string folder)
         {
-            var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
+            //var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
 
-            if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
-                return Forbid();
-            
-            return Json(_fsInfo.GetFolderContent(folder));
+            //if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
+            //    return Forbid();
+
+            var resp = _fsInfo.GetFolderContent(folder);
+            return Json(resp);
         }
 
         [HttpGet("[action]")]

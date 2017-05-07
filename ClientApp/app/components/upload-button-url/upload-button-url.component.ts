@@ -1,9 +1,10 @@
 ﻿import { Component } from "@angular/core";
 
 import { NotificationsService, SimpleNotificationsComponent, PushNotificationsService } from "angular2-notifications";
-import { DataService } from "../data-service/data.service";
+import { DataService } from "../../services/data.service";
 
 import { Response } from '@angular/http';
+import { ContentService } from "../../services/content.service";
 
 @Component({
     selector: "upload-button-url",
@@ -11,12 +12,12 @@ import { Response } from '@angular/http';
     styleUrls: ["./upload-button-url.component.css"]
 })
 export class UploadButtonUrlComponent {
-    constructor(private data: DataService,
+    constructor(private data: DataService, private content: ContentService,
         private service: NotificationsService) {
     }
 
     onClick(url: any) {
-        this.data.submitTorrentUrl(url.value, this.data.homeComponent.currentFolder).subscribe(
+        this.data.submitTorrentUrl(url.value, this.content.currentFolder.getValue()).subscribe(
             (res: Response) => {
                 if (res.status === 200) {
                     this.service.success("File Uploaded",
@@ -28,7 +29,8 @@ export class UploadButtonUrlComponent {
                             clickToClose: true,
                             maxLength: 100
                         });
-                    this.data.homeComponent.getContent(this.data.homeComponent.currentFolder);
+
+                    this.content.getContent(this.content.currentFolder.getValue());
                 }
             },
             error => {

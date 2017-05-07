@@ -1,24 +1,22 @@
 ﻿import { Injectable } from "@angular/core";
 import { Http, URLSearchParams, Response } from "@angular/http";
+import { Headers, RequestOptions } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { AsyncSubject } from "rxjs/AsyncSubject";
 import { Subject } from "rxjs/Subject";
-
-import { TdLoadingService, LoadingType, LoadingMode } from "@covalent/core";
-
 import "rxjs/add/operator/map";
 
-import { Headers, RequestOptions } from "@angular/http";
-
-import { HomeComponent } from "../home/home.component";
+import { TdLoadingService, LoadingType, LoadingMode } from "@covalent/core";
+import { SimpleTimer } from 'ng2-simple-timer';
 
 @Injectable()
 export class DataService {
-    homeComponent: HomeComponent;
+    folderContent: Subject<any>;
 
     constructor(private http: Http,
-        private loadingService: TdLoadingService) {
+        private loadingService: TdLoadingService,
+        private st: SimpleTimer) {
 
         this.loadingService.create({
             name: "query",
@@ -26,27 +24,27 @@ export class DataService {
             mode: LoadingMode.Indeterminate,
             color: "accent"
         });
+
+        this.folderContent = new Subject<any>();
+        this.st.newTimer('5sec', 5);
     }
 
     getFolderContent(folder: string) {
         const params = new URLSearchParams();
         params.set("folder", folder);
 
-        return Observable.create(observer => {
-            this.loadingService.register("query");
-
+        this.loadingService.register("query");
             this.http.get(`api/Content/GetFolder`, { search: params }).subscribe(
-                result => observer.next(result),
+                result => this.folderContent.next(result.text()),
                 error => {
                     this.loadingService.resolve("query");
-                    observer.error(error);
-                    console.error(`Error during retriving data: ${error}`);
+                    this.handleError(error);
                 },
                 () => {
                     this.loadingService.resolve("query");
-                    observer.complete();
                 });
-        });
+
+        return this.folderContent.asObservable();
     }
 
     submitTorrentUrl(url: string, folder: string): Observable<Response> {
@@ -64,11 +62,18 @@ export class DataService {
             .map((response: Response) => {
                 return response;
             })
-            .catch(error => {
-                return Observable.throw(error.json().error || "Server error");
-            })
+            .catch(this.handleError)
             .finally(() => {
                 this.loadingService.resolve("query");
             });
+    }
+
+    handleError(error) {
+        console.error(`Error during retriving data: ${error}`);
+        return Observable.throw(error.json().error || "Server error");
+    }
+
+    getByTime() {
+        this.st.subscribe('5sec', e => console.log("Timer 5sec"));
     }
 }

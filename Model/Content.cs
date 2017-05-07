@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace WebTorrent.Model
 {
     public class Content
     {
+        [JsonIgnore]
+        public int Id { get; set; }
+
+        public string Hash { get; set; }
+        public bool IsInProgress { get; set; }
         public string CurrentFolder { get; set; }
-        public string Parent { get; set; }
-        public List<FileSystemItem> Contents { get; set; }
+        public string ParentFolder { get; set; }
+        public virtual List<FileSystemItem> FsItems { get; set; }
     }
 
     public class FileSystemItem
     {
+        [JsonIgnore]
+        public int Id { get; set; }
+
         public string FullName { get; set; }
         public string Name { get; set; }
         public long Size { get; set; }
