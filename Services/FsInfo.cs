@@ -14,7 +14,6 @@ namespace WebTorrent.Services
         private const string UploadFolder = "uploads";
         private readonly IHostingEnvironment _environment;
         private readonly IContentRecordRepository _repository;
-        private TorrentClient _torrentClient;
 
         public FsInfo(IHostingEnvironment environment, IContentRecordRepository repository)
         {
@@ -40,7 +39,7 @@ namespace WebTorrent.Services
 #else
         public IList<Content> GetFolderContent(string folder)
         {
-            if (!string.IsNullOrEmpty(folder) && folder.Contains(wwwroot/uploads"))
+            if (!string.IsNullOrEmpty(folder) && folder.Contains("wwwroot/uploads"))
             {
                 var Info = Path.Combine(_environment.WebRootPath, folder);
                 return _repository.Find(Info);

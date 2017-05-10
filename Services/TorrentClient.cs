@@ -25,7 +25,52 @@ namespace WebTorrent.Services
             _fsInfo = fsInfo;
             _repository = repository;
             _client = new UTorrentClient("admin", "");
-            //_timer = new Timer(ConvertVideo, null, 0, (int)TimeSpan.FromSeconds(10).TotalMilliseconds);
+            _timer = new Timer(CheckStatus, null, 0, (int)TimeSpan.FromSeconds(10).TotalMilliseconds);
+        }
+
+        private void CheckStatus(object state)
+        {
+            foreach (var tor in _client.GetList().Result.Torrents)
+            {
+                if (tor.Progress != 1000)
+                {
+                    continue;
+                }
+                CreatePlayList(tor);
+            }
+        }
+
+        private void CreatePlayList(UTorrent.Api.Data.Torrent tor)
+        {
+            foreach (var files in _client.GetFiles(tor.Hash).Result.Files.Values)
+            {
+                foreach (var file in files)
+                {
+                    if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
+                        MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
+                    {
+                        if (!file.NameWithoutPath.EndsWith(".mp4"))
+                            Task.Factory.StartNew(() =>
+                            {
+                                var fileToConvert = Path.Combine(tor.Path, file.Name);
+
+                                var processInfo = new ProcessStartInfo(@"/app/vendor/ffmpeg/ffmpeg")
+                                {
+                                    Arguments = string.Format(@"-i {0} -codec:v libx264 -codec:a aac -map 0 
+                                                  -f segment -segment_time 10 -segment_format mpegts -segment_list_flags live 
+                                                  -segment_list {1}/out.m3u8 -segment_list_type m3u8 {1}/%d.ts",
+                                        fileToConvert, tor.Path)
+                                };
+
+                                var process = Process.Start(processInfo);
+                                process.WaitForExit();
+                                _client.DeleteTorrentAsync(tor.Hash);
+                                _repository.Delete(_repository.FindByHash(tor.Hash).Id);
+                                //File.Delete(fileToConvert);
+                            });
+                    }
+                }
+            }
         }
 
         public async Task<Content> AddTorrent(Stream file, string path)

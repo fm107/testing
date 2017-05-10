@@ -21,17 +21,21 @@ namespace WebTorrent.Repository
             _log = _log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "ContentRecordRepository");
         }
 
-        public IList<Content> GetAll()
+        public IQueryable<Content> GetAll()
         {
-            _log.Info("Getting the existing records");
-            return _context.Content.ToList();
+            return _context.Content;
         }
 
         public IList<Content> Find(string folder)
         {
             return _context.Content.Where(t => t.CurrentFolder.StartsWith(folder)).Include(t => t.FsItems).ToList();
         }
-        
+
+        public Content FindByHash(string hash)
+        {
+            return _context.Content.First(t => t.Hash.Equals(hash));
+        }
+
         public async void Add(Content contentRecord)
         {
             await _context.Content.AddAsync(contentRecord);
