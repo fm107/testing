@@ -1,8 +1,10 @@
 ﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, OnInit } from '@angular/core';
 
-import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn, TdSearchBoxComponent } from "@covalent/core";
+import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn, TdSearchBoxComponent, TdDataTableColumnComponent } from "@covalent/core";
 import { ClickedItem } from "./ClickedItem";
 import { IContent } from "../../model/content";
+import {IFileSystemItem} from "../../model/file-system";
+import {isNumeric} from "rxjs/util/isNumeric"
 
 @Component({
     selector: 'data-presenter',
@@ -19,7 +21,7 @@ export class DataPresenterComponent {
     sortOrder: TdDataTableSortingOrder;
     @Input() parentFolder: string;
     @Input() currentFolder: string;
-    @Input() data: any[];
+    @Input() data: IContent[];
     @Output() onItemClick = new EventEmitter<ClickedItem>();
 
     @ViewChild('searchBox') searchBox: TdSearchBoxComponent;
@@ -47,7 +49,6 @@ export class DataPresenterComponent {
         this.sortBy = sortEvent.name;
         this.sortOrder = sortEvent.order === TdDataTableSortingOrder.Ascending ?
             TdDataTableSortingOrder.Descending : TdDataTableSortingOrder.Ascending;
-        console.log(sortEvent);
         this.updateDataTable("sort");
     }
 
@@ -58,10 +59,13 @@ export class DataPresenterComponent {
 
     updateDataTable(action: string): void {
         const newData: any[] = this.data;
+
         switch (action) {
             case "filter":
                 if (this.searchTerm) {
-                    this.filteredData = this.dataTableService.filterData(newData, this.searchTerm, true);
+                    //this.filteredData = this.dataTableService.filterData(newData.map(i=>i.fsItems), this.searchTerm, true);
+                    
+                    this.filteredData = newData;
                     if (this.filteredData && this.filteredData.length > 0) {
                         this.hasData = true;
                     } else {
@@ -73,7 +77,11 @@ export class DataPresenterComponent {
                 }
                 break;
             case "sort":
-                this.filteredData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
+                //this.filteredData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
+
+                //newData.forEach(data=>this.sorting(data, this.sortBy, this.sortOrder));
+
+                this.filteredData = newData;
                 break;
             default:
                 this.filteredData = newData;
@@ -81,20 +89,35 @@ export class DataPresenterComponent {
         }
     }
 
-    private showFiles(item) {
+private sorting(data: IContent[], sortBy, sortOrder) {
+    data.sort((a, b) => {
+        var compA = a.fsItems[sortBy];
+        var compB = b.fsItems[sortBy];
+        var direction = 0;
+        if (compA < compB) {
+            direction = -1;
+        }
+        else if (compA > compB) {
+            direction = 1;
+        }
+        return direction * (sortOrder === TdDataTableSortingOrder.Descending ? -1 : 1);
+    });
+}
+
+    private showFiles1(item) {
         switch (item.type) {
-            case "folder":
-                if (this.showFolder) {
-                    return true;
-                }
-                return false;
-            case "file":
-                if (!this.showFolder) {
-                    return true;
-                }
-                return false;
-            default:
-                return false;
+        case "folder":
+            if (this.showFolder) {
+                return true;
+            }
+            return false;
+        case "file":
+            if (!this.showFolder) {
+                return true;
+            }
+            return false;
+        default:
+            return false;
         }
     }
 

@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
     onClick(item) {
         //this.messagesObs.next({ message: "Test message" });
         if (item.type == "file") {
-            lity(item.itemName);
+            lity("uploads/output.ts");
         }
 
         this.content.getContent(item.itemName);

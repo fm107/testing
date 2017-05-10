@@ -8,7 +8,7 @@
                    (clear)="hasData = true" flex>
     </td-search-box>
 </div>
-<table>
+<table #table>
     <tr td-data-table-row>
         <th td-data-table-column
             [name]="icon"
@@ -64,10 +64,9 @@
             </div>
         </td>
     </tr>
-
     <template ngFor let-contents [ngForOf]="filteredData">
-        <template ngFor let-content let-first="first" [ngForOf]="contents.fsItems">
-            <tr class="animated fadeInDown list__item--hover" td-data-table-row *ngIf="showFiles(content)">
+        <template ngFor let-content [ngForOf]="contents.fsItems | showFiles:showFolder | filter:searchTerm | sort:sortBy:sortOrder">
+            <tr class="animated fadeInDown list__item--hover" td-data-table-row>
                 <td td-data-table-cell>
                     <div class="icon-column">
                         <img *ngIf="content.type == 'folder'" src="/img/documents-icon.png">
@@ -91,7 +90,6 @@
             </tr>
         </template>
     </template>
-       
 </table>
 <div class="md-padding" *ngIf="!hasData" layout="row" layout-align="center center">
     <h3>No results</h3>
