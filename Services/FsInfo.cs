@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
-using MimeMapping;
 using UTorrent.Api.Data;
-using WebTorrent.Extensions;
 using WebTorrent.Model;
 using WebTorrent.Repository;
 
@@ -27,6 +25,7 @@ namespace WebTorrent.Services
                 Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, UploadFolder));
         }
 
+#if DEBUG
         public IList<Content> GetFolderContent(string folder)
         {
             if (!string.IsNullOrEmpty(folder) && folder.Contains(@"C:\Users\Alexander\Downloads\wwwroot\uploads"))
@@ -36,59 +35,28 @@ namespace WebTorrent.Services
             }
 
             return _repository.Find(@"C:\Users\Alexander\Downloads\wwwroot\uploads");
-
-            //var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
-
-            //var fsContent = new List<FileSystemItem>(directoryInfo
-            //    .GetFilesByExtensions(SearchOption.TopDirectoryOnly, MimeTypes.TypeMap
-            //        .Where(t => t.Value.Contains("video") | t.Value.Contains("audio"))
-            //        .Select(f => "*." + f.Key)
-            //        .ToArray())
-            //    .Select(file => new FileSystemItem
-            //    {
-            //        FullName = file.FullName.Replace(_environment.WebRootPath, string.Empty)
-            //            .TrimStart('\u005C', '\u002F'),
-            //        Name = file.Name,
-            //        Size = file.Length,
-            //        LastChanged = file.LastWriteTime,
-            //        Type = "file"
-            //    }));
-
-            //fsContent.AddRange(directoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly)
-            //    .Select(directory => new FileSystemItem
-            //    {
-            //        FullName = directory.FullName.Replace(_environment.WebRootPath, string.Empty)
-            //                .TrimStart('\u005C', '\u002F'),
-            //        Name = directory.Name,
-            //        Size = new DirectoryInfo(directory.FullName).GetFiles("*", SearchOption.AllDirectories)
-            //                .Sum(f => f.Length),
-            //        LastChanged = directory.LastWriteTime,
-            //        Type = "folder"
-            //    }
-            //    ));
-
-            //var content = new Content
-            //{
-            //    CurrentFolder = folder ?? UploadFolder,
-            //    FsItems = fsContent,
-            //    ParentFolder = folder == null || folder == UploadFolder
-            //        ? null
-            //        : directoryInfo.Parent.FullName.Replace(_environment.WebRootPath, string.Empty)
-            //            .TrimStart('\u005C', '\u002F')
-            //};
-
-            //return content;
         }
+
+#else
+        public IList<Content> GetFolderContent(string folder)
+        {
+            if (!string.IsNullOrEmpty(folder) && folder.Contains(wwwroot/uploads"))
+            {
+                var Info = Path.Combine(_environment.WebRootPath, folder);
+                return _repository.Find(Info);
+            }
+
+            return _repository.Find(@"/app/heroku_output/wwwroot/uploads");
+        }
+#endif
 
         public Content SaveFolderContent(UTorrent.Api.Data.Torrent torrent, ICollection<FileCollection> collection)
         {
-
             var directoryInfo = new DirectoryInfo(torrent.Path);
 
             var fsContent = new List<FileSystemItem>();
 
             foreach (var col in collection)
-            {
                 fsContent.AddRange(col.Select(file => new FileSystemItem
                 {
                     Name = file.NameWithoutPath,
@@ -97,7 +65,6 @@ namespace WebTorrent.Services
                     Size = file.Size,
                     Type = "file"
                 }));
-            }
 
             var folder = new FileSystemItem();
             folder.Name = Path.ChangeExtension(torrent.Name, null);

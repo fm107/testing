@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Reflection;
@@ -14,7 +12,6 @@ using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MimeMapping;
 using Newtonsoft.Json;
 using WebTorrent.Model;
 using WebTorrent.Services;
@@ -104,7 +101,7 @@ namespace WebTorrent.Controllers
 
             //return Ok(Path.GetFileName(_fileName));
         }
-        
+
         [HttpGet("[action]")]
         public string GetTorrentInfo()
         {
@@ -129,36 +126,8 @@ namespace WebTorrent.Controllers
                 if (!_torrentClient.IsTorrentType(content))
                     return BadRequest("Not application/x-bittorrent Mime type");
 
-                return Json(new List<Content>{await _torrentClient.AddTorrent(content, DownLoadFolder)});
-                
+                return Json(new List<Content> {await _torrentClient.AddTorrent(content, DownLoadFolder)});
             }
-
-            //foreach (var uploadedFile in file)
-            //{
-            //    if (uploadedFile.Length <= 0) continue;
-            //    _fileName = Path.Combine(uploads, uploadedFile.FileName.Split('\\').LastOrDefault());
-
-            //    using (var fileStream = new FileStream(_fileName, FileMode.Create))
-            //    {
-            //        await uploadedFile.CopyToAsync(fileStream);
-            //    }
-            //}
-
-            //_log.Info("Starting torrent manager");
-            //_log.InfoFormat("file path is {0}", _fileName);
-
-            //try
-            //{
-            //    //_torrent = new TorrentTransfer(_fileName, uploads);
-            //    //_torrent.StateChanged += TorrentStateChanged;
-            //    //_torrent.ReportStats += TorrentReportStats;
-            //    //_torrent.Start();
-            //}
-            //catch (Exception exception)
-            //{
-            //    _log.Error(exception);
-            //}
-
 
             return null;
         }

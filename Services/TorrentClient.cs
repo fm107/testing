@@ -118,7 +118,7 @@ namespace WebTorrent.Services
                     new string('-', 20) + Environment.NewLine);
         }
 
-        public void ConvertVideo(object state)
+        private void ConvertVideo(object state)
         {
             foreach (var tor in _client.GetList().Result.Torrents)
             {
@@ -146,11 +146,6 @@ namespace WebTorrent.Services
                                 //File.Delete(fileToConvert);
                             });
             }
-        }
-
-        public override string ToString()
-        {
-            return GetHashCode().ToString();
         }
     }
 }

@@ -2,19 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net.WebSockets;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using MimeMapping;
-using Newtonsoft.Json;
-using WebTorrent.Extensions;
-using WebTorrent.Model;
 using WebTorrent.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,25 +19,25 @@ namespace WebTorrent.Controllers
         private const string UploadFolder = "uploads";
 
         private readonly IHostingEnvironment _environment;
-        private readonly ILog _log;
         private readonly FsInfo _fsInfo;
+        private readonly ILog _log;
 
         public ContentController(IHostingEnvironment environment, FsInfo fsInfo)
         {
             _environment = environment;
             _fsInfo = fsInfo;
             _log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "ContentController");
-
         }
 
         [HttpGet("[action]")]
         public IActionResult GetFolder([FromQuery] string folder)
         {
-            //var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
+#if !DEBUG
+            var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
 
-            //if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
-            //    return Forbid();
-
+            if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
+                return Forbid();
+#endif
             var resp = _fsInfo.GetFolderContent(folder);
             return Json(resp);
         }
@@ -65,7 +57,8 @@ namespace WebTorrent.Controllers
         {
             var processInfo = new ProcessStartInfo("/app/utorrent-server/utserver")
             {
-                Arguments = "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
+                Arguments =
+                    "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -73,10 +66,7 @@ namespace WebTorrent.Controllers
             };
 
             Process.Start(processInfo).StandardOutput.ReadToEndAsync()
-                .ContinueWith(response =>
-                {
-                    _log.Info(response.Result);
-                }); 
+                .ContinueWith(response => { _log.Info(response.Result); });
 
             return Ok();
         }
@@ -102,7 +92,7 @@ namespace WebTorrent.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new[] { "value1", "value2" };
+            return new[] {"value1", "value2"};
         }
 
         // GET api/values/5
@@ -131,7 +121,7 @@ namespace WebTorrent.Controllers
         }
     }
 
-    class MyClass
+    internal class MyClass
     {
         public string message { get; set; }
     }

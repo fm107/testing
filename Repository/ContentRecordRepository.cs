@@ -29,8 +29,7 @@ namespace WebTorrent.Repository
 
         public IList<Content> Find(string folder)
         {
-            var k= _context.Content.Where(t => t.CurrentFolder.StartsWith(folder)).Include(t => t.FsItems).ToList();
-            return k;
+            return _context.Content.Where(t => t.CurrentFolder.StartsWith(folder)).Include(t => t.FsItems).ToList();
         }
         
         public async void Add(Content contentRecord)
