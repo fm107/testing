@@ -21,7 +21,10 @@ import { DataService } from "./services/data.service";
 import { WebSocketService } from "./services/websocket.service";
 import { DataPresenterComponent } from "./components/data-presenter/data-presenter.component";
 import { ContentService } from "./services/content.service";
-
+import { FilterPipe } from "./pipes/filter.pipe";
+import { SortPipe } from "./pipes/sort.pipe";
+import { FileSizePipe } from "./pipes/filesize.pipe";
+import { ShowFilesPipe } from "./pipes/show-files.pipe";
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -29,7 +32,7 @@ import { ContentService } from "./services/content.service";
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent
+        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe
     ],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.

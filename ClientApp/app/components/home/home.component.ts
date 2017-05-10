@@ -17,7 +17,7 @@ declare var lity: any;
 })
 
 export class HomeComponent implements OnInit {
-    fsItems = this.content.metaData;
+    metaData = this.content.metaData;
     parentFolder = this.content.parentFolder;
     currentFolder = this.content.currentFolder;
 
@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
     onClick(item) {
         //this.messagesObs.next({ message: "Test message" });
         if (item.type == "file") {
-            lity("uploads/output.ts");
+            lity(item.itemName);
         }
 
         this.content.getContent(item.itemName);

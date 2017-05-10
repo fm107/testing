@@ -1,2 +1,0 @@
-﻿2017-04-27 21:48:23,518 [3] INFO TorrentController - Starting torrent manager
-2017-04-27 21:48:23,542 [3] INFO TorrentController - file path is D:\Temp\GitHub\testing\wwwroot\uploads\[rutracker.org].t5388752.torrent
