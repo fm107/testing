@@ -24,7 +24,7 @@ namespace WebTorrent.Services
         {
             _fsInfo = fsInfo;
             _repository = repository;
-            _client = new UTorrentClient("admin", "admin");
+            _client = new UTorrentClient("admin", "");
             _timer = new Timer(CheckStatus, null, 0, (int)TimeSpan.FromSeconds(10).TotalMilliseconds);
         }
 
