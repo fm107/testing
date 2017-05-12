@@ -26,7 +26,8 @@ namespace WebTorrent.Torrent
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    UseShellExecute = true
                 };
 
                 Process.Start(processInfo)
