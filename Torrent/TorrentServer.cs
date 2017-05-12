@@ -18,10 +18,11 @@ namespace WebTorrent.Torrent
         {
             try
             {
-                var processInfo = new ProcessStartInfo("/app/heroku_output/Torrent/utorrent.sh")
+                var processInfo = new ProcessStartInfo("sh")
                 {
                     //Arguments = @"-c 'cd /app/utorrent-server/ && ./utserver -settingspath utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon'",
 
+                    Arguments = "/app/utorrent-server/utorrent.sh",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
