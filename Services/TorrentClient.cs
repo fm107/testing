@@ -77,9 +77,9 @@ namespace WebTorrent.Services
         {
             var response = _client.PostTorrent(file, path);
             var torrent = response.AddedTorrent;
-            Console.WriteLine("error - "+response.Error);
-            Console.WriteLine("result - " + response.Result);
-            Console.WriteLine("AddedTorrentInfo - " + response.AddedTorrentInfo);
+            Console.WriteLine("error - "+response.Error.Message);
+            Console.WriteLine("StackTrace - " + response.Error.StackTrace);
+            Console.WriteLine("InnerException - " + response.Error.InnerException);
             var content = _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
             return content;
         }
