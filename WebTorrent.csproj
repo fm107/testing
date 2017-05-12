@@ -30,6 +30,7 @@
     <None Remove=".gitignore" />
     <None Remove="log4net.config" />
     <None Remove="README.md" />
+    <None Remove="Torrent\utorrent.sh" />
     <None Remove="yarn.lock" />
     <Compile Remove="BitTorrent.Dht\**" />
     <Compile Remove="BitTorrent\**" />
@@ -63,6 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="log4net.config" />
+    <Content Include="Torrent\utorrent.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="UTorrentClientApi\UTorrentClientApi.csproj" />
