@@ -32,10 +32,10 @@ namespace WebTorrent.Services
         {
             foreach (var tor in _client.GetList().Result.Torrents)
             {
-                if (tor.Progress != 1000)
-                {
-                    continue;
-                }
+                //if (tor.Progress != 1000)
+                //{
+                //    continue;
+                //}
                 CreatePlayList(tor);
             }
         }
@@ -77,9 +77,6 @@ namespace WebTorrent.Services
         {
             var response = _client.PostTorrent(file, path);
             var torrent = response.AddedTorrent;
-            Console.WriteLine("error - "+response.Error?.Message);
-            Console.WriteLine("StackTrace - " + response.Error?.StackTrace);
-            Console.WriteLine("InnerException - " + response.Error?.InnerException);
             var content = _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
             return content;
         }
