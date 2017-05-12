@@ -77,9 +77,9 @@ namespace WebTorrent.Services
         {
             var response = _client.PostTorrent(file, path);
             var torrent = response.AddedTorrent;
-            Console.WriteLine("error - "+response.Error.Message);
-            Console.WriteLine("StackTrace - " + response.Error.StackTrace);
-            Console.WriteLine("InnerException - " + response.Error.InnerException);
+            Console.WriteLine("error - "+response.Error?.Message);
+            Console.WriteLine("StackTrace - " + response.Error?.StackTrace);
+            Console.WriteLine("InnerException - " + response.Error?.InnerException);
             var content = _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
             return content;
         }
@@ -90,14 +90,14 @@ namespace WebTorrent.Services
             return response.AddedTorrent;
         }
 
-        public bool IsTorrentType(Stream file)
+        public async Task<bool> IsTorrentType(Stream file)
         {
             var buffer = new byte[11];
             var torrentType = new byte[] {0x64, 0x38, 0x3a, 0x61, 0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65};
 
             if (file.CanRead)
             {
-                file.ReadAsync(buffer, 0, buffer.Length);
+                await file.ReadAsync(buffer, 0, buffer.Length);
                 if (file.CanSeek)
                     file.Seek(0, SeekOrigin.Begin);
             }

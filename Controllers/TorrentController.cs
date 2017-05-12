@@ -56,7 +56,7 @@ namespace WebTorrent.Controllers
             var response = await _client.GetAsync(url, HttpCompletionOption.ResponseContentRead);
             var content = await response.Content.ReadAsStreamAsync();
 
-            if (!_torrentClient.IsTorrentType(content))
+            if (!await _torrentClient.IsTorrentType(content))
                 return BadRequest("Not application/x-bittorrent Mime type");
 
             return Json(_torrentClient.AddTorrent(content, DownLoadFolder));
@@ -123,7 +123,7 @@ namespace WebTorrent.Controllers
 
                 var content = uploadedFile.OpenReadStream();
 
-                if (!_torrentClient.IsTorrentType(content))
+                if (!await _torrentClient.IsTorrentType(content))
                     return BadRequest("Not application/x-bittorrent Mime type");
 
                 return Json(new List<Content> {await _torrentClient.AddTorrent(content, DownLoadFolder)});
