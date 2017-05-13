@@ -28,27 +28,46 @@ namespace WebTorrent.Services
             _repository = repository;
             _log = log;
             _client = new UTorrentClient("admin", "");
-            _timer = new Timer(CheckStatus, null, 0, (int) TimeSpan.FromSeconds(1).TotalMilliseconds);
+            _timer = new Timer(CheckStatus, null, 0, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
         }
 
-        private void CheckStatus(object state)
+        private async void CheckStatus(object state)
         {
             foreach (var tor in _client.GetList().Result.Torrents)
+            {
                 if (tor.Progress == 1000)
                 {
-                    _log.LogInformation("Creating playing list for {0}", tor.Name);
-                    CreatePlayList(tor);
+                    var content = await _repository.FindByHash(tor.Hash);
+                    if (content.IsInProgress)
+                    {
+                        _log.LogInformation("Creating playing list for {0}", tor.Name);
+                        ChangeStatus(content);
+                        CreatePlayList(tor);
+                    }
                 }
+            }
+        }
+
+        private void ChangeStatus(Content content)
+        {
+            content.IsInProgress = false;
+
+            _repository.Update(content);
+            _repository.Save();
         }
 
         private void CreatePlayList(UTorrent.Api.Data.Torrent tor)
         {
             foreach (var files in _client.GetFiles(tor.Hash).Result.Files.Values)
-            foreach (var file in files)
-                if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
+            {
+                foreach (var file in files)
+                {
+                    if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
                     MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
-                    if (!file.NameWithoutPath.EndsWith(".mp4") && tor.Path.Contains(Path.ChangeExtension(file.NameWithoutPath, null)))
-                        Task.Factory.StartNew( () =>
+                    {
+                        if (!file.NameWithoutPath.EndsWith(".mp4") && tor.Path.Contains(Path.ChangeExtension(file.NameWithoutPath, null)))
+                        {
+                            Task.Factory.StartNew( () =>
                         {
                             var fileToConvert = Path.Combine(tor.Path, file.Name);
 
@@ -67,6 +86,10 @@ namespace WebTorrent.Services
                             //await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
                             //File.Delete(fileToConvert);
                         });
+                        }
+                    }
+                }
+            }
         }
 
         public async Task<Content> AddTorrent(Stream file, string path)
@@ -92,7 +115,9 @@ namespace WebTorrent.Services
             {
                 await file.ReadAsync(buffer, 0, buffer.Length);
                 if (file.CanSeek)
+                {
                     file.Seek(0, SeekOrigin.Begin);
+                }
             }
 
             return buffer.SequenceEqual(torrentType);
@@ -137,7 +162,10 @@ namespace WebTorrent.Services
 
             var items = new List<object>();
             foreach (var torrent in _client.GetList().Result.Torrents)
+            {
                 items.Add(new {torrent.Name, Progress = torrent.Progress / 10.0, torrent.Remaining});
+            }
+
             return items;
         }
 
@@ -163,14 +191,21 @@ namespace WebTorrent.Services
         {
             foreach (var tor in _client.GetList().Result.Torrents)
             {
-                if (tor.Progress != 1000) continue;
+                if (tor.Progress != 1000)
+                {
+                    continue;
+                }
 
                 foreach (var files in _client.GetFiles(tor.Hash).Result.Files.Values)
-                foreach (var file in files)
-                    if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
+                {
+                    foreach (var file in files)
+                    {
+                        if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
                         MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
-                        if (!file.NameWithoutPath.EndsWith(".mp4"))
-                            Task.Factory.StartNew(() =>
+                        {
+                            if (!file.NameWithoutPath.EndsWith(".mp4"))
+                            {
+                                Task.Factory.StartNew(() =>
                             {
                                 var fileToConvert = Path.Combine(tor.Path, file.Name);
 
@@ -186,6 +221,10 @@ namespace WebTorrent.Services
                                 process.WaitForExit();
                                 //File.Delete(fileToConvert);
                             });
+                            }
+                        }
+                    }
+                }
             }
         }
     }

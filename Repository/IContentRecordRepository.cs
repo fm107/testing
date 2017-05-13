@@ -11,6 +11,7 @@ namespace WebTorrent.Repository
         Task<IList<Content>> Find(string folder);
         Task<Content> FindByHash(string hash);
         void Add(Content contentRecord);
+        void Update(Content contentRecord);
         Task Delete(int id);
         void Save();
     }

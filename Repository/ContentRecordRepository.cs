@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using WebTorrent.Data;
 using WebTorrent.Model;
@@ -41,6 +42,11 @@ namespace WebTorrent.Repository
         {
             await _context.Content.AddAsync(contentRecord);
         }
+        public void Update(Content contentRecord)
+        {
+           _context.Content.Update(contentRecord);
+        }
+
 
         public async Task Delete(int id)
         {
