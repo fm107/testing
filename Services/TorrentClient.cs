@@ -34,7 +34,7 @@ namespace WebTorrent.Services
         private void CheckStatus(object state)
         {
             foreach (var tor in _client.GetList().Result.Torrents)
-                if (tor.Progress >= 0)
+                if (tor.Progress == 1000)
                 {
                     _log.LogInformation("Creating playing list for {0}", tor.Name);
                     CreatePlayList(tor);
@@ -47,8 +47,8 @@ namespace WebTorrent.Services
             foreach (var file in files)
                 if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
                     MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
-                    if (!file.NameWithoutPath.EndsWith(".mp4"))
-                        Task.Factory.StartNew( () =>
+                    if (!file.NameWithoutPath.EndsWith(".mp4") && tor.Path.Contains(Path.ChangeExtension(file.NameWithoutPath, null)))
+                        Task.Factory.StartNew(async () =>
                         {
                             var fileToConvert = Path.Combine(tor.Path, file.Name);
 
@@ -63,8 +63,8 @@ namespace WebTorrent.Services
 
                             var process = Process.Start(processInfo);
                             process.WaitForExit();
-                            //await _client.DeleteTorrentAsync(tor.Hash);
-                            //await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
+                            await _client.DeleteTorrentAsync(tor.Hash);
+                            await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
                             //File.Delete(fileToConvert);
                         });
         }
