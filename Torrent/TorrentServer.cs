@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
-using log4net;
+using Serilog;
 
 namespace WebTorrent.Torrent
 {
     public class TorrentServer
     {
-        private static readonly ILog Log;
-
-        static TorrentServer()
-        {
-            Log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "uTorrent");
-        }
+        private static readonly ILogger Log = new LoggerConfiguration().WriteTo
+            .File("wwwroot/log/log.txt").CreateLogger();
 
         public static void Start()
         {
             try
             {
-                var processInfo = new ProcessStartInfo()
+                var processInfo = new ProcessStartInfo
                 {
                     //Arguments = @"-c 'cd /app/utorrent-server/ && ./utserver -settingspath utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon'",
                     FileName = "/app/utorrent-server/utserver",
-                    Arguments = "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
+                    Arguments =
+                        "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true
@@ -30,11 +26,11 @@ namespace WebTorrent.Torrent
 
                 Process.Start(processInfo)
                     .StandardOutput.ReadToEndAsync()
-                    .ContinueWith(response => { Log.Info(response.Result); });
+                    .ContinueWith(response => { Log.Information(response.Result); });
             }
             catch (Exception e)
             {
-                Log.Error(e);
+                Log.Error(e, e.Message);
             }
         }
     }

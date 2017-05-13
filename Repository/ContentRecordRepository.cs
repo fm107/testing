@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using log4net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WebTorrent.Data;
 using WebTorrent.Model;
 
@@ -14,12 +13,12 @@ namespace WebTorrent.Repository
     {
         private readonly ContentDbContext _context;
 
-        private readonly ILog _log;
+        private readonly ILogger<ContentRecordRepository> _log;
 
-        public ContentRecordRepository(ContentDbContext context)
+        public ContentRecordRepository(ContentDbContext context, ILogger<ContentRecordRepository> log)
         {
             _context = context;
-            _log = _log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "ContentRecordRepository");
+            _log = log;
         }
 
         public IQueryable<Content> GetAll()
@@ -29,7 +28,8 @@ namespace WebTorrent.Repository
 
         public async Task<IList<Content>> Find(string folder)
         {
-            return await _context.Content.Where(t => t.CurrentFolder.StartsWith(folder)).Include(t => t.FsItems).ToListAsync();
+            return await _context.Content.Where(t => t.CurrentFolder.StartsWith(folder)).Include(t => t.FsItems)
+                .ToListAsync();
         }
 
         public async Task<Content> FindByHash(string hash)
@@ -55,7 +55,7 @@ namespace WebTorrent.Repository
 
         public async void Dispose()
         {
-           await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             _context?.Dispose();
         }
     }

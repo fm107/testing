@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog.Extensions.Logging;
 using WebTorrent.Data;
 using WebTorrent.Repository;
 using WebTorrent.Services;
@@ -45,6 +46,7 @@ namespace WebTorrent
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            loggerFactory.AddFile("wwwroot/log/log.txt");
 
             if (env.IsDevelopment())
             {

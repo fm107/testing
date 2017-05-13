@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.WebSockets;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using WebTorrent.Model;
 using WebTorrent.Services;
@@ -27,7 +26,7 @@ namespace WebTorrent.Controllers
         private const string DownLoadFolder = "wwwroot/uploads";
         private readonly HttpClient _client;
         private readonly IHostingEnvironment _environment;
-        private readonly ILog _log;
+        private readonly ILogger<TorrentController> _log;
         private readonly TorrentClient _torrentClient;
 
         private string _fileName;
@@ -35,12 +34,13 @@ namespace WebTorrent.Controllers
         private WebSocket _webSocket;
         private int total;
 
-        public TorrentController(IHostingEnvironment environment, TorrentClient torrentClient)
+        public TorrentController(ILogger<TorrentController> log, IHostingEnvironment environment,
+            TorrentClient torrentClient)
         {
             _environment = environment;
             _torrentClient = torrentClient;
             _client = new HttpClient();
-            _log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "TorrentController");
+            _log = log;
         }
 
         [HttpPost("[action]")]
@@ -143,7 +143,7 @@ namespace WebTorrent.Controllers
                     var token = CancellationToken.None;
                     var buffer = new ArraySegment<byte>(new byte[4096]);
                     var received = await _webSocket.ReceiveAsync(buffer, token);
-                    _log.Info("recieved message from websocket");
+                    _log.LogInformation("recieved message from websocket");
 
                     switch (received.MessageType)
                     {

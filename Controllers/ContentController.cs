@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
-using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WebTorrent.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,13 +19,13 @@ namespace WebTorrent.Controllers
 
         private readonly IHostingEnvironment _environment;
         private readonly FsInfo _fsInfo;
-        private readonly ILog _log;
+        private readonly ILogger<ContentController> _log;
 
-        public ContentController(IHostingEnvironment environment, FsInfo fsInfo)
+        public ContentController(ILogger<ContentController> log, IHostingEnvironment environment, FsInfo fsInfo)
         {
             _environment = environment;
             _fsInfo = fsInfo;
-            _log = LogManager.GetLogger(Assembly.GetEntryAssembly(), "ContentController");
+            _log = log;
         }
 
         [HttpGet("[action]")]
@@ -66,7 +65,7 @@ namespace WebTorrent.Controllers
             };
 
             Process.Start(processInfo).StandardOutput.ReadToEndAsync()
-                .ContinueWith(response => { _log.Info(response.Result); });
+                .ContinueWith(response => { _log.LogInformation(response.Result); });
 
             return Ok();
         }
