@@ -1,11 +1,11 @@
 ﻿{
   "buildOptions": {
-    "debugType": "portable",
     "compile": {
       "exclude": [
         "node_modules"
       ]
     },
+    "debugType": "portable",
     "emitEntryPoint": true,
     "preserveCompilationContext": true
   },
