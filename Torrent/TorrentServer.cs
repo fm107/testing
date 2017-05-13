@@ -24,9 +24,7 @@ namespace WebTorrent.Torrent
                     FileName = "/app/utorrent-server/utorrent.sh",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                    UseShellExecute = false
+                    RedirectStandardInput = true
                 };
 
                 Process.Start(processInfo)
