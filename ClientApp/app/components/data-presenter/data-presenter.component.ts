@@ -135,6 +135,7 @@ private sorting(data: IContent[], sortBy, sortOrder) {
         if (item.type) {
             itemObj.type = item.type;
             itemObj.itemName = item.fullName;
+            itemObj.downloadPath = item.downloadPath;
             this.onItemClick.emit(itemObj);
         }
     }

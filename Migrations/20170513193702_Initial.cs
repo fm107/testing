@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebTorrent.Migrations
 {
-    public partial class AddContent : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,6 +31,7 @@ namespace WebTorrent.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ContentId = table.Column<int>(nullable: true),
+                    DownloadPath = table.Column<string>(nullable: true),
                     FullName = table.Column<string>(nullable: true),
                     LastChanged = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),

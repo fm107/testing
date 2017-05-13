@@ -33,26 +33,27 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.content.getContent("");
 
-        this.messagesObs = (this.wsService
-            .connect(`ws://${window.location.hostname}:${window.location.port}/api/Torrent/Notifications`)
-            .map((response: MessageEvent): IMessage => {
-                const msg = JSON.parse(response.data);
-                return {
-                    message: msg.message
-                };
-            }) as Subject<IMessage>);
+        //this.messagesObs = (this.wsService
+        //    .connect(`ws://${window.location.hostname}:${window.location.port}/api/Torrent/Notifications`)
+        //    .map((response: MessageEvent): IMessage => {
+        //        const msg = JSON.parse(response.data);
+        //        return {
+        //            message: msg.message
+        //        };
+        //    }) as Subject<IMessage>);
 
 
-        this.messagesObs.subscribe(response => {
-            console.log(response);
-            this.messages.push(response);
-        });
+        //this.messagesObs.subscribe(response => {
+        //    console.log(response);
+        //    this.messages.push(response);
+        //});
     }
 
     onClick(item) {
         //this.messagesObs.next({ message: "Test message" });
         if (item.type == "file") {
-            lity(item.itemName +"/out.m3u8");
+            console.log(item);
+            lity(item.downloadPath +"/out.m3u8");
         }
 
         this.content.getContent(item.itemName);

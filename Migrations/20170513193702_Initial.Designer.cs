@@ -8,13 +8,13 @@ using WebTorrent.Data;
 namespace WebTorrent.Migrations
 {
     [DbContext(typeof(ContentDbContext))]
-    [Migration("20170505123907_AddContent")]
-    partial class AddContent
+    [Migration("20170513193702_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.1.1");
+                .HasAnnotation("ProductVersion", "1.1.2");
 
             modelBuilder.Entity("WebTorrent.Model.Content", b =>
                 {
@@ -40,6 +40,8 @@ namespace WebTorrent.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int?>("ContentId");
+
+                    b.Property<string>("DownloadPath");
 
                     b.Property<string>("FullName");
 

@@ -13,7 +13,7 @@ namespace WebTorrent.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.1.1");
+                .HasAnnotation("ProductVersion", "1.1.2");
 
             modelBuilder.Entity("WebTorrent.Model.Content", b =>
                 {
@@ -39,6 +39,8 @@ namespace WebTorrent.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int?>("ContentId");
+
+                    b.Property<string>("DownloadPath");
 
                     b.Property<string>("FullName");
 

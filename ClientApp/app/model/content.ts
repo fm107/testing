@@ -1,7 +1,7 @@
 ﻿import { IFileSystemItem } from "./file-system";
 
 export interface IContent {
-    folder: IFileSystemItem;
+    downloadPath?:string;
     hash:string;
     isInProgress:boolean;
     currentFolder: string;
