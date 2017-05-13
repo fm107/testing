@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using log4net;
 using Microsoft.EntityFrameworkCore;
 using WebTorrent.Data;
@@ -26,14 +27,14 @@ namespace WebTorrent.Repository
             return _context.Content;
         }
 
-        public IList<Content> Find(string folder)
+        public async Task<IList<Content>> Find(string folder)
         {
-            return _context.Content.Where(t => t.CurrentFolder.StartsWith(folder)).Include(t => t.FsItems).ToList();
+            return await _context.Content.Where(t => t.CurrentFolder.StartsWith(folder)).Include(t => t.FsItems).ToListAsync();
         }
 
-        public Content FindByHash(string hash)
+        public async Task<Content> FindByHash(string hash)
         {
-            return _context.Content.First(t => t.Hash.Equals(hash));
+            return await _context.Content.FirstAsync(t => t.Hash.Equals(hash));
         }
 
         public async void Add(Content contentRecord)
@@ -41,9 +42,9 @@ namespace WebTorrent.Repository
             await _context.Content.AddAsync(contentRecord);
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var entity = _context.Content.First(t => t.Id == id);
+            var entity = await _context.Content.FirstAsync(t => t.Id == id);
             _context.Content.Remove(entity);
         }
 
@@ -52,9 +53,9 @@ namespace WebTorrent.Repository
             await _context.SaveChangesAsync();
         }
 
-        public void Dispose()
+        public async void Dispose()
         {
-            _context.SaveChanges();
+           await _context.SaveChangesAsync();
             _context?.Dispose();
         }
     }

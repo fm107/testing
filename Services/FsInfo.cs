@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using UTorrent.Api.Data;
 using WebTorrent.Model;
@@ -25,27 +26,27 @@ namespace WebTorrent.Services
         }
 
 #if DEBUG
-        public IList<Content> GetFolderContent(string folder)
+        public async Task<IList<Content>> GetFolderContent(string folder)
         {
             if (!string.IsNullOrEmpty(folder) && folder.Contains(@"C:\Users\Alexander\Downloads\wwwroot\uploads"))
             {
                 var Info = Path.Combine(_environment.WebRootPath, folder);
-                return _repository.Find(Info);
+                return await _repository.Find(Info);
             }
 
-            return _repository.Find(@"C:\Users\Alexander\Downloads\wwwroot\uploads");
+            return await _repository.Find(@"C:\Users\Alexander\Downloads\wwwroot\uploads");
         }
 
 #else
-        public IList<Content> GetFolderContent(string folder)
+        public async Task<IList<Content>> GetFolderContent(string folder)
         {
             if (!string.IsNullOrEmpty(folder) && folder.Contains("wwwroot/uploads"))
             {
                 var Info = Path.Combine(_environment.WebRootPath, folder);
-                return _repository.Find(Info);
+                return await _repository.Find(Info);
             }
 
-            return _repository.Find(@"/app/heroku_output/wwwroot/uploads");
+            return await _repository.Find(@"/app/heroku_output/wwwroot/uploads");
         }
 #endif
 

@@ -32,15 +32,14 @@ namespace WebTorrent.Services
         {
             foreach (var tor in _client.GetList().Result.Torrents)
             {
-                //if (tor.Progress != 1000)
-                //{
-                //    continue;
-                //}
-                CreatePlayList(tor);
+                if (tor.Progress == 100)
+                {
+                    CreatePlayList(tor);
+                }
             }
         }
 
-        private void CreatePlayList(UTorrent.Api.Data.Torrent tor)
+        private  void CreatePlayList(UTorrent.Api.Data.Torrent tor)
         {
             foreach (var files in _client.GetFiles(tor.Hash).Result.Files.Values)
             {
@@ -50,7 +49,7 @@ namespace WebTorrent.Services
                         MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
                     {
                         if (!file.NameWithoutPath.EndsWith(".mp4"))
-                            Task.Factory.StartNew(() =>
+                            Task.Factory.StartNew(async () =>
                             {
                                 var fileToConvert = Path.Combine(tor.Path, file.Name);
 
@@ -64,8 +63,8 @@ namespace WebTorrent.Services
 
                                 var process = Process.Start(processInfo);
                                 process.WaitForExit();
-                                _client.DeleteTorrentAsync(tor.Hash);
-                                _repository.Delete(_repository.FindByHash(tor.Hash).Id);
+                                await _client.DeleteTorrentAsync(tor.Hash);
+                                await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
                                 //File.Delete(fileToConvert);
                             });
                     }
