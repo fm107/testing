@@ -36,7 +36,7 @@ namespace WebTorrent.Services
         {
             foreach (var tor in _client.GetList().Result.Torrents)
             {
-                if (tor.Progress == 100)
+                if (tor.Progress >= 100)
                 {
                     _log.LogInformation("Creating playing list for ",tor.Name);
                     CreatePlayList(tor);
