@@ -5,9 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MimeMapping;
 using UTorrent.Api;
 using UTorrent.Api.Data;
+using WebTorrent.Controllers;
 using WebTorrent.Model;
 using WebTorrent.Repository;
 
@@ -19,11 +21,13 @@ namespace WebTorrent.Services
         private readonly FsInfo _fsInfo;
         private readonly IContentRecordRepository _repository;
         private Timer _timer;
+        private readonly ILogger<TorrentClient> _log;
 
-        public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository)
+        public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository, ILogger<TorrentClient> log)
         {
             _fsInfo = fsInfo;
             _repository = repository;
+            _log = log;
             _client = new UTorrentClient("admin", "");
             _timer = new Timer(CheckStatus, null, 0, (int)TimeSpan.FromSeconds(1).TotalMilliseconds);
         }
@@ -34,6 +38,7 @@ namespace WebTorrent.Services
             {
                 if (tor.Progress == 100)
                 {
+                    _log.LogInformation("Creating playing list for ",tor.Name);
                     CreatePlayList(tor);
                 }
             }
@@ -53,6 +58,7 @@ namespace WebTorrent.Services
                             {
                                 var fileToConvert = Path.Combine(tor.Path, file.Name);
 
+                                _log.LogInformation("Start convert process for ", fileToConvert);
                                 var processInfo = new ProcessStartInfo(@"/app/vendor/ffmpeg/ffmpeg")
                                 {
                                     Arguments = string.Format(@"-i {0} -codec:v libx264 -codec:a aac -map 0 
