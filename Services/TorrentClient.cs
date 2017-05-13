@@ -48,7 +48,7 @@ namespace WebTorrent.Services
                 if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
                     MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
                     if (!file.NameWithoutPath.EndsWith(".mp4") && tor.Path.Contains(Path.ChangeExtension(file.NameWithoutPath, null)))
-                        Task.Factory.StartNew(async () =>
+                        Task.Factory.StartNew( () =>
                         {
                             var fileToConvert = Path.Combine(tor.Path, file.Name);
 
@@ -63,8 +63,8 @@ namespace WebTorrent.Services
 
                             var process = Process.Start(processInfo);
                             process.WaitForExit();
-                            await _client.DeleteTorrentAsync(tor.Hash);
-                            await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
+                            //await _client.DeleteTorrentAsync(tor.Hash);
+                            //await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
                             //File.Delete(fileToConvert);
                         });
         }
