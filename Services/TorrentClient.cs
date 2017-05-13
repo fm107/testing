@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using MimeMapping;
 using UTorrent.Api;
 using UTorrent.Api.Data;
-using WebTorrent.Controllers;
 using WebTorrent.Model;
 using WebTorrent.Repository;
 
@@ -19,9 +18,9 @@ namespace WebTorrent.Services
     {
         private readonly UTorrentClient _client;
         private readonly FsInfo _fsInfo;
+        private readonly ILogger<TorrentClient> _log;
         private readonly IContentRecordRepository _repository;
         private Timer _timer;
-        private readonly ILogger<TorrentClient> _log;
 
         public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository, ILogger<TorrentClient> log)
         {
@@ -29,53 +28,45 @@ namespace WebTorrent.Services
             _repository = repository;
             _log = log;
             _client = new UTorrentClient("admin", "");
-            _timer = new Timer(CheckStatus, null, 0, (int)TimeSpan.FromSeconds(1).TotalMilliseconds);
+            _timer = new Timer(CheckStatus, null, 0, (int) TimeSpan.FromSeconds(1).TotalMilliseconds);
         }
 
         private void CheckStatus(object state)
         {
             foreach (var tor in _client.GetList().Result.Torrents)
-            {
-                if (tor.Progress >= 100)
+                if (tor.Progress >= 0)
                 {
-                    _log.LogInformation("Creating playing list for ",tor.Name);
+                    _log.LogInformation("Creating playing list for {0}", tor.Name);
                     CreatePlayList(tor);
                 }
-            }
         }
 
-        private  void CreatePlayList(UTorrent.Api.Data.Torrent tor)
+        private void CreatePlayList(UTorrent.Api.Data.Torrent tor)
         {
             foreach (var files in _client.GetFiles(tor.Hash).Result.Files.Values)
-            {
-                foreach (var file in files)
-                {
-                    if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
-                        MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
-                    {
-                        if (!file.NameWithoutPath.EndsWith(".mp4"))
-                            Task.Factory.StartNew(async () =>
+            foreach (var file in files)
+                if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
+                    MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
+                    if (!file.NameWithoutPath.EndsWith(".mp4"))
+                        Task.Factory.StartNew(async () =>
+                        {
+                            var fileToConvert = Path.Combine(tor.Path, file.Name);
+
+                            _log.LogInformation("Start convert process for {0}", fileToConvert);
+                            _log.LogInformation("file path {0}", tor.Path);
+                            var processInfo = new ProcessStartInfo(@"/app/vendor/ffmpeg/ffmpeg")
                             {
-                                var fileToConvert = Path.Combine(tor.Path, file.Name);
+                                Arguments = string.Format(
+                                    @"-i {0} -codec:v libx264 -codec:a aac -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list_flags live -segment_list {1}/out.m3u8 -segment_list_type m3u8 {1}/%d.ts",
+                                    fileToConvert, tor.Path)
+                            };
 
-                                _log.LogInformation("Start convert process for ", fileToConvert);
-                                var processInfo = new ProcessStartInfo(@"/app/vendor/ffmpeg/ffmpeg")
-                                {
-                                    Arguments = string.Format(@"-i {0} -codec:v libx264 -codec:a aac -map 0 
-                                                  -f segment -segment_time 10 -segment_format mpegts -segment_list_flags live 
-                                                  -segment_list {1}/out.m3u8 -segment_list_type m3u8 {1}/%d.ts",
-                                        fileToConvert, tor.Path)
-                                };
-
-                                var process = Process.Start(processInfo);
-                                process.WaitForExit();
-                                await _client.DeleteTorrentAsync(tor.Hash);
-                                await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
-                                //File.Delete(fileToConvert);
-                            });
-                    }
-                }
-            }
+                            var process = Process.Start(processInfo);
+                            process.WaitForExit();
+                            await _client.DeleteTorrentAsync(tor.Hash);
+                            await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
+                            //File.Delete(fileToConvert);
+                        });
         }
 
         public async Task<Content> AddTorrent(Stream file, string path)
