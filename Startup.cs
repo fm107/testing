@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Serilog.Extensions.Logging;
 using WebTorrent.Data;
 using WebTorrent.Repository;
 using WebTorrent.Services;
@@ -61,7 +61,16 @@ namespace WebTorrent
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
+            // Set up custom content types -associating file extension to MIME type
+            var provider = new FileExtensionContentTypeProvider();
+            // Add new mappings
+            provider.Mappings[".m3u8"] = "application/x-mpegURL";
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = provider
+            });
+
             app.UseWebSockets();
 
             app.UseMvc(routes =>
