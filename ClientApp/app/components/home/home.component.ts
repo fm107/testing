@@ -22,8 +22,8 @@ export class HomeComponent implements OnInit {
     parentFolder = this.content.parentFolder;
     currentFolder = this.content.currentFolder;
 
-    idx: string = " ";
-    url: string = " ";
+    idx: string;
+    url: string;
 
     private messages: IMessage[] = new Array();
 
@@ -61,8 +61,9 @@ export class HomeComponent implements OnInit {
             this.url = item.downloadPath + "/out.m3u8";
 
             $("#video").click();
+        } else {
+            this.content.getContent(item.itemName);
         }
-
-        this.content.getContent(item.itemName);
+        
     }
 }
