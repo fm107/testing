@@ -6,6 +6,8 @@ import { IContent } from "../../model/content";
 import {IFileSystemItem} from "../../model/file-system";
 import {isNumeric} from "rxjs/util/isNumeric"
 
+declare var lity: any;
+
 @Component({
     selector: 'data-presenter',
     templateUrl: './data-presenter.component.html',

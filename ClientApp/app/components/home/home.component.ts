@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver } from "@angular/core";
 
 import { Subject } from "rxjs/Subject";
 import { TdDataTableService } from "@covalent/core";
@@ -7,7 +7,9 @@ import { TdDataTableService } from "@covalent/core";
 import { IMessage } from "../../services/message";
 import { WebSocketService } from "../../services/websocket.service";
 import { ContentService } from "../../services/content.service";
-
+import { ClickedItem } from "../data-presenter/ClickedItem";
+import { VideoJSComponent } from "../videojs/videojs.component";
+import { InvokePlayerComponent } from "../invoke-player/invoke-player.component";
 declare var $: any;
 
 @Component({
@@ -23,16 +25,21 @@ export class HomeComponent implements OnInit {
     currentFolder = this.content.currentFolder;
 
     idx: string;
-    url: string;
+    url: string = " ";
 
     private messages: IMessage[] = new Array();
 
     messagesObs: Subject<IMessage>;
+    @ViewChild('videojs') videoBox: VideoJSComponent;
 
+    @ViewChild('parent', { read: ViewContainerRef }) parent: ViewContainerRef;
+    invokePlayerComponent: any;
 
     constructor(private content: ContentService,
         private wsService: WebSocketService,
-        private dataTableService: TdDataTableService) {
+        private dataTableService: TdDataTableService, private componentFactoryResolver: ComponentFactoryResolver) {
+
+        this.invokePlayerComponent = this.componentFactoryResolver.resolveComponentFactory(InvokePlayerComponent);
     }
 
     ngOnInit() {
@@ -54,16 +61,30 @@ export class HomeComponent implements OnInit {
         //});
     }
 
-    onClick(item) {
+    onClick(item: ClickedItem) {
         //this.messagesObs.next({ message: "Test message" });
-        if (item.type == "file") {
-            this.idx = item.id;
-            this.url = item.downloadPath + "/out.m3u8";
 
-            $("#video").click();
-        } else {
-            this.content.getContent(item.itemName);
+        //if (item.type == "file") {
+        //    this.idx = String(item.id);
+        //    this.url = item.downloadPath + "/out.m3u8";
+
+        //    this.videoBox.idx="0";
+        //    this.videoBox.url = "http://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8";
+        //    this.videoBox.init();
+        //    $("#video").click();
+        //} else {
+        //    this.content.getContent(item.itemName);
+        //}
+
+        //this.childComponent.idx = 
+        //this.childComponent.url="http://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8";
+
+        if (item.type == "file") {
+            const cmp = this.parent.createComponent(this.invokePlayerComponent);
+            const inv = (cmp.instance) as InvokePlayerComponent;
+            inv.url = item.downloadPath + "/out.m3u8";
+            inv.idx = String(item.id);
+            inv.init(cmp);
         }
-        
     }
 }

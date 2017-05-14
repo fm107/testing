@@ -27,6 +27,7 @@ import { FilterPipe } from "./pipes/filter.pipe";
 import { SortPipe } from "./pipes/sort.pipe";
 import { FileSizePipe } from "./pipes/filesize.pipe";
 import { ShowFilesPipe } from "./pipes/show-files.pipe";
+import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.component";
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -34,7 +35,7 @@ import { ShowFilesPipe } from "./pipes/show-files.pipe";
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent,
+        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent, InvokePlayerComponent,
 
         FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe
     ],
@@ -55,6 +56,7 @@ import { ShowFilesPipe } from "./pipes/show-files.pipe";
             { path: '**', redirectTo: 'home' }
         ])
     ],
+    entryComponents: [HomeComponent, InvokePlayerComponent],
     providers: [DataService, ContentService, WebSocketService, TdLoadingService, SimpleTimer]
 })
 export class AppModule {

@@ -4,8 +4,10 @@
                 (onItemClick)="onClick($event)">
 </data-presenter>
 
-<a id="video" href="#inline" data-lity></a>
+<!--<a *ngIf="idx" id="video" href="#inline" data-lity></a>
 
-<div *ngIf="idx"  id="inline" style="background:#000000" class="lity-hide">
-    <videojs [idx]="idx" [url]="url"></videojs>
-</div>
+<div *ngIf="idx" id="inline" style="background:#000000" class="lity-hide">
+    <videojs #videojs [idx]="idx" [url]="url"></videojs>
+</div>-->
+
+<div #parent></div>

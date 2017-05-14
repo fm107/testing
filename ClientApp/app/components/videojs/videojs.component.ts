@@ -30,7 +30,10 @@ export class VideoJSComponent {
     // use ngAfterViewInit to make sure we initialize the videojs element
     // after the component template itself has been rendered
     ngAfterViewInit() {
+        this.init();
+    }
 
+    init() {
         console.log("idx - " + this.idx);
         console.log("url - " + this.url);
         // ID with which to access the template's video element
