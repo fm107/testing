@@ -1,0 +1,5 @@
+﻿<video *ngIf="url" id="video_{{idx}}" class="video-js vjs-default-skin vjs-big-play-centered "
+       controls preload="auto" >
+    <source [src]="url"
+            type="application/x-mpegURL">
+</video>

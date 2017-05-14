@@ -64,8 +64,8 @@
             </div>
         </td>
     </tr>
-    <template ngFor let-contents [ngForOf]="filteredData">
-        <template ngFor let-content [ngForOf]="contents.fsItems | showFiles:showFolder | filter:searchTerm | sort:sortBy:sortOrder">
+    <template ngFor let-metaData [ngForOf]="filteredData">
+        <template ngFor let-content [ngForOf]="metaData.fsItems | showFiles:showFolder | filter:searchTerm | sort:sortBy:sortOrder">
             <tr class="animated fadeInDown list__item--hover" td-data-table-row>
                 <td td-data-table-cell>
                     <div class="icon-column">
@@ -75,7 +75,7 @@
                 </td>
                 <td class="pointer--cursor" td-data-table-cell (click)="onClick(content)">{{content.name}}</td>
                 <td class="pointer--default" td-data-table-cell>
-                    <div class="info-column">
+                    <div *ngIf="metaData.isInProgress" class="info-column">
                         <div class="cssProgress">
                             <div class="progress2">
                                 <div class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">

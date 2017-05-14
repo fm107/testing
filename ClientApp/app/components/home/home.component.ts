@@ -1,13 +1,14 @@
-import { Component, OnInit, Output } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 
 import { Subject } from "rxjs/Subject";
 import { TdDataTableService } from "@covalent/core";
+
 
 import { IMessage } from "../../services/message";
 import { WebSocketService } from "../../services/websocket.service";
 import { ContentService } from "../../services/content.service";
 
-declare var lity: any;
+declare var $: any;
 
 @Component({
     selector: "home",
@@ -21,9 +22,13 @@ export class HomeComponent implements OnInit {
     parentFolder = this.content.parentFolder;
     currentFolder = this.content.currentFolder;
 
+    idx: string = " ";
+    url: string = " ";
+
     private messages: IMessage[] = new Array();
 
     messagesObs: Subject<IMessage>;
+
 
     constructor(private content: ContentService,
         private wsService: WebSocketService,
@@ -52,8 +57,10 @@ export class HomeComponent implements OnInit {
     onClick(item) {
         //this.messagesObs.next({ message: "Test message" });
         if (item.type == "file") {
-            console.log(item);
-            lity(item.downloadPath +"/out.m3u8");
+            this.idx = item.id;
+            this.url = item.downloadPath + "/out.m3u8";
+
+            $("#video").click();
         }
 
         this.content.getContent(item.itemName);

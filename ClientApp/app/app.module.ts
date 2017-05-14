@@ -15,12 +15,14 @@ import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { UploadButtonComponent } from "./components/upload-button/upload-button.component";
-
 import { UploadButtonUrlComponent } from "./components/upload-button-url/upload-button-url.component";
+import { VideoJSComponent } from "./components/videojs/videojs.component";
+
 import { DataService } from "./services/data.service";
 import { WebSocketService } from "./services/websocket.service";
 import { DataPresenterComponent } from "./components/data-presenter/data-presenter.component";
 import { ContentService } from "./services/content.service";
+
 import { FilterPipe } from "./pipes/filter.pipe";
 import { SortPipe } from "./pipes/sort.pipe";
 import { FileSizePipe } from "./pipes/filesize.pipe";
@@ -32,7 +34,9 @@ import { ShowFilesPipe } from "./pipes/show-files.pipe";
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe
+        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent,
+
+        FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe
     ],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.

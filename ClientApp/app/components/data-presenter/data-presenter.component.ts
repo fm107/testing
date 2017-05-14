@@ -128,11 +128,12 @@ private sorting(data: IContent[], sortBy, sortOrder) {
         this.onItemClick.emit(itemObj);
     }
 
-    private onClick(item) {
+    private onClick(item:IFileSystemItem) {
         this.showFolder = false;
         const itemObj = new ClickedItem();
 
         if (item.type) {
+            itemObj.id = item.id;
             itemObj.type = item.type;
             itemObj.itemName = item.fullName;
             itemObj.downloadPath = item.downloadPath;
