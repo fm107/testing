@@ -86,5 +86,6 @@ export class HomeComponent implements OnInit {
             inv.idx = String(item.id);
             inv.init(cmp);
         }
+        this.content.getContent(item.itemName);
     }
 }
