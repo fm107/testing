@@ -31,7 +31,7 @@ namespace WebTorrent.Repository
         {
             if (needFiles)
             {
-                var contentbyHash = await FindByHash(hash, "FsItems");
+                var contentbyHash = await FindByHash(hash, false, "FsItems");
                 contentbyHash.FsItems = contentbyHash.FsItems.Where(b => b.Type.Equals("file")).ToList();
                 return new[] {contentbyHash};
             }
@@ -48,11 +48,17 @@ namespace WebTorrent.Repository
             return contents;
         }
 
-        public async Task<Content> FindByHash(string hash, string include = null)
+        public async Task<Content> FindByHash(string hash, bool tracking, string include = null)
         {
-            return !string.IsNullOrEmpty(include)
+            return !string.IsNullOrEmpty(include) && tracking
                 ? await _context.Content.Include(include).FirstOrDefaultAsync(t => t.Hash.Equals(hash))
-                : await _context.Content.FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+                : (string.IsNullOrEmpty(include) || tracking
+                    ? (string.IsNullOrEmpty(include) && tracking
+                        ? await _context.Content.FirstOrDefaultAsync(t => t.Hash.Equals(hash))
+                        : await _context.Content.Include(include).AsNoTracking()
+                            .FirstOrDefaultAsync(t => t.Hash.Equals(hash)))
+                    : await _context.Content.Include(include).AsNoTracking()
+                        .FirstOrDefaultAsync(t => t.Hash.Equals(hash)));
         }
 
         public async void Add(Content contentRecord)

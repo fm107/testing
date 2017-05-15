@@ -32,8 +32,15 @@ namespace WebTorrent.Services
                 : await _repository.FindByFolder(UploadFolder, needFiles, hash);
         }
 
-        public Content SaveFolderContent(UTorrent.Api.Data.Torrent torrent, ICollection<FileCollection> collection)
+        public async Task<Content> SaveFolderContent(UTorrent.Api.Data.Torrent torrent, ICollection<FileCollection> collection)
         {
+            var content = await _repository.FindByHash(torrent.Hash, false, "FsItems");
+
+            if (content!=null)
+            {
+                return content;
+            }
+
             var directoryInfo = new DirectoryInfo(torrent.Path);
 
             var fsContent = new List<FileSystemItem>();
@@ -60,7 +67,7 @@ namespace WebTorrent.Services
 
             fsContent.Add(folder);
 
-            var content = new Content
+            content = new Content
             {
                 FsItems = fsContent,
                 CurrentFolder = directoryInfo.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C', '\u002F'),

@@ -9,7 +9,7 @@ namespace WebTorrent.Repository
     {
         IQueryable<Content> GetAll();
         Task<IList<Content>> FindByFolder(string folder, bool needFiles, string hash);
-        Task<Content> FindByHash(string hash, string include = null);
+        Task<Content> FindByHash(string hash, bool tracking, string include = null);
         void Add(Content contentRecord);
         void Update(Content contentRecord);
         Task Delete(int id);

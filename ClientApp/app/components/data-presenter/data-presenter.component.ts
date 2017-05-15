@@ -128,6 +128,7 @@ private sorting(data: IContent[], sortBy, sortOrder) {
         const itemObj = new ClickedItem();
         itemObj.downloadPath = item;
         itemObj.showFiles = false;
+        console.log(this.parentFolder);
         this.onItemClick.emit(itemObj);
     }
 

@@ -38,14 +38,12 @@ namespace WebTorrent.Services
             {
                 if (tor.Progress == 1000)
                 {
-                    _autoReset.WaitOne((int)TimeSpan.FromSeconds(1).TotalMilliseconds);
-                    var content = await _repository.FindByHash(tor.Hash);
+                    var content = await _repository.FindByHash(tor.Hash, true);
                     if (content?.IsInProgress == true)
                     {
                         _log.LogInformation("Creating playing list for {0}", tor.Name);
                         ChangeStatus(content);
                         CreatePlayList(tor);
-                        _autoReset.Set();
                     }
                 }
             }
@@ -99,8 +97,7 @@ namespace WebTorrent.Services
         {
             var response = _client.PostTorrent(file, path);
             var torrent = response.AddedTorrent;
-            var content = _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
-            return content;
+            return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
         }
 
         public UTorrent.Api.Data.Torrent AddUrlTorrent(string url, string path)
