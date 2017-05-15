@@ -21,6 +21,7 @@ namespace WebTorrent.Services
         private readonly ILogger<TorrentClient> _log;
         private readonly IContentRecordRepository _repository;
         private Timer _timer;
+        private readonly AutoResetEvent _autoReset = new AutoResetEvent(true);
 
         public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository, ILogger<TorrentClient> log)
         {
@@ -37,12 +38,14 @@ namespace WebTorrent.Services
             {
                 if (tor.Progress == 1000)
                 {
+                    _autoReset.WaitOne((int)TimeSpan.FromSeconds(1).TotalMilliseconds);
                     var content = await _repository.FindByHash(tor.Hash);
-                    if (content.IsInProgress)
+                    if (content?.IsInProgress == true)
                     {
                         _log.LogInformation("Creating playing list for {0}", tor.Name);
                         ChangeStatus(content);
                         CreatePlayList(tor);
+                        _autoReset.Set();
                     }
                 }
             }

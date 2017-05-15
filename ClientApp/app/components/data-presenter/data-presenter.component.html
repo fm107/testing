@@ -65,7 +65,7 @@
         </td>
     </tr>
     <template ngFor let-metaData [ngForOf]="filteredData">
-        <template ngFor let-content [ngForOf]="metaData.fsItems | showFiles:showFolder | filter:searchTerm | sort:sortBy:sortOrder">
+        <template ngFor let-content [ngForOf]="metaData.fsItems | filter:searchTerm | sort:sortBy:sortOrder">
             <tr class="animated fadeInDown list__item--hover" td-data-table-row>
                 <td td-data-table-cell>
                     <div class="icon-column">
@@ -73,7 +73,7 @@
                         <img *ngIf="content.type == 'file'" src="/img/document-movie-icon.png">
                     </div>
                 </td>
-                <td class="pointer--cursor" td-data-table-cell (click)="onClick(content)">{{content.name}}</td>
+                <td class="pointer--cursor" td-data-table-cell (click)="onClick(content, metaData.hash)">{{content.name}}</td>
                 <td class="pointer--default" td-data-table-cell>
                     <div *ngIf="metaData.isInProgress" class="info-column">
                         <div class="cssProgress">

@@ -17,8 +17,8 @@ export class ContentService {
         this.currentFolder = new BehaviorSubject<string>(null);
     }
 
-    getContent(request: string) {
-        this.data.getFolderContent(request).subscribe(result => {
+    getContent(request: string, needFiles: boolean, hash: string) {
+        this.data.getFolderContent(request, needFiles, hash).subscribe(result => {
             const res = JSON.parse((result)) as IContent[];
             this.metaData.next(res);
             for (let i of res) {

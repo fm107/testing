@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.content.getContent("");
+        this.content.getContent(null,false, null);
 
         //this.messagesObs = (this.wsService
         //    .connect(`ws://${window.location.hostname}:${window.location.port}/api/Torrent/Notifications`)
@@ -85,7 +85,9 @@ export class HomeComponent implements OnInit {
             inv.url = item.downloadPath + "/out.m3u8";
             inv.idx = String(item.id);
             inv.init(cmp);
+        } else {
+            this.content.getContent(item.downloadPath, item.showFiles, item.hash);
         }
-        this.content.getContent(item.itemName);
+        
     }
 }

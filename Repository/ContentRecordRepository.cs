@@ -27,15 +27,32 @@ namespace WebTorrent.Repository
             return _context.Content;
         }
 
-        public async Task<IList<Content>> Find(string folder)
+        public async Task<IList<Content>> FindByFolder(string folder, bool needFiles, string hash)
         {
-            return await _context.Content.Where(t => t.CurrentFolder.StartsWith(folder)).Include(t => t.FsItems)
-                .ToListAsync();
+            if (needFiles)
+            {
+                var contentbyHash = await FindByHash(hash, "FsItems");
+                contentbyHash.FsItems = contentbyHash.FsItems.Where(b => b.Type.Equals("file")).ToList();
+                return new[] {contentbyHash};
+            }
+
+            var contents = await _context.Content.Where(t => t.CurrentFolder.Equals(folder)).Include(f => f.FsItems)
+                .AsNoTracking().ToListAsync();
+
+            foreach (var content in contents)
+            {
+                content.FsItems = content.FsItems =
+                        content.FsItems.Where(b => b.Type.Equals("folder")).ToList();
+            }
+
+            return contents;
         }
 
-        public async Task<Content> FindByHash(string hash)
+        public async Task<Content> FindByHash(string hash, string include = null)
         {
-            return await _context.Content.FirstAsync(t => t.Hash.Equals(hash));
+            return !string.IsNullOrEmpty(include)
+                ? await _context.Content.Include(include).FirstOrDefaultAsync(t => t.Hash.Equals(hash))
+                : await _context.Content.FirstOrDefaultAsync(t => t.Hash.Equals(hash));
         }
 
         public async void Add(Content contentRecord)
@@ -50,7 +67,7 @@ namespace WebTorrent.Repository
 
         public async Task Delete(int id)
         {
-            var entity = await _context.Content.FirstAsync(t => t.Id == id);
+            var entity = await _context.Content.FirstOrDefaultAsync(t => t.Id == id);
             _context.Content.Remove(entity);
         }
 

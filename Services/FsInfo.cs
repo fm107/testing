@@ -25,30 +25,12 @@ namespace WebTorrent.Services
                 Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, UploadFolder));
         }
 
-#if DEBUG
-        public async Task<IList<Content>> GetFolderContent(string folder)
+        public async Task<IList<Content>> GetFolderContent(string folder, bool needFiles, string hash)
         {
-            if (!string.IsNullOrEmpty(folder) && folder.Contains(@"C:\Users\Alexander\Downloads\wwwroot\uploads"))
-            {
-                var Info = Path.Combine(_environment.WebRootPath, folder);
-                return await _repository.Find(Info);
-            }
-
-            return await _repository.Find(@"C:\Users\Alexander\Downloads\wwwroot\uploads");
+            return !string.IsNullOrEmpty(folder) && folder.Contains(UploadFolder)
+                ? await _repository.FindByFolder(folder, needFiles, hash)
+                : await _repository.FindByFolder(UploadFolder, needFiles, hash);
         }
-
-#else
-        public async Task<IList<Content>> GetFolderContent(string folder)
-        {
-            if (!string.IsNullOrEmpty(folder) && folder.Contains("wwwroot/uploads"))
-            {
-                var Info = Path.Combine(_environment.WebRootPath, folder);
-                return await _repository.Find(Info);
-            }
-
-            return await _repository.Find(@"/app/heroku_output/wwwroot/uploads");
-        }
-#endif
 
         public Content SaveFolderContent(UTorrent.Api.Data.Torrent torrent, ICollection<FileCollection> collection)
         {
@@ -67,23 +49,22 @@ namespace WebTorrent.Services
                     Type = "file"
                 }));
 
-            var folder = new FileSystemItem();
-            folder.Name = Path.ChangeExtension(torrent.Name, null);
-            folder.LastChanged = DateTime.Now;
-            folder.Size = fsContent.Sum(f => f.Size);
-            folder.Type = "folder";
-            folder.FullName = Path.Combine(directoryInfo.FullName, folder.Name);
+            var folder = new FileSystemItem
+            {
+                Name = Path.ChangeExtension(torrent.Name, null),
+                LastChanged = DateTime.Now,
+                Size = fsContent.Sum(f => f.Size),
+                Type = "folder",
+                FullName = directoryInfo.FullName
+            };
 
             fsContent.Add(folder);
 
             var content = new Content
             {
                 FsItems = fsContent,
-                CurrentFolder = folder.FullName ?? UploadFolder,
-                ParentFolder = torrent.Path == null || torrent.Path == UploadFolder
-                    ? null
-                    : directoryInfo.Parent.FullName.Replace(_environment.WebRootPath, string.Empty)
-                        .TrimStart('\u005C', '\u002F'),
+                CurrentFolder = directoryInfo.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C', '\u002F'),
+                ParentFolder = directoryInfo.Parent.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C', '\u002F'),
                 Hash = torrent.Hash,
                 IsInProgress = true
             };

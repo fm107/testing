@@ -29,9 +29,11 @@ export class DataService {
         this.st.newTimer('5sec', 5);
     }
 
-    getFolderContent(folder: string) {
+    getFolderContent(folder: string, needFiles: boolean, hash: string) {
         const params = new URLSearchParams();
         params.set("folder", folder);
+        params.set("needFiles", needFiles.toString());
+        params.set("hash", hash);
 
         this.loadingService.register("query");
             this.http.get(`api/Content/GetFolder`, { search: params }).subscribe(

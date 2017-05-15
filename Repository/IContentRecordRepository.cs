@@ -8,8 +8,8 @@ namespace WebTorrent.Repository
     public interface IContentRecordRepository
     {
         IQueryable<Content> GetAll();
-        Task<IList<Content>> Find(string folder);
-        Task<Content> FindByHash(string hash);
+        Task<IList<Content>> FindByFolder(string folder, bool needFiles, string hash);
+        Task<Content> FindByHash(string hash, string include = null);
         void Add(Content contentRecord);
         void Update(Content contentRecord);
         Task Delete(int id);

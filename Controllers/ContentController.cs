@@ -29,7 +29,7 @@ namespace WebTorrent.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetFolder([FromQuery] string folder)
+        public async Task<IActionResult> GetFolder([FromQuery] string folder, bool needFiles, string hash)
         {
 #if !DEBUG
             var directoryInfo = new DirectoryInfo(Path.Combine(_environment.WebRootPath, folder ?? UploadFolder));
@@ -37,7 +37,7 @@ namespace WebTorrent.Controllers
             if (!directoryInfo.Parent.FullName.StartsWith(_environment.WebRootPath))
                 return Forbid();
 #endif
-            var resp = await _fsInfo.GetFolderContent(folder);
+            var resp = await _fsInfo.GetFolderContent(folder, needFiles, hash);
             return Json(resp);
         }
 

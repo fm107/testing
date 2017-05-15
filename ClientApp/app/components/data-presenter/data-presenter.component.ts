@@ -126,15 +126,18 @@ private sorting(data: IContent[], sortBy, sortOrder) {
     private onUp(item) {
         this.showFolder = true;
         const itemObj = new ClickedItem();
-        itemObj.itemName = item;
+        itemObj.downloadPath = item;
+        itemObj.showFiles = false;
         this.onItemClick.emit(itemObj);
     }
 
-    private onClick(item:IFileSystemItem) {
+    private onClick(item:IFileSystemItem, hash: string) {
         this.showFolder = false;
         const itemObj = new ClickedItem();
 
         if (item.type) {
+            itemObj.showFiles = true;
+            itemObj.hash = hash;
             itemObj.id = item.id;
             itemObj.type = item.type;
             itemObj.itemName = item.fullName;

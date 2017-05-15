@@ -102,18 +102,6 @@ namespace WebTorrent.Controllers
             //return Ok(Path.GetFileName(_fileName));
         }
 
-        [HttpGet("[action]")]
-        public string GetTorrentInfo()
-        {
-            return _torrentClient.GetTorrentInfo();
-        }
-
-        [HttpGet("[action]")]
-        public IActionResult GetTorrent()
-        {
-            return Content(JsonConvert.SerializeObject(_torrentClient.GetTorrent()));
-        }
-
         [HttpPost("[action]")]
         public async Task<IActionResult> UploadFile(ICollection<IFormFile> file, string folder)
         {
@@ -126,10 +114,24 @@ namespace WebTorrent.Controllers
                 if (!await _torrentClient.IsTorrentType(content))
                     return BadRequest("Not application/x-bittorrent Mime type");
 
-                return Json(new List<Content> {await _torrentClient.AddTorrent(content, DownLoadFolder)});
+                return Json(string.IsNullOrEmpty(folder)
+                    ? new List<Content> {await _torrentClient.AddTorrent(content, folder)}
+                    : new List<Content> {await _torrentClient.AddTorrent(content, DownLoadFolder)});
             }
 
-            return null;
+            return Ok("{}");
+        }
+
+        [HttpGet("[action]")]
+        public string GetTorrentInfo()
+        {
+            return _torrentClient.GetTorrentInfo();
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult GetTorrent()
+        {
+            return Content(JsonConvert.SerializeObject(_torrentClient.GetTorrent()));
         }
 
         [HttpGet("[action]")]
@@ -148,7 +150,7 @@ namespace WebTorrent.Controllers
                     switch (received.MessageType)
                     {
                         case WebSocketMessageType.Text:
-                            var request = new MyClass {message = total.ToString()};
+                            var request = new MyClass { message = total.ToString() };
                             var type = WebSocketMessageType.Text;
                             var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request));
                             buffer = new ArraySegment<byte>(data);
