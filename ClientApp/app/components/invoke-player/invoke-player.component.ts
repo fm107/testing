@@ -25,6 +25,7 @@ export class InvokePlayerComponent {
             console.log('Lightbox closed');
             videojs.clear();
             component.destroy();
+            $("#inline").remove();
         });
     }
 }
