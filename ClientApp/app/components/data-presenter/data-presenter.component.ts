@@ -60,7 +60,7 @@ export class DataPresenterComponent {
     }
 
     updateDataTable(action: string): void {
-        const newData: any[] = this.data;
+        const newData: IContent[] = this.data;
 
         switch (action) {
             case "filter":
@@ -82,8 +82,8 @@ export class DataPresenterComponent {
                 //this.filteredData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
 
                 //newData.forEach(data=>this.sorting(data, this.sortBy, this.sortOrder));
-
-                this.filteredData = newData;
+                this.filteredData = this.sorting(newData, this.sortBy, this.sortOrder);
+                //this.filteredData = newData;
                 break;
             default:
                 this.filteredData = newData;
@@ -91,20 +91,38 @@ export class DataPresenterComponent {
         }
     }
 
-private sorting(data: IContent[], sortBy, sortOrder) {
-    data.sort((a, b) => {
-        var compA = a.fsItems[sortBy];
-        var compB = b.fsItems[sortBy];
-        var direction = 0;
-        if (compA < compB) {
-            direction = -1;
+    private sorting(data: IContent[], sortBy, sortOrder) {
+
+        data.forEach((v, l)=> v.fsItems);
+        for (var i = 0; i < data.length; i++) {
+                data[i].fsItems.sort((a, b) => {
+                    var compA = a[sortBy];
+                    var compB = b[sortBy];
+                    var direction = 0;
+                    if (compA < compB) {
+                        direction = -1;
+                    }
+                    else if (compA > compB) {
+                        direction = 1;
+                    }
+                    return direction * (sortOrder === TdDataTableSortingOrder.Descending ? -1 : 1);
+            });
         }
-        else if (compA > compB) {
-            direction = 1;
-        }
-        return direction * (sortOrder === TdDataTableSortingOrder.Descending ? -1 : 1);
-    });
-}
+
+        return data;
+        //return data.sort((a, b) => {
+        //    var compA = a.fsItems[sortBy];
+        //    var compB = b.fsItems[sortBy];
+        //    var direction = 0;
+        //    if (compA < compB) {
+        //        direction = -1;
+        //    }
+        //    else if (compA > compB) {
+        //        direction = 1;
+        //    }
+        //    return direction * (sortOrder === TdDataTableSortingOrder.Descending ? -1 : 1);
+        //});
+    }
 
     private showFiles1(item) {
         switch (item.type) {
@@ -124,24 +142,31 @@ private sorting(data: IContent[], sortBy, sortOrder) {
     }
 
     private onUp(item) {
-        this.showFolder = true;
+        console.log(item);
+        setTimeout(() => {
+            this.showFolder = true;
+        }, 10);
+
         const itemObj = new ClickedItem();
-        itemObj.downloadPath = item;
+        itemObj.folder = item;
         itemObj.showFiles = false;
-        console.log(this.parentFolder);
         this.onItemClick.emit(itemObj);
     }
 
-    private onClick(item:IFileSystemItem, hash: string) {
-        this.showFolder = false;
+    private onClick(item: IFileSystemItem, content: IContent) {
+        setTimeout(() => {
+            this.showFolder = false;
+        }, 10);
+
         const itemObj = new ClickedItem();
 
         if (item.type) {
             itemObj.showFiles = true;
-            itemObj.hash = hash;
+            itemObj.hash = content.hash;
             itemObj.id = item.id;
             itemObj.type = item.type;
             itemObj.itemName = item.fullName;
+            itemObj.folder = content.parentFolder;
             itemObj.downloadPath = item.downloadPath;
             this.onItemClick.emit(itemObj);
         }

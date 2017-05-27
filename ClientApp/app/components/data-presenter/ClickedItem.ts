@@ -4,5 +4,6 @@
     type: string;
     itemName: string;
     downloadPath: string;
+    folder: string;
     showFiles:boolean;
 }

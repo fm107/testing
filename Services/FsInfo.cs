@@ -12,6 +12,7 @@ namespace WebTorrent.Services
 {
     public class FsInfo
     {
+        private readonly char[] _directorySeparators = {'\u005C', '\u002F'};
         private const string UploadFolder = "uploads";
         private readonly IHostingEnvironment _environment;
         private readonly IContentRecordRepository _repository;
@@ -36,25 +37,24 @@ namespace WebTorrent.Services
         {
             var content = await _repository.FindByHash(torrent.Hash, false, "FsItems");
 
-            if (content!=null)
-            {
-                return content;
-            }
+            if (content != null) return content;
 
             var directoryInfo = new DirectoryInfo(torrent.Path);
 
             var fsContent = new List<FileSystemItem>();
 
             foreach (var col in collection)
+            {
                 fsContent.AddRange(col.Select(file => new FileSystemItem
                 {
                     DownloadPath = directoryInfo.FullName.Replace(_environment.WebRootPath, string.Empty),
                     Name = file.NameWithoutPath,
-                    FullName = Path.Combine(directoryInfo.FullName, Path.ChangeExtension(torrent.Name, null)),
+                    FullName = directoryInfo.FullName,
                     LastChanged = DateTime.Now,
                     Size = file.Size,
                     Type = "file"
                 }));
+            }
 
             var folder = new FileSystemItem
             {
@@ -67,11 +67,13 @@ namespace WebTorrent.Services
 
             fsContent.Add(folder);
 
+            GetFolderPath(directoryInfo, out string currentFolder, out string parentFolder);
+
             content = new Content
             {
                 FsItems = fsContent,
-                CurrentFolder = directoryInfo.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C', '\u002F'),
-                ParentFolder = directoryInfo.Parent.FullName.Replace(_environment.WebRootPath, string.Empty).TrimStart('\u005C', '\u002F'),
+                CurrentFolder = currentFolder,
+                ParentFolder = parentFolder,
                 Hash = torrent.Hash,
                 IsInProgress = true
             };
@@ -80,6 +82,32 @@ namespace WebTorrent.Services
             _repository.Save();
 
             return content;
+        }
+
+        private void GetFolderPath(FileSystemInfo path, out string currentFolder, out string parentFolder)
+        {
+            var separator = path.FullName.FirstOrDefault(c => _directorySeparators.Contains(c));
+
+            var tmpString = path.FullName.Replace(_environment.WebRootPath, string.Empty)
+                                         .TrimStart(_directorySeparators);
+            var indexOfSeparator = tmpString.IndexOf(separator);
+            var indexToRemove = tmpString.IndexOf(separator, indexOfSeparator + 1);
+
+            string parrent;
+            string current;
+            if (indexToRemove > 0)
+            {
+                current = tmpString.Remove(indexToRemove);
+                parrent = current.Substring(0, indexOfSeparator);
+            }
+            else
+            {
+                current = tmpString;
+                parrent = current.Substring(0, indexOfSeparator);
+            }
+
+            currentFolder = current;
+            parentFolder = parrent;
         }
     }
 }

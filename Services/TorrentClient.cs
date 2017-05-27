@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -29,7 +31,7 @@ namespace WebTorrent.Services
             _repository = repository;
             _log = log;
             _client = new UTorrentClient("admin", "");
-            _timer = new Timer(CheckStatus, null, 0, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
+            _timer = new Timer(CheckStatus, null, 0, (int)TimeSpan.FromSeconds(10).TotalMilliseconds);
         }
 
         private async void CheckStatus(object state)
@@ -38,12 +40,14 @@ namespace WebTorrent.Services
             {
                 if (tor.Progress == 1000)
                 {
+                    _autoReset.WaitOne((int)TimeSpan.FromSeconds(1).TotalMilliseconds);
                     var content = await _repository.FindByHash(tor.Hash, true);
                     if (content?.IsInProgress == true)
                     {
                         _log.LogInformation("Creating playing list for {0}", tor.Name);
                         ChangeStatus(content);
                         CreatePlayList(tor);
+                        _autoReset.Set();
                     }
                 }
             }
@@ -68,25 +72,32 @@ namespace WebTorrent.Services
                     {
                         if (!file.NameWithoutPath.EndsWith(".mp4") && tor.Path.Contains(Path.ChangeExtension(file.NameWithoutPath, null)))
                         {
-                            Task.Factory.StartNew( () =>
-                        {
                             var fileToConvert = Path.Combine(tor.Path, file.Name);
 
                             _log.LogInformation("Start convert process for {0}", fileToConvert);
                             _log.LogInformation("file path {0}", tor.Path);
-                            var processInfo = new ProcessStartInfo(@"/app/vendor/ffmpeg/ffmpeg")
-                            {
-                                Arguments = string.Format(
-                                    @"-i {0} -codec:v libx264 -codec:a aac -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list_flags live -segment_list {1}/out.m3u8 -segment_list_type m3u8 {1}/%d.ts",
-                                    fileToConvert, tor.Path)
-                            };
+                            var ffmpeg = new FFmpeg();
+                            ffmpeg.CreatePlayList(fileToConvert, tor.Path);
 
-                            var process = Process.Start(processInfo);
-                            process.WaitForExit();
-                            //await _client.DeleteTorrentAsync(tor.Hash);
-                            //await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
-                            //File.Delete(fileToConvert);
-                        });
+                       //     Task.Factory.StartNew(() =>
+                       //{
+                       //    var fileToConvert = Path.Combine(tor.Path, file.Name);
+
+                       //    _log.LogInformation("Start convert process for {0}", fileToConvert);
+                       //    _log.LogInformation("file path {0}", tor.Path);
+                       //    var processInfo = new ProcessStartInfo(@"/app/vendor/ffmpeg/ffmpeg")
+                       //    {
+                       //        Arguments = string.Format(
+                       //            @"-i {0} -codec:v libx264 -codec:a aac -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list_flags live -segment_list {1}/out.m3u8 -segment_list_type m3u8 {1}/%d.ts",
+                       //            fileToConvert, tor.Path)
+                       //    };
+
+                       //    var process = Process.Start(processInfo);
+                       //    process.WaitForExit();
+                       //     //await _client.DeleteTorrentAsync(tor.Hash);
+                       //     //await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
+                       //     //File.Delete(fileToConvert);
+                       // });
                         }
                     }
                 }
@@ -95,7 +106,7 @@ namespace WebTorrent.Services
 
         public async Task<Content> AddTorrent(Stream file, string path)
         {
-            var response = _client.PostTorrent(file, path);
+            var response = _client.PostTorrent(file, Path.Combine(path, await GetTorrentName(file)));
             var torrent = response.AddedTorrent;
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
         }
@@ -106,10 +117,27 @@ namespace WebTorrent.Services
             return response.AddedTorrent;
         }
 
+        private static async Task<string> GetTorrentName(Stream file)
+        {
+            var buffer = new byte[file.Length];
+            var regex = new Regex(":name[0-9]{2}:(.*?)[0-9]{2}:piece");
+
+            if (file.CanRead)
+            {
+                await file.ReadAsync(buffer, 0, buffer.Length);
+                if (file.CanSeek)
+                {
+                    file.Seek(0, SeekOrigin.Begin);
+                }
+            }
+            var stringOfStream = Encoding.UTF8.GetString(buffer);
+            return Path.ChangeExtension(regex.Match(stringOfStream).Groups[1].Value, null);
+        }
+
         public async Task<bool> IsTorrentType(Stream file)
         {
             var buffer = new byte[11];
-            var torrentType = new byte[] {0x64, 0x38, 0x3a, 0x61, 0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65};
+            var torrentType = new byte[] { 0x64, 0x38, 0x3a, 0x61, 0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65 };
 
             if (file.CanRead)
             {
@@ -163,7 +191,7 @@ namespace WebTorrent.Services
             var items = new List<object>();
             foreach (var torrent in _client.GetList().Result.Torrents)
             {
-                items.Add(new {torrent.Name, Progress = torrent.Progress / 10.0, torrent.Remaining});
+                items.Add(new { torrent.Name, Progress = torrent.Progress / 10.0, torrent.Remaining });
             }
 
             return items;

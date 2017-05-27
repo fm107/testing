@@ -65,6 +65,9 @@ namespace WebTorrent
             var provider = new FileExtensionContentTypeProvider();
             // Add new mappings
             provider.Mappings[".m3u8"] = "application/x-mpegURL";
+            provider.Mappings[".woff"] = "application/x-font-woff";
+            provider.Mappings[".woff2"] = "font/woff2";
+            provider.Mappings[".ttf"] = "font/ttf";
 
             app.UseStaticFiles(new StaticFileOptions
             {

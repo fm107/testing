@@ -13,9 +13,8 @@
 }
 
 .pointer--cursor { cursor: pointer; }
-.pointer--default {
-    cursor: default;
-}
+
+.pointer--default { cursor: default; }
 
 .icon-column {
     width: 5px;
@@ -44,6 +43,10 @@
     /*margin-left: 80%;
     position: absolute;
     z-index: 2;*/
+}
+
+.folder-up {
+    display: none;
 }
 
 .txt_alignment {

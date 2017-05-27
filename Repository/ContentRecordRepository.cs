@@ -36,7 +36,8 @@ namespace WebTorrent.Repository
                 return new[] {contentbyHash};
             }
 
-            var contents = await _context.Content.Where(t => t.CurrentFolder.Equals(folder)).Include(f => f.FsItems)
+            //todo correct display parent/current folder. Was t => t.CurrentFolder.Equals(folder))
+            var contents = await _context.Content.Where(t => t.ParentFolder.Equals(folder)).Include(f => f.FsItems)
                 .AsNoTracking().ToListAsync();
 
             foreach (var content in contents)

@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
 
     onClick(item: ClickedItem) {
         //this.messagesObs.next({ message: "Test message" });
-
+        console.log(item);
         if (item.type == "file") {
             const cmp = this.parent.createComponent(this.invokePlayerComponent);
             const inv = (cmp.instance) as InvokePlayerComponent;
@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
             inv.idx = String(item.id);
             inv.init(cmp);
         } else {
-            this.content.getContent(item.downloadPath, item.showFiles, item.hash);
+            this.content.getContent(item.folder, item.showFiles, item.hash);
         }
     }
 }

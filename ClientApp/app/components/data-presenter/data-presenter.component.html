@@ -50,7 +50,7 @@
             <span class="text-input--material__label--active" mdTooltip="{{changed.tooltip}}">{{changed.label}}</span>
         </th>
     </tr>
-    <tr td-data-table-row *ngIf="parentFolder != uploads">
+    <tr td-data-table-row [ngClass]="{'folder-up' : showFolder}">
         <td td-data-table-cell>
             <div class="icon-column">
                 <img src="/img/cycle.png">
@@ -64,8 +64,8 @@
             </div>
         </td>
     </tr>
-    <template ngFor let-metaData [ngForOf]="filteredData">
-        <template ngFor let-content [ngForOf]="metaData.fsItems | filter:searchTerm | sort:sortBy:sortOrder">
+    <template ngFor let-metaData [ngForOf]="filteredData ">
+        <template ngFor let-content [ngForOf]="metaData.fsItems | filter:searchTerm ">
             <tr class="animated fadeInDown list__item--hover" td-data-table-row>
                 <td td-data-table-cell>
                     <div class="icon-column">
@@ -73,7 +73,7 @@
                         <img *ngIf="content.type == 'file'" src="/img/document-movie-icon.png">
                     </div>
                 </td>
-                <td class="pointer--cursor" td-data-table-cell (click)="onClick(content, metaData.hash)">{{content.name}}</td>
+                <td class="pointer--cursor" td-data-table-cell (click)="onClick(content, metaData)">{{content.name}}</td>
                 <td class="pointer--default" td-data-table-cell>
                     <div *ngIf="metaData.isInProgress" class="info-column">
                         <div class="cssProgress">
