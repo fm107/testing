@@ -56,12 +56,13 @@ export class HomeComponent implements OnInit {
         //this.messagesObs.next({ message: "Test message" });
         console.log(item);
         if (item.type == "file") {
-            const cmp = this.parent.createComponent(this.invokePlayerComponent);
+            let cmp = this.parent.createComponent(this.invokePlayerComponent);
             let inv = (cmp.instance) as InvokePlayerComponent;
             inv.url = item.downloadPath + "/out.m3u8";
             inv.idx = String(item.id);
             inv.init(cmp, this.parent);
             inv = null;
+            cmp = null;
         } else {
             this.content.getContent(item.folder, item.showFiles, item.hash);
         }
