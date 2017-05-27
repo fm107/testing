@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, ViewContainerRef } from '@angular/core';
 
 declare var $: any;
 
@@ -18,13 +18,13 @@ export class InvokePlayerComponent {
         
     }
 
-    init(component, videojs) {
+    init(component, videojs: ViewContainerRef) {
         $("#video").click();
 
         $(document).on('lity:close', (event, instance) => {
             console.log('Lightbox closed');
-            component.destroy();
             videojs.clear();
+            component.destroy();
         });
     }
 }
