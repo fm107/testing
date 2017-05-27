@@ -19,10 +19,10 @@ export class VideoJSComponent {
     @Input() url: any;
 
     // declare player var
-    private player: any;
+    player: any;
 
     // constructor initializes our declared vars
-    constructor(elementRef: ElementRef) {
+    constructor() {
         this.url = false;
         this.player = false;
     }
@@ -41,14 +41,14 @@ export class VideoJSComponent {
 
         // setup the player via the unique element ID
         this.player = videojs(el);
-
+        
         this.player = videojs(document.getElementById(el), {}, function () {
 
             // Store the video object
             var myPlayer = this, id = myPlayer.id();
 
             // Make up an aspect ratio
-            var aspectRatio = 400 / 500;
+            var aspectRatio = 364 / 540;
 
             // internal method to handle a window resize event to adjust the video player
             function resizeVideoJS() {

@@ -1,31 +1,24 @@
-import { Component, OnInit, ElementRef, Input, ViewContainerRef } from '@angular/core';
+import { Component, ViewContainerRef } from "@angular/core";
 
 declare var $: any;
 
 @Component({
-    selector: "invoke",
     templateUrl: "./invoke-player.component.html"
 })
 
 export class InvokePlayerComponent {
     idx: string;
     url: any;
-    
-    constructor() {
-        //this.url = "http://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8";
-        //this.idx = "0";
 
-        
-    }
-
-    init(component, videojs: ViewContainerRef) {
+    init(component, videojs: ViewContainerRef, id: string) {
         $("#video").click();
 
-        $(document).on('lity:close', (event, instance) => {
-            console.log('Lightbox closed');
+        $(document).on("lity:close", (event, instance) => {
+            console.log("Lightbox closed");
+            
             videojs.clear();
-            component.destroy();
-            $("#videoPlayer").remove();
+            component.destroy(); 
+            $(`#video_${id}`).remove();
         });
     }
 }
