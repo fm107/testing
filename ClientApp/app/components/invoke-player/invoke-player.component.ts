@@ -18,12 +18,13 @@ export class InvokePlayerComponent {
         
     }
 
-    init(component) {
+    init(component, videojs) {
         $("#video").click();
 
         $(document).on('lity:close', (event, instance) => {
             console.log('Lightbox closed');
             component.destroy();
+            videojs.clear();
         });
     }
 }

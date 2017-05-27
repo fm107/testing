@@ -37,7 +37,7 @@ export class VideoJSComponent {
         console.log("idx - " + this.idx);
         console.log("url - " + this.url);
         // ID with which to access the template's video element
-        let el = `video_${this.idx}`;
+        const el = `video_${this.idx}`;
 
         // setup the player via the unique element ID
         this.player = videojs(el);

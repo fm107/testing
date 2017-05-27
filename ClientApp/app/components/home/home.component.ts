@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
             const inv = (cmp.instance) as InvokePlayerComponent;
             inv.url = item.downloadPath + "/out.m3u8";
             inv.idx = String(item.id);
-            inv.init(cmp);
+            inv.init(cmp, this.parent);
         } else {
             this.content.getContent(item.folder, item.showFiles, item.hash);
         }
