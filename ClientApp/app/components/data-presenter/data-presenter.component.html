@@ -45,7 +45,6 @@
             [active]="changed.sortable && changed.name === sortBy"
             [sortable]="changed.sortable"
             [sortOrder]="sortOrder" 
-            [numeric]="changed.numeric"
             (sortChange)="sort($event)">
             <span class="text-input--material__label--active" mdTooltip="{{changed.tooltip}}">{{changed.label}}</span>
         </th>
