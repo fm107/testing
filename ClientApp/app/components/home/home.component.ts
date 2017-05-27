@@ -57,10 +57,11 @@ export class HomeComponent implements OnInit {
         console.log(item);
         if (item.type == "file") {
             const cmp = this.parent.createComponent(this.invokePlayerComponent);
-            const inv = (cmp.instance) as InvokePlayerComponent;
+            let inv = (cmp.instance) as InvokePlayerComponent;
             inv.url = item.downloadPath + "/out.m3u8";
             inv.idx = String(item.id);
             inv.init(cmp, this.parent);
+            inv = null;
         } else {
             this.content.getContent(item.folder, item.showFiles, item.hash);
         }
