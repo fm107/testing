@@ -6,5 +6,6 @@
     downloadPath: string;
     stream: string;
     folder: string;
-    showFiles:boolean;
+    showFiles: boolean;
+    isStreaming: boolean;
 }

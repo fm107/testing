@@ -58,9 +58,15 @@ export class HomeComponent implements OnInit {
         if (item.type == "file") {
             const cmp = this.parent.createComponent(this.invokePlayerComponent);
             const inv = (cmp.instance) as InvokePlayerComponent;
-            inv.url = item.stream;
             inv.idx = String(item.id);
-            inv.init(cmp, this.parent, String(item.id));
+
+            if (item.isStreaming) {
+                inv.url = item.stream;
+                inv.initVideo(cmp, this.parent, String(item.id));
+            } else {
+                inv.url = item.downloadPath + "/" + item.itemName;
+                inv.initContent(cmp, this.parent, String(item.id));
+            }
 
         } else {
             this.content.getContent(item.folder, item.showFiles, item.hash);

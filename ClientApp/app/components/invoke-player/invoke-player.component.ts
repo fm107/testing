@@ -10,7 +10,7 @@ export class InvokePlayerComponent {
     idx: string;
     url: any;
 
-    init(component, videojs: ViewContainerRef, id: string) {
+    initVideo(component, videojs: ViewContainerRef, id: string) {
         $("#video").click();
 
         $(document).on("lity:close", (event, instance) => {
@@ -19,6 +19,18 @@ export class InvokePlayerComponent {
             videojs.clear();
             component.destroy(); 
             $(`#video_${id}`).remove();
+        });
+    }
+
+    initContent(component, videojs: ViewContainerRef, id: string) {
+        $("#non_video").click();
+
+        $(document).on("lity:close", () => {
+            console.log("Lightbox closed");
+
+            videojs.clear();
+            component.destroy();
+            $("#non_video").remove();
         });
     }
 }

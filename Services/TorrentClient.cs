@@ -27,6 +27,7 @@ namespace WebTorrent.Services
         private readonly ILogger<TorrentClient> _log;
         private readonly IContentRecordRepository _repository;
         private Timer _timer;
+        private readonly TaskSynchronizationScope _lock = new TaskSynchronizationScope();
 
         public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository, ILogger<TorrentClient> log,
             FFmpeg ffmpeg, IHostingEnvironment environment)
@@ -46,15 +47,21 @@ namespace WebTorrent.Services
             {
                 if (tor.Progress == 1000)
                 {
-                    _autoReset.WaitOne((int) TimeSpan.FromSeconds(1).TotalMilliseconds);
-                    var content = await _repository.FindByHash(tor.Hash, true);
+                    //_autoReset.WaitOne((int) TimeSpan.FromSeconds(1).TotalMilliseconds);
+
+                    Content content = null;
+                    await _lock.RunAsync(async () =>
+                    {
+                        content = await _repository.FindByHash(tor.Hash, true);
+                    });
+
                     if (content?.IsInProgress == true)
                     {
                         _log.LogInformation("Creating playing list for {0}", tor.Name);
                         ChangeStatus(content);
                         //CreatePlayList(tor);
                         CreatePlayList(content);
-                        _autoReset.Set();
+                        //_autoReset.Set();
                     }
                 }
             }
@@ -74,16 +81,23 @@ namespace WebTorrent.Services
                         _log.LogInformation("Start convert process for {0}", fileToConvert);
                         _log.LogInformation("file path {0}", file.FullName);
 
-                        _ffmpeg.CreatePlayList(fileToConvert, file.FullName, file.Name);
-
                         file.Stream = Path.Combine(file.FullName.Replace(_environment.WebRootPath, string.Empty),
                             file.Name + ".m3u8");
+                        _repository.Update(content);
+                        _repository.Save();
+
+                        _ffmpeg.CreatePlayList(fileToConvert, file.FullName, file.Name);
+                        
                     }
                     else
                     {
                         file.Stream = Path.Combine(file.FullName.Replace(_environment.WebRootPath, string.Empty),
                             file.Name);
+                        _repository.Update(content);
+                        _repository.Save();
                     }
+
+                    file.IsStreaming = true;
                 }
             }
         }

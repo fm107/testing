@@ -44,6 +44,8 @@ namespace WebTorrent.Migrations
 
                     b.Property<string>("FullName");
 
+                    b.Property<bool>("IsStreaming");
+
                     b.Property<DateTime>("LastChanged");
 
                     b.Property<string>("Name");

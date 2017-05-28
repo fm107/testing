@@ -20,6 +20,7 @@ namespace WebTorrent.Model
     {
         public int Id { get; set; }
 
+        public bool IsStreaming { get; set; }
         public string Stream { get; set; }
         public string DownloadPath { get; set; }
         public string FullName { get; set; }

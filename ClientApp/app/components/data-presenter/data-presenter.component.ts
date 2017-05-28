@@ -142,7 +142,7 @@ export class DataPresenterComponent {
     }
 
     private onUp(item) {
-        console.log(item);
+        console.log("onUp " + item);
         setTimeout(() => {
             this.showFolder = true;
         }, 10);
@@ -154,6 +154,8 @@ export class DataPresenterComponent {
     }
 
     private onClick(item: IFileSystemItem, content: IContent) {
+        console.log("onClick: item " + item);
+        console.log("onClick: content " + content);
         setTimeout(() => {
             this.showFolder = false;
         }, 10);
@@ -165,10 +167,11 @@ export class DataPresenterComponent {
             itemObj.hash = content.hash;
             itemObj.id = item.id;
             itemObj.type = item.type;
-            itemObj.itemName = item.fullName;
+            itemObj.itemName = item.name;
             itemObj.folder = content.parentFolder;
             itemObj.downloadPath = item.downloadPath;
             itemObj.stream = item.stream;
+            itemObj.isStreaming = item.isStreaming;
             this.onItemClick.emit(itemObj);
         }
     }

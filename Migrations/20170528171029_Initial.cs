@@ -33,6 +33,7 @@ namespace WebTorrent.Migrations
                     ContentId = table.Column<int>(nullable: true),
                     DownloadPath = table.Column<string>(nullable: true),
                     FullName = table.Column<string>(nullable: true),
+                    IsStreaming = table.Column<bool>(nullable: false),
                     LastChanged = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Size = table.Column<long>(nullable: false),

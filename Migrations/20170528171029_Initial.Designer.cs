@@ -8,7 +8,7 @@ using WebTorrent.Data;
 namespace WebTorrent.Migrations
 {
     [DbContext(typeof(ContentDbContext))]
-    [Migration("20170528155258_Initial")]
+    [Migration("20170528171029_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,8 @@ namespace WebTorrent.Migrations
                     b.Property<string>("DownloadPath");
 
                     b.Property<string>("FullName");
+
+                    b.Property<bool>("IsStreaming");
 
                     b.Property<DateTime>("LastChanged");
 

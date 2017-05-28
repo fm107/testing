@@ -6,5 +6,6 @@
     name: string;
     size: number;
     lastChanged: Date;
-    type: string;   
+    type: string;
+    isStreaming: boolean;
 }
