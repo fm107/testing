@@ -70,36 +70,31 @@ namespace WebTorrent.Services
         private void CreatePlayList(Content content)
         {
             foreach (var file in content.FsItems.Where(f => f.Type.Equals("file")))
-            {
                 if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
                     MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
                 {
-                    if (!file.Name.EndsWith(".mp4"))
-                    {
-                        var fileToConvert = Path.Combine(file.FullName, file.Name);
-
-                        _log.LogInformation("Start convert process for {0}", fileToConvert);
-                        _log.LogInformation("file path {0}", file.FullName);
-
-                        file.Stream = Path.Combine(file.FullName.Replace(_environment.WebRootPath, string.Empty),
-                            file.Name + ".m3u8");
-                        _repository.Update(content);
-                        _repository.Save();
-
-                        _ffmpeg.CreatePlayList(fileToConvert, file.FullName, file.Name);
-                        
-                    }
-                    else
+                    if (file.Name.EndsWith(".mp4"))
                     {
                         file.Stream = Path.Combine(file.FullName.Replace(_environment.WebRootPath, string.Empty),
                             file.Name);
+                        file.IsStreaming = true;
                         _repository.Update(content);
                         _repository.Save();
                     }
 
+                    var fileToConvert = Path.Combine(file.FullName, file.Name);
+
+                    _log.LogInformation("Start convert process for {0}", fileToConvert);
+                    _log.LogInformation("file path {0}", file.FullName);
+
+                    file.Stream = Path.Combine(file.FullName.Replace(_environment.WebRootPath, string.Empty),
+                        file.Name + ".m3u8");
                     file.IsStreaming = true;
+                    _repository.Update(content);
+                    _repository.Save();
+
+                    _ffmpeg.CreatePlayList(fileToConvert, file.FullName, file.Name);
                 }
-            }
         }
 
         private void ChangeStatus(Content content)
