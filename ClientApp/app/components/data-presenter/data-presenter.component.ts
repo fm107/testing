@@ -168,6 +168,7 @@ export class DataPresenterComponent {
             itemObj.itemName = item.fullName;
             itemObj.folder = content.parentFolder;
             itemObj.downloadPath = item.downloadPath;
+            itemObj.stream = item.stream;
             this.onItemClick.emit(itemObj);
         }
     }

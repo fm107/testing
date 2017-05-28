@@ -23,16 +23,13 @@ namespace WebTorrent.Controllers
     [Route("api/[controller]")]
     public class TorrentController : Controller
     {
-        private const string DownLoadFolder = "wwwroot/uploads";
+        private const string DownLoadFolder = @"wwwroot/uploads";
         private readonly HttpClient _client;
         private readonly IHostingEnvironment _environment;
         private readonly ILogger<TorrentController> _log;
         private readonly TorrentClient _torrentClient;
 
-        private string _fileName;
-
         private WebSocket _webSocket;
-        private int total;
 
         public TorrentController(ILogger<TorrentController> log, IHostingEnvironment environment,
             TorrentClient torrentClient)
@@ -50,14 +47,16 @@ namespace WebTorrent.Controllers
             {
                 var torrent = _torrentClient.AddUrlTorrent(url, DownLoadFolder);
 
-                return Ok(torrent.Name);
+                return Json(torrent.Name);
             }
 
             var response = await _client.GetAsync(url, HttpCompletionOption.ResponseContentRead);
             var content = await response.Content.ReadAsStreamAsync();
 
             if (!await _torrentClient.IsTorrentType(content))
+            {
                 return BadRequest("Not application/x-bittorrent Mime type");
+            }
 
             return Json(_torrentClient.AddTorrent(content, DownLoadFolder));
 
@@ -107,12 +106,17 @@ namespace WebTorrent.Controllers
         {
             foreach (var uploadedFile in file)
             {
-                if (uploadedFile.Length <= 0) continue;
+                if (uploadedFile.Length <= 0)
+                {
+                    continue;
+                }
 
                 var content = uploadedFile.OpenReadStream();
 
                 if (!await _torrentClient.IsTorrentType(content))
+                {
                     return BadRequest("Not application/x-bittorrent Mime type");
+                }
 
                 return Json(string.IsNullOrEmpty(folder)
                     ? new List<Content> {await _torrentClient.AddTorrent(content, folder)}
@@ -150,7 +154,7 @@ namespace WebTorrent.Controllers
                     switch (received.MessageType)
                     {
                         case WebSocketMessageType.Text:
-                            var request = new MyClass { message = total.ToString() };
+                            var request = new MyClass {message = "test"};
                             var type = WebSocketMessageType.Text;
                             var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request));
                             buffer = new ArraySegment<byte>(data);

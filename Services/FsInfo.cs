@@ -47,7 +47,7 @@ namespace WebTorrent.Services
             {
                 fsContent.AddRange(col.Select(file => new FileSystemItem
                 {
-                    DownloadPath = directoryInfo.FullName.Replace(_environment.WebRootPath, string.Empty),
+                    DownloadPath = Path.Combine(directoryInfo.FullName.Replace(_environment.WebRootPath, string.Empty), file.NameWithoutPath),
                     Name = file.NameWithoutPath,
                     FullName = directoryInfo.FullName,
                     LastChanged = DateTime.Now,

@@ -70,7 +70,7 @@ export class UploadButtonComponent {
                     });
 
                 this.data.folderContent.next(JSON.stringify(response));
-                this.content.getContent(this.content.parentFolder.getValue(), false, null);
+                this.content.getContent(null, false, null);
             },
             error => console.error(`Error while file uploading: ${error}`));
 

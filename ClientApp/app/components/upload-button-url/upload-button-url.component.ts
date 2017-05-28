@@ -30,7 +30,7 @@ export class UploadButtonUrlComponent {
                             maxLength: 100
                         });
 
-                    this.content.getContent(this.content.parentFolder.getValue(), false, null);
+                    this.content.getContent(null, false, null);
                 }
             },
             error => {

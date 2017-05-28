@@ -36,6 +36,7 @@ namespace WebTorrent.Migrations
                     LastChanged = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Size = table.Column<long>(nullable: false),
+                    Stream = table.Column<string>(nullable: true),
                     Type = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

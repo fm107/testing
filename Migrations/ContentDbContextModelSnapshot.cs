@@ -50,6 +50,8 @@ namespace WebTorrent.Migrations
 
                     b.Property<long>("Size");
 
+                    b.Property<string>("Stream");
+
                     b.Property<string>("Type");
 
                     b.HasKey("Id");

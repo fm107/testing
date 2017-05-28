@@ -37,6 +37,11 @@ namespace WebTorrent
             services.AddSingleton<FsInfo, FsInfo>();
             services.AddSingleton<TorrentClient, TorrentClient>();
 
+            services.AddSingleton<FFmpeg, FFmpeg>();
+
+            // Configure FFmpeg using appsettings.json file.
+            services.Configure<FFmpegSettings>(Configuration.GetSection("FFmpeg"));
+
             // Add framework services.
             services.AddMvc();
         }

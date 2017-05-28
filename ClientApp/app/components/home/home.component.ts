@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.content.getContent(null,false, null);
+        this.content.getContent(null, false, null);
 
         //this.messagesObs = (this.wsService
         //    .connect(`ws://${window.location.hostname}:${window.location.port}/api/Torrent/Notifications`)
@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit {
         if (item.type == "file") {
             const cmp = this.parent.createComponent(this.invokePlayerComponent);
             const inv = (cmp.instance) as InvokePlayerComponent;
-            inv.url = item.downloadPath + "/out.m3u8";
+            inv.url = item.stream;
             inv.idx = String(item.id);
             inv.init(cmp, this.parent, String(item.id));
 

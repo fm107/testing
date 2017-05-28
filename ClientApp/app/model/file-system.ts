@@ -1,5 +1,6 @@
 ﻿export interface IFileSystemItem {
     id: number;
+    stream: string;
     downloadPath?: string;
     fullName: string;
     name: string;
