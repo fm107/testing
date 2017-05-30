@@ -45,25 +45,19 @@ namespace WebTorrent.Services
         {
             foreach (var tor in _client.GetList().Result.Torrents)
             {
-                if (tor.Progress == 1000)
+                if (tor.Progress != 1000) continue;
+
+                Content content = null;
+                await _lock.RunAsync(async () =>
                 {
-                    //_autoReset.WaitOne((int) TimeSpan.FromSeconds(1).TotalMilliseconds);
+                    content = await _repository.FindByHash(tor.Hash, true);
+                });
 
-                    Content content = null;
-                    await _lock.RunAsync(async () =>
-                    {
-                        content = await _repository.FindByHash(tor.Hash, true);
-                    });
+                if (content?.IsInProgress != true) continue;
 
-                    if (content?.IsInProgress == true)
-                    {
-                        _log.LogInformation("Creating playing list for {0}", tor.Name);
-                        ChangeStatus(content);
-                        //CreatePlayList(tor);
-                        CreatePlayList(content);
-                        //_autoReset.Set();
-                    }
-                }
+                _log.LogInformation("Creating playing list for {0}", tor.Name);
+                ChangeStatus(content);
+                CreatePlayList(content);
             }
         }
 
@@ -156,10 +150,11 @@ namespace WebTorrent.Services
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
         }
 
-        public UTorrent.Api.Data.Torrent AddUrlTorrent(string url, string path)
+        public async Task<Content> AddUrlTorrent(string url, string path)
         {
             var response = _client.AddUrlTorrent(url, path);
-            return response.AddedTorrent;
+            var torrent = response.AddedTorrent;
+            return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
         }
 
         private static async Task<string> GetTorrentName(Stream file)

@@ -45,9 +45,7 @@ namespace WebTorrent.Controllers
         {
             if (url.StartsWith("magnet:?xt=urn:btih:"))
             {
-                var torrent = _torrentClient.AddUrlTorrent(url, DownLoadFolder);
-
-                return Json(torrent.Name);
+                return Json(_torrentClient.AddUrlTorrent(url, DownLoadFolder));
             }
 
             var response = await _client.GetAsync(url, HttpCompletionOption.ResponseContentRead);
