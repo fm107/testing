@@ -59,12 +59,14 @@ export class HomeComponent implements OnInit {
             const inv = (cmp.instance) as InvokePlayerComponent;
             inv.idx = String(item.id);
 
+            //todo untill play list not created for media file isStreaming also false. Review this.
             if (item.isStreaming) {
                 inv.url = item.stream;
+                inv.showVideo = true;
                 inv.initVideo(cmp, this.parent, String(item.id));
             } else {
                 inv.url = item.downloadPath;
-                inv.initContent(cmp, this.parent, String(item.id));
+                inv.initContent(cmp, this.parent);
             }
         } else {
             this.content.getContent(item.folder, item.showFiles, item.hash);

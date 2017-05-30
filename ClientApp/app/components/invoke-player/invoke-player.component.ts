@@ -1,6 +1,7 @@
-import { Component, ViewContainerRef } from "@angular/core";
+import { Component, ViewContainerRef, ComponentRef } from "@angular/core";
 
 declare var $: any;
+declare var lity: any;
 
 @Component({
     templateUrl: "./invoke-player.component.html"
@@ -8,9 +9,10 @@ declare var $: any;
 
 export class InvokePlayerComponent {
     idx: string;
-    url: any;
+    url: string;
+    showVideo: boolean;
 
-    initVideo(component, videojs: ViewContainerRef, id: string) {
+    initVideo(component: ComponentRef<{}>, videojs: ViewContainerRef, id: string) {
         $("#video").click();
 
         $(document).on("lity:close", (event, instance) => {
@@ -22,15 +24,14 @@ export class InvokePlayerComponent {
         });
     }
 
-    initContent(component, videojs: ViewContainerRef, id: string) {
-        $("#non_video").click();
+    initContent(component: ComponentRef<{}>, videojs: ViewContainerRef) {
+        lity(this.url);
 
         $(document).on("lity:close", () => {
             console.log("Lightbox closed");
 
             videojs.clear();
             component.destroy();
-            $("#non_video").remove();
         });
     }
 }
