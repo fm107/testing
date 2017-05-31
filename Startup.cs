@@ -37,10 +37,10 @@ namespace WebTorrent
 
             services.AddScoped<IContentRecordRepository, ContentRecordRepository>();
 
-            services.AddScoped<FsInfo, FsInfo>();
-            services.AddScoped<TorrentClient, TorrentClient>();
+            services.AddSingleton<FsInfo, FsInfo>();
+            services.AddSingleton<TorrentClient, TorrentClient>();
 
-            services.AddScoped<FFmpeg, FFmpeg>();
+            services.AddSingleton<FFmpeg, FFmpeg>();
 
             // Configure FFmpeg using appsettings.json file.
             services.Configure<FFmpegSettings>(Configuration.GetSection("FFmpeg"));
