@@ -67,15 +67,6 @@ namespace WebTorrent.Services
                 if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
                     MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
                 {
-                    if (file.Name.EndsWith(".mp4"))
-                    {
-                        file.Stream = Path.Combine(file.FullName.Replace(_environment.WebRootPath, string.Empty),
-                            file.Name);
-                        file.IsStreaming = true;
-                        _repository.Update(content);
-                        _repository.Save();
-                    }
-
                     var fileToConvert = Path.Combine(file.FullName, file.Name);
 
                     _log.LogInformation("Start convert process for {0}", fileToConvert);
