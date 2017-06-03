@@ -105,7 +105,7 @@ export class DataPresenterComponent {
         setTimeout(() => {
             this.showFolder = true;
             this.cd.markForCheck();
-        }, 50);
+        }, 100);
         
             const itemObj = new ClickedItem();
             itemObj.folder = item;
