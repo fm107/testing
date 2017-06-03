@@ -41,7 +41,7 @@ namespace WebTorrent.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> UploadFromUrl([FromQuery] string url, [FromQuery] string folder)
+        public async Task<IActionResult> UploadFromUrl([FromForm] string url, [FromForm] string folder)
         {
             if (url.StartsWith("magnet:?xt=urn:btih:"))
             {

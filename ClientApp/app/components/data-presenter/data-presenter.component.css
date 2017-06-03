@@ -45,9 +45,7 @@
     z-index: 2;*/
 }
 
-.folder-up {
-    display: none;
-}
+.folder-up { display: none; }
 
 .txt_alignment {
     text-align: justify;

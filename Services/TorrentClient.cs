@@ -143,9 +143,15 @@ namespace WebTorrent.Services
 
         public async Task<Content> AddUrlTorrent(string url, string path)
         {
-            var response = _client.AddUrlTorrent(url, path);
+            var response = _client.AddUrlTorrent(url, Path.Combine(path, GetTorrentName(url)));
             var torrent = response.AddedTorrent;
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
+        }
+
+        private static string GetTorrentName(string file)
+        {
+            var torrentName = file.ToCharArray(20, 40);
+            return string.Concat(torrentName);
         }
 
         private static async Task<string> GetTorrentName(Stream file)

@@ -2,13 +2,13 @@
     <span *ngIf="!searchBox.searchVisible" class="push-left-sm">
         <span class="md-title">WebTorrent</span>
     </span>
-    <td-search-box #searchBox backIcon="arrow_back" class="push-right-sm" placeholder="Search here" 
-                   (searchDebounce)="search($event)" 
-                   (search)="search($event)" 
+    <td-search-box #searchBox backIcon="arrow_back" class="push-right-sm" placeholder="Search here"
+                   (searchDebounce)="search($event)"
+                   (search)="search($event)"
                    (clear)="hasData = true" flex>
     </td-search-box>
 </div>
-<table #table>
+<table>
     <tr td-data-table-row>
         <th td-data-table-column
             [name]="icon"
@@ -44,12 +44,12 @@
             [name]="changed.name"
             [active]="changed.sortable && changed.name === sortBy"
             [sortable]="changed.sortable"
-            [sortOrder]="sortOrder" 
+            [sortOrder]="sortOrder"
             (sortChange)="sort($event)">
             <span class="text-input--material__label--active" mdTooltip="{{changed.tooltip}}">{{changed.label}}</span>
         </th>
     </tr>
-    <tr td-data-table-row [ngClass]="{'folder-up' : showFolder}">
+    <tr td-data-table-row  [ngClass]="{'folder-up' : showFolder}">
         <td td-data-table-cell>
             <div class="icon-column">
                 <img src="/img/cycle.png">
@@ -63,32 +63,28 @@
             </div>
         </td>
     </tr>
-    <template ngFor let-metaData [ngForOf]="filteredData ">
-        <template ngFor let-content [ngForOf]="metaData.fsItems | filter:searchTerm ">
-            <tr class="animated fadeInDown list__item--hover" td-data-table-row>
-                <td td-data-table-cell>
-                    <div class="icon-column">
-                        <img *ngIf="content.type == 'folder'" src="/img/documents-icon.png">
-                        <img *ngIf="content.type == 'file'" src="/img/document-movie-icon.png">
-                    </div>
-                </td>
-                <td class="pointer--cursor" td-data-table-cell (click)="onClick(content, metaData)">{{content.name}}</td>
-                <td class="pointer--default" td-data-table-cell>
-                    <div *ngIf="metaData.isInProgress" class="info-column">
-                        <div class="cssProgress">
-                            <div class="progress2">
-                                <div class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">
-                                    <span class="cssProgress-label">Loading</span>
-                                </div>
-                            </div>
+    <tr class="animated fadeInDown list__item--hover" td-data-table-row *ngFor="let content of filteredData | sort:sortBy:sortOrder">
+        <td td-data-table-cell>
+            <div class="icon-column">
+                <img *ngIf="content.type == 'folder'" src="/img/documents-icon.png">
+                <img *ngIf="content.type == 'file'" src="/img/document-movie-icon.png">
+            </div>
+        </td>
+        <td class="pointer--cursor" td-data-table-cell (click)="onClick(content)">{{content.name}}</td>
+        <td class="pointer--default" td-data-table-cell>
+            <div *ngIf="content.isInProgress" class="info-column">
+                <div class="cssProgress">
+                    <div class="progress2">
+                        <div class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">
+                            <span class="cssProgress-label">Loading</span>
                         </div>
                     </div>
-                </td>
-                <td class="pointer--default" td-data-table-cell>{{content.size | fileSize}}</td>
-                <td class="pointer--default" td-data-table-cell>{{content.lastChanged | date :'short'}}</td>
-            </tr>
-        </template>
-    </template>
+                </div>
+            </div>
+        </td>
+        <td class="pointer--default" td-data-table-cell>{{content.size | fileSize}}</td>
+        <td class="pointer--default" td-data-table-cell>{{content.lastChanged | date :'short'}}</td>
+    </tr>
 </table>
 <div class="md-padding" *ngIf="!hasData" layout="row" layout-align="center center">
     <h3>No results</h3>

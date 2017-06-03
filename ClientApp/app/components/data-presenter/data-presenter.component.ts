@@ -1,12 +1,9 @@
-﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, OnInit } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from '@angular/core';
 
-import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn, TdSearchBoxComponent, TdDataTableColumnComponent } from "@covalent/core";
+import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn, TdSearchBoxComponent } from "@covalent/core";
+
 import { ClickedItem } from "./ClickedItem";
 import { IContent } from "../../model/content";
-import {IFileSystemItem} from "../../model/file-system";
-import {isNumeric} from "rxjs/util/isNumeric"
-
-declare var lity: any;
 
 @Component({
     selector: 'data-presenter',
@@ -17,6 +14,7 @@ declare var lity: any;
 export class DataPresenterComponent {
     showFolder = true;
     filteredData: any[];
+    tmpArray: ClickedItem[];
     searchTerm: string;
     sortBy: string;
     hasData = true;
@@ -28,7 +26,7 @@ export class DataPresenterComponent {
 
     @ViewChild('searchBox') searchBox: TdSearchBoxComponent;
 
-    constructor(private dataTableService: TdDataTableService) {
+    constructor(private dataTableService: TdDataTableService, private cd: ChangeDetectorRef) {
     }
 
     private name: ITdDataTableColumn = {
@@ -42,16 +40,15 @@ export class DataPresenterComponent {
     }
 
     ngOnChanges(): void {
+        this.initData();
         this.updateDataTable(null);
         this.searchBox.value = "";
-        this.hasData = true;
     }
 
     sort(sortEvent: ITdDataTableSortChangeEvent): void {
         this.sortBy = sortEvent.name;
         this.sortOrder = sortEvent.order === TdDataTableSortingOrder.Ascending ?
             TdDataTableSortingOrder.Descending : TdDataTableSortingOrder.Ascending;
-        this.updateDataTable("sort");
     }
 
     search(searchTerm: string): void {
@@ -59,31 +56,44 @@ export class DataPresenterComponent {
         this.updateDataTable("filter");
     }
 
-    updateDataTable(action: string): void {
-        const newData: IContent[] = this.data;
+    private initData() {
+        if (this.data) {
+            this.tmpArray = new Array();
+            for (let data of this.data) {
+                for (let fs of data.fsItems) {
+                    const newElem = new ClickedItem();
+                    newElem.folder = data.parentFolder;
+                    newElem.hash = data.hash;
+                    newElem.isInProgress = data.isInProgress;
+                    newElem.id = fs.id;
+                    newElem.downloadPath = fs.downloadPath;
+                    newElem.isStreaming = fs.isStreaming;
+                    newElem.name = fs.name;
+                    newElem.lastChanged = fs.lastChanged;
+                    newElem.size = fs.size;
+                    newElem.stream = fs.stream;
+                    newElem.type = fs.type;
+                    this.tmpArray.push(newElem);
+                }
+            }
+        }
+    }
+
+    private updateDataTable(action: string): void {
+        const newData = this.tmpArray;
 
         switch (action) {
             case "filter":
                 if (this.searchTerm) {
-                    //this.filteredData = this.dataTableService.filterData(newData.map(i=>i.fsItems), this.searchTerm, true);
-                    
-                    this.filteredData = newData;
+                    this.filteredData = this.dataTableService.filterData(newData, this.searchTerm, true);
                     if (this.filteredData && this.filteredData.length > 0) {
                         this.hasData = true;
                     } else {
                         this.hasData = false;
                     }
-
                 } else {
                     this.filteredData = newData;
                 }
-                break;
-            case "sort":
-                //this.filteredData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
-
-                //newData.forEach(data=>this.sorting(data, this.sortBy, this.sortOrder));
-                this.filteredData = this.sorting(newData, this.sortBy, this.sortOrder);
-                //this.filteredData = newData;
                 break;
             default:
                 this.filteredData = newData;
@@ -91,88 +101,26 @@ export class DataPresenterComponent {
         }
     }
 
-    private sorting(data: IContent[], sortBy, sortOrder) {
-
-        data.forEach((v, l)=> v.fsItems);
-        for (var i = 0; i < data.length; i++) {
-                data[i].fsItems.sort((a, b) => {
-                    var compA = a[sortBy];
-                    var compB = b[sortBy];
-                    var direction = 0;
-                    if (compA < compB) {
-                        direction = -1;
-                    }
-                    else if (compA > compB) {
-                        direction = 1;
-                    }
-                    return direction * (sortOrder === TdDataTableSortingOrder.Descending ? -1 : 1);
-            });
-        }
-
-        return data;
-        //return data.sort((a, b) => {
-        //    var compA = a.fsItems[sortBy];
-        //    var compB = b.fsItems[sortBy];
-        //    var direction = 0;
-        //    if (compA < compB) {
-        //        direction = -1;
-        //    }
-        //    else if (compA > compB) {
-        //        direction = 1;
-        //    }
-        //    return direction * (sortOrder === TdDataTableSortingOrder.Descending ? -1 : 1);
-        //});
-    }
-
-    private showFiles1(item) {
-        switch (item.type) {
-        case "folder":
-            if (this.showFolder) {
-                return true;
-            }
-            return false;
-        case "file":
-            if (!this.showFolder) {
-                return true;
-            }
-            return false;
-        default:
-            return false;
-        }
-    }
-
     private onUp(item) {
-        console.log("onUp " + item);
         setTimeout(() => {
             this.showFolder = true;
-        }, 10);
-
-        const itemObj = new ClickedItem();
-        itemObj.folder = item;
-        itemObj.showFiles = false;
-        this.onItemClick.emit(itemObj);
+            this.cd.markForCheck();
+        }, 50);
+        
+            const itemObj = new ClickedItem();
+            itemObj.folder = item;
+            itemObj.showFiles = false;
+            this.onItemClick.emit(itemObj);
     }
 
-    private onClick(item: IFileSystemItem, content: IContent) {
-        console.log("onClick: item " + item);
-        console.log("onClick: content " + content);
+    private onClick(item: ClickedItem) {
         setTimeout(() => {
             this.showFolder = false;
-        }, 10);
+            this.cd.markForCheck();
+        }, 50);
 
-        const itemObj = new ClickedItem();
-
-        if (item.type) {
-            itemObj.showFiles = true;
-            itemObj.hash = content.hash;
-            itemObj.id = item.id;
-            itemObj.type = item.type;
-            itemObj.itemName = item.name;
-            itemObj.folder = content.parentFolder;
-            itemObj.downloadPath = item.downloadPath;
-            itemObj.stream = item.stream;
-            itemObj.isStreaming = item.isStreaming;
-            this.onItemClick.emit(itemObj);
-        }
+            this.parentFolder = item.folder;
+            item.showFiles = true;
+            this.onItemClick.emit(item);
     }
 }

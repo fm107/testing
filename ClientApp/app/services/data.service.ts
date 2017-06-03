@@ -2,8 +2,6 @@
 import { Http, URLSearchParams, Response } from "@angular/http";
 import { Headers, RequestOptions } from "@angular/http";
 import { Observable } from "rxjs/Observable";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { AsyncSubject } from "rxjs/AsyncSubject";
 import { Subject } from "rxjs/Subject";
 import "rxjs/add/operator/map";
 
@@ -50,17 +48,12 @@ export class DataService {
     }
 
     submitTorrentUrl(url: string, folder: string): Observable<Response> {
-        const headers = new Headers({ 'Content-Type': "application/json" });
-        //headers.append('Access-Control-Allow-Origin', '*');
-
-        const params = new URLSearchParams();
-        params.set("url", url);
-        params.set("folder", folder);
-
-        const options = new RequestOptions({ search: params, headers: headers });
+        const body = new FormData();
+        body.append("url", url);
+        body.append("folder", folder);
 
         this.loadingService.register("query");
-        return this.http.post(`api/Torrent/UploadFromUrl`, params.toString(), options)
+        return this.http.post(`api/Torrent/UploadFromUrl`, body)
             .map((response: Response) => {
                 return response;
             })
