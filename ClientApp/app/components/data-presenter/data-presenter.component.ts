@@ -117,7 +117,7 @@ export class DataPresenterComponent {
         setTimeout(() => {
             this.showFolder = false;
             this.cd.markForCheck();
-        }, 50);
+        }, 100);
 
             this.parentFolder = item.folder;
             item.showFiles = true;
