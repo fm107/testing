@@ -1,10 +1,11 @@
 ﻿import { Component } from "@angular/core";
 
+import { TdLoadingService } from "@covalent/core";
 import { TdFileService, IUploadOptions, TdFileUploadComponent } from "@covalent/file-upload";
 import { NotificationsService, SimpleNotificationsComponent, PushNotificationsService } from "angular2-notifications";
 
 import { ContentService } from "../../services/content.service";
-import {DataService} from "../../services/data.service";
+import { DataService } from "../../services/data.service";
 
 @Component({
     selector: "upload-button",
@@ -16,7 +17,9 @@ export class UploadButtonComponent {
 
     constructor(private service: NotificationsService,
         private fileUploadService: TdFileService,
-        private content: ContentService, private data: DataService) {
+        private content: ContentService,
+        private data: DataService,
+        private loadingService: TdLoadingService) {
     }
 
     selectEvent(file: File, uploadComponent: TdFileUploadComponent): void {
@@ -57,8 +60,10 @@ export class UploadButtonComponent {
             file: file
         };
 
+        this.loadingService.register("query");
         this.fileUploadService.upload(options).subscribe(
             response => {
+                this.loadingService.resolve("query");
                 this.service.success("File Uploaded",
                     `${file.name} uploaded successfully`,
                     {
@@ -72,7 +77,10 @@ export class UploadButtonComponent {
                 this.data.folderContent.next(JSON.stringify(response));
                 this.content.getContent(null, false, null);
             },
-            error => console.error(`Error while file uploading: ${error}`));
+            error => {
+                this.loadingService.resolve("query");
+                console.error(`Error while file uploading: ${error}`);
+            });
 
         uploadComponent.cancel();
     };

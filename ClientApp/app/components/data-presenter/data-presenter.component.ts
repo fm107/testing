@@ -1,16 +1,19 @@
-﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from "@angular/core";
+import { Response } from "@angular/http";
 
-import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn, TdSearchBoxComponent } from "@covalent/core";
+import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn, TdSearchBoxComponent, TdDialogService  } from "@covalent/core";
 
 import { ClickedItem } from "./ClickedItem";
 import { IContent } from "../../model/content";
+import { DataService } from "../../services/data.service";
 
 @Component({
-    selector: 'data-presenter',
-    templateUrl: './data-presenter.component.html',
-    styleUrls: ['./data-presenter.component.css'],
+    selector: "data-presenter",
+    templateUrl: "./data-presenter.component.html",
+    styleUrls: ["./data-presenter.component.css"],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
+
 export class DataPresenterComponent {
     showFolder = true;
     filteredData: any[];
@@ -22,11 +25,14 @@ export class DataPresenterComponent {
     @Input() parentFolder: string;
     @Input() currentFolder: string;
     @Input() data: IContent[];
-    @Output() onItemClick = new EventEmitter<ClickedItem>();
+    @Output() onItemClick = new EventEmitter<ClickedItem>(true);
 
-    @ViewChild('searchBox') searchBox: TdSearchBoxComponent;
+    @ViewChild("searchBox") searchBox: TdSearchBoxComponent;
 
-    constructor(private dataTableService: TdDataTableService, private cd: ChangeDetectorRef) {
+    constructor(private dataTableService: TdDataTableService,
+        private cd: ChangeDetectorRef,
+        private dialogService: TdDialogService,
+        private dataService: DataService) {
     }
 
     private name: ITdDataTableColumn = {
@@ -119,8 +125,21 @@ export class DataPresenterComponent {
             this.cd.markForCheck();
         }, 100);
 
-            this.parentFolder = item.folder;
-            item.showFiles = true;
-            this.onItemClick.emit(item);
+        if (item.isInProgress) {
+            this.openAlert(item.hash, ()=> this.onUp(item.folder));
+        }
+
+        this.parentFolder = item.folder;
+        item.showFiles = true;
+        this.onItemClick.emit(item);
+    }
+
+    private openAlert(hash: string, callback: Function): void {
+        this.dataService.getTorrentStatus(hash).subscribe((response:Response) => {
+            this.dialogService.openAlert(({
+                message: response.text(),
+                disableClose: false
+            })).afterClosed().subscribe(()=> callback());
+        });
     }
 }

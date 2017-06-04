@@ -41,6 +41,12 @@ namespace WebTorrent.Controllers
             return Json(resp);
         }
 
+        //[HttpGet("[action]")]
+        //public IActionResult GetFile(string hash)
+        //{
+        //    var fileStream = new FileStreamResult();
+        //}
+
         [HttpGet("[action]")]
         public string ShowDirectory()
         {

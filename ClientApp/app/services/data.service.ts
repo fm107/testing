@@ -47,6 +47,23 @@ export class DataService {
         return this.folderContent.asObservable();
     }
 
+    getTorrentStatus(hash: string) {
+        const params = new URLSearchParams();
+        params.set("hash", hash);
+
+        const options = new RequestOptions({ search: params });
+
+        this.loadingService.register("query");
+        return this.http.get(`api/Torrent/GetTorrentInfo`, options)
+            .map((response: Response) => {
+                return response;
+            })
+            .catch(this.handleError)
+            .finally(() => {
+                this.loadingService.resolve("query");
+            });
+    }
+
     submitTorrentUrl(url: string, folder: string): Observable<Response> {
         const body = new FormData();
         body.append("url", url);

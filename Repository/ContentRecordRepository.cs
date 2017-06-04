@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using WebTorrent.Data;
 using WebTorrent.Model;
 
 namespace WebTorrent.Repository
 {
-    internal class ContentRecordRepository : IContentRecordRepository, IDisposable
+    internal class ContentRecordRepository : IContentRecordRepository
     {
         private readonly ContentDbContext _context;
 
@@ -41,10 +39,8 @@ namespace WebTorrent.Repository
                 .AsNoTracking().ToListAsync();
 
             foreach (var content in contents)
-            {
                 content.FsItems = content.FsItems =
-                        content.FsItems.Where(b => b.Type.Equals("folder")).ToList();
-            }
+                    content.FsItems.Where(b => b.Type.Equals("folder")).ToList();
 
             return contents;
         }
@@ -66,11 +62,11 @@ namespace WebTorrent.Repository
         {
             await _context.Content.AddAsync(contentRecord);
         }
+
         public void Update(Content contentRecord)
         {
-           _context.Content.Update(contentRecord);
+            _context.Content.Update(contentRecord);
         }
-
 
         public async Task Delete(int id)
         {
@@ -81,12 +77,6 @@ namespace WebTorrent.Repository
         public async void Save()
         {
             await _context.SaveChangesAsync();
-        }
-
-        public async void Dispose()
-        {
-            await _context.SaveChangesAsync();
-            _context?.Dispose();
         }
     }
 }

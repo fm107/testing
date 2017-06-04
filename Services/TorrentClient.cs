@@ -19,15 +19,14 @@ namespace WebTorrent.Services
 {
     public class TorrentClient
     {
-        private readonly AutoResetEvent _autoReset = new AutoResetEvent(true);
         private readonly UTorrentClient _client;
         private readonly IHostingEnvironment _environment;
         private readonly FFmpeg _ffmpeg;
         private readonly FsInfo _fsInfo;
+        private readonly TaskSynchronizationScope _lock = new TaskSynchronizationScope();
         private readonly ILogger<TorrentClient> _log;
         private readonly IContentRecordRepository _repository;
         private Timer _timer;
-        private readonly TaskSynchronizationScope _lock = new TaskSynchronizationScope();
 
         public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository, ILogger<TorrentClient> log,
             FFmpeg ffmpeg, IHostingEnvironment environment)
@@ -45,15 +44,18 @@ namespace WebTorrent.Services
         {
             foreach (var tor in _client.GetList().Result.Torrents)
             {
-                if (tor.Progress != 1000) continue;
+                if (tor.Progress != 1000)
+                {
+                    continue;
+                }
 
                 Content content = null;
-                await _lock.RunAsync(async () =>
-                {
-                    content = await _repository.FindByHash(tor.Hash, true);
-                });
+                await _lock.RunAsync(async () => { content = await _repository.FindByHash(tor.Hash, true); });
 
-                if (content?.IsInProgress != true) continue;
+                if (content?.IsInProgress != true)
+                {
+                    continue;
+                }
 
                 _log.LogInformation("Creating playing list for {0}", tor.Name);
                 ChangeStatus(content);
@@ -64,6 +66,7 @@ namespace WebTorrent.Services
         private void CreatePlayList(Content content)
         {
             foreach (var file in content.FsItems.Where(f => f.Type.Equals("file")))
+            {
                 if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
                     MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
                 {
@@ -80,6 +83,7 @@ namespace WebTorrent.Services
 
                     _ffmpeg.CreatePlayList(fileToConvert, file.FullName, file.Name);
                 }
+            }
         }
 
         private void ChangeStatus(Content content)
@@ -240,16 +244,15 @@ namespace WebTorrent.Services
             return response.Result.Files.Values;
         }
 
-        public string GetTorrentInfo()
+        public async Task<string> GetTorrentInfo(string hash)
         {
-            return _client.GetList()
-                .Result.Torrents
+            var torrent = await _client.GetTorrentAsync(hash);
+            return torrent.Result.Torrents
                 .Aggregate<UTorrent.Api.Data.Torrent, string>(null, (current, tor) =>
                     current + $"{tor.Name} " + Environment.NewLine +
                     $"Progress: {tor.Progress / 10.0} " + Environment.NewLine +
                     $"Path: {tor.Path} " + Environment.NewLine +
-                    $"Remaining: {tor.Remaining}" + Environment.NewLine +
-                    new string('-', 20) + Environment.NewLine);
+                    $"Remaining: {tor.Remaining}" + Environment.NewLine);
         }
 
         private void ConvertVideo(object state)

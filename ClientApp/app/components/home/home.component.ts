@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
 
     messagesObs: Subject<IMessage>;
 
-    @ViewChild('videojs', { read: ViewContainerRef }) parent: ViewContainerRef;
+    @ViewChild("videojs", { read: ViewContainerRef }) parent: ViewContainerRef;
     invokePlayerComponent: any;
 
     constructor(private content: ContentService,

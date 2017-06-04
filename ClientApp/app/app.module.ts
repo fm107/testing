@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 
 import { MaterialModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { CovalentCoreModule, TdLoadingService } from '@covalent/core';
+import { CovalentCoreModule, TdLoadingService, CovalentDialogsModule } from '@covalent/core';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { SimpleTimer } from 'ng2-simple-timer';
 
@@ -48,7 +48,9 @@ import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.
         FlexLayoutModule,
 
         SimpleNotificationsModule.forRoot(),
+
         CovalentCoreModule,
+        CovalentDialogsModule,
 
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },

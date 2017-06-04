@@ -25,16 +25,13 @@ namespace WebTorrent.Controllers
     {
         private const string DownLoadFolder = @"wwwroot/uploads";
         private readonly HttpClient _client;
-        private readonly IHostingEnvironment _environment;
         private readonly ILogger<TorrentController> _log;
         private readonly TorrentClient _torrentClient;
 
         private WebSocket _webSocket;
 
-        public TorrentController(ILogger<TorrentController> log, IHostingEnvironment environment,
-            TorrentClient torrentClient)
+        public TorrentController(ILogger<TorrentController> log, IHostingEnvironment environment, TorrentClient torrentClient)
         {
-            _environment = environment;
             _torrentClient = torrentClient;
             _client = new HttpClient();
             _log = log;
@@ -57,46 +54,6 @@ namespace WebTorrent.Controllers
             }
 
             return Json(_torrentClient.AddTorrent(content, DownLoadFolder));
-
-            //var response = await _client.GetAsync(url, HttpCompletionOption.ResponseContentRead);
-
-            //var uploads = Path.Combine(_environment.WebRootPath, folder);
-
-            //_fileName = Path.Combine(uploads, RemoveInvalidFilePathCharacters(
-            //    response.Content.Headers.ContentDisposition != null
-            //        ? response.Content.Headers.ContentDisposition.FileName.Trim('\u0022')
-            //        : response.RequestMessage.RequestUri.Segments.LastOrDefault(), "_"));
-
-            //using (var fileStream = new FileStream(_fileName, FileMode.Create))
-            //{
-            //    await response.Content.CopyToAsync(fileStream);
-            //}
-
-            //if (MimeTypes.GetMimeMapping(_fileName) != "application/x-bittorrent")
-            //    return BadRequest("Not application/x-bittorrent Mime type");
-
-            //_log.Info("Starting torrent manager");
-            //_log.InfoFormat("file path is {0}", _fileName);
-
-            //try
-            //{
-            //    //_torrent = new TorrentTransfer(_fileName, uploads);
-            //    //_torrent.StateChanged += TorrentStateChanged;
-            //    //_torrent.ReportStats += TorrentReportStats;
-            //    //_torrent.Start();
-
-
-            //    //var response2 = client.PostTorrent(new FileStream(_fileName, FileMode.Open),
-            //    //    Path.Combine("wwwroot/uploads", Path.GetFileNameWithoutExtension(_fileName)));
-            //    //var torrent = response2.AddedTorrent;
-            //}
-            //catch (Exception exception)
-            //{
-            //    _log.Error(exception);
-            //    throw;
-            //}
-
-            //return Ok(Path.GetFileName(_fileName));
         }
 
         [HttpPost("[action]")]
@@ -125,15 +82,9 @@ namespace WebTorrent.Controllers
         }
 
         [HttpGet("[action]")]
-        public string GetTorrentInfo()
+        public async Task<IActionResult> GetTorrentInfo(string hash)
         {
-            return _torrentClient.GetTorrentInfo();
-        }
-
-        [HttpGet("[action]")]
-        public IActionResult GetTorrent()
-        {
-            return Content(JsonConvert.SerializeObject(_torrentClient.GetTorrent()));
+            return Content(await _torrentClient.GetTorrentInfo(hash));
         }
 
         [HttpGet("[action]")]

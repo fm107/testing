@@ -1,9 +1,9 @@
 ﻿import { Component } from "@angular/core";
+import { Response } from '@angular/http';
 
 import { NotificationsService, SimpleNotificationsComponent, PushNotificationsService } from "angular2-notifications";
-import { DataService } from "../../services/data.service";
 
-import { Response } from '@angular/http';
+import { DataService } from "../../services/data.service";
 import { ContentService } from "../../services/content.service";
 
 @Component({
@@ -12,7 +12,8 @@ import { ContentService } from "../../services/content.service";
     styleUrls: ["./upload-button-url.component.css"]
 })
 export class UploadButtonUrlComponent {
-    constructor(private data: DataService, private content: ContentService,
+    constructor(private data: DataService,
+        private content: ContentService,
         private service: NotificationsService) {
     }
 
