@@ -31,7 +31,7 @@ import { FileSizePipe } from "./pipes/filesize.pipe";
 import { ShowFilesPipe } from "./pipes/show-files.pipe";
 import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.component";
 import {ProgressComponent} from "./components/progress/progress.component";
-import {KeysPipe} from "./pipes/keys.pipe";
+
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -41,7 +41,7 @@ import {KeysPipe} from "./pipes/keys.pipe";
         HomeComponent,
         UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent, InvokePlayerComponent, ProgressComponent,
 
-        FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe, KeysPipe
+        FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe
     ],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
