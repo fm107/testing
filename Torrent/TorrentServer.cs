@@ -17,7 +17,7 @@ namespace WebTorrent.Torrent
                     //Arguments = @"-c 'cd /app/utorrent-server/ && ./utserver -settingspath utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon'",
                     FileName = "/app/utorrent-server/utserver",
                     Arguments =
-                        "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
+                        "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/logs/utorrent_log.txt -daemon",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true

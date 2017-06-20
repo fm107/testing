@@ -1,6 +1,5 @@
 ﻿import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { SimpleTimer } from 'ng2-simple-timer';
 
 import { IContent } from "../model/content";
 import { DataService } from "./data.service";
@@ -17,15 +16,14 @@ export class ContentService {
         this.currentFolder = new BehaviorSubject<string>(null);
     }
 
-    getContent(request: string, needFiles: boolean, hash: string) {
-        this.data.getFolderContent(request, needFiles, hash).subscribe(result => {
+    getContent(folder: string, needFiles: boolean, hash: string) {
+        this.data.getFolderContent(folder, needFiles, hash).subscribe(result => {
             const res = JSON.parse((result)) as IContent[];
             this.metaData.next(res);
-            for (let i of res) {
-                this.parentFolder.next(i.parentFolder);
-                this.currentFolder.next(i.currentFolder);
+            for (let r of res) {
+                this.parentFolder.next(r.parentFolder);
+                this.currentFolder.next(r.currentFolder);
             }
-
         });
     }
 }

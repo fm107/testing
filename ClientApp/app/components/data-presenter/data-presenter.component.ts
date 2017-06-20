@@ -1,6 +1,7 @@
 ﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { Response } from "@angular/http";
 
+import { Observable } from "rxjs/Observable";
 import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn, TdSearchBoxComponent, TdDialogService  } from "@covalent/core";
 
 import { ClickedItem } from "./ClickedItem";
@@ -16,7 +17,7 @@ import { DataService } from "../../services/data.service";
 
 export class DataPresenterComponent {
     showFolder = true;
-    filteredData: any[];
+    filteredData: ClickedItem[];
     tmpArray: ClickedItem[];
     searchTerm: string;
     sortBy: string;
@@ -51,13 +52,13 @@ export class DataPresenterComponent {
         this.searchBox.value = "";
     }
 
-    sort(sortEvent: ITdDataTableSortChangeEvent): void {
+    private sort(sortEvent: ITdDataTableSortChangeEvent): void {
         this.sortBy = sortEvent.name;
         this.sortOrder = sortEvent.order === TdDataTableSortingOrder.Ascending ?
             TdDataTableSortingOrder.Descending : TdDataTableSortingOrder.Ascending;
     }
 
-    search(searchTerm: string): void {
+    private search(searchTerm: string): void {
         this.searchTerm = searchTerm;
         this.updateDataTable("filter");
     }
@@ -135,10 +136,11 @@ export class DataPresenterComponent {
     }
 
     private openAlert(hash: string, callback: Function): void {
-        this.dataService.getTorrentStatus(hash).subscribe((response:Response) => {
+        this.dataService.getTorrentInfo(hash).subscribe((response:Response) => {
             this.dialogService.openAlert(({
                 message: response.text(),
-                disableClose: false
+                disableClose: false, 
+                title: "Torrent is in progress"
             })).afterClosed().subscribe(()=> callback());
         });
     }

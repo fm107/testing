@@ -28,6 +28,8 @@ namespace WebTorrent.Migrations
 
                     b.Property<string>("ParentFolder");
 
+                    b.Property<string>("TorrentName");
+
                     b.HasKey("Id");
 
                     b.ToTable("Content");

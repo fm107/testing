@@ -4,9 +4,10 @@ import { UniversalModule } from 'angular2-universal';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { MaterialModule } from '@angular/material';
+import { MaterialModule, MdTooltipModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CovalentCoreModule, TdLoadingService, CovalentDialogsModule } from '@covalent/core';
+import { TdFileService } from "@covalent/file-upload";
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { SimpleTimer } from 'ng2-simple-timer';
 
@@ -22,12 +23,15 @@ import { DataService } from "./services/data.service";
 import { WebSocketService } from "./services/websocket.service";
 import { DataPresenterComponent } from "./components/data-presenter/data-presenter.component";
 import { ContentService } from "./services/content.service";
+import {TorrentProgressService} from "./services/torrent-progress.service";
 
 import { FilterPipe } from "./pipes/filter.pipe";
 import { SortPipe } from "./pipes/sort.pipe";
 import { FileSizePipe } from "./pipes/filesize.pipe";
 import { ShowFilesPipe } from "./pipes/show-files.pipe";
 import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.component";
+import {ProgressComponent} from "./components/progress/progress.component";
+import {KeysPipe} from "./pipes/keys.pipe";
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -35,9 +39,9 @@ import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent, InvokePlayerComponent,
+        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent, InvokePlayerComponent, ProgressComponent,
 
-        FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe
+        FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe, KeysPipe
     ],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
@@ -45,6 +49,7 @@ import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.
         CommonModule,
 
         MaterialModule,
+        MdTooltipModule,
         FlexLayoutModule,
 
         SimpleNotificationsModule.forRoot(),
@@ -59,7 +64,7 @@ import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.
         ])
     ],
     entryComponents: [HomeComponent, InvokePlayerComponent],
-    providers: [DataService, ContentService, WebSocketService, TdLoadingService, SimpleTimer]
+    providers: [DataService, ContentService, TorrentProgressService, WebSocketService, TdLoadingService, SimpleTimer, TdFileService]
 })
 export class AppModule {
 }

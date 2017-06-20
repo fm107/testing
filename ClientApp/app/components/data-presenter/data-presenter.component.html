@@ -72,7 +72,8 @@
         </td>
         <td class="pointer--cursor" td-data-table-cell (click)="onClick(content)">{{content.name}}</td>
         <td class="pointer--default" td-data-table-cell>
-            <div *ngIf="content.isInProgress" class="info-column">
+            <torrentProgress [Item]="content"></torrentProgress>
+            <!--<div *ngIf="content.isInProgress" class="info-column">
                 <div class="cssProgress">
                     <div class="progress2">
                         <div class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">
@@ -80,7 +81,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </td>
         <td class="pointer--default" td-data-table-cell>{{content.size | fileSize}}</td>
         <td class="pointer--default" td-data-table-cell>{{content.lastChanged | date :'short'}}</td>

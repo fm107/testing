@@ -9,6 +9,7 @@
     <DefineConstants>TRACE;DEBUG;NETCOREAPP1_1</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.1.0" />
     <PackageReference Include="DotNet.Contracts" Version="1.10.20606.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />

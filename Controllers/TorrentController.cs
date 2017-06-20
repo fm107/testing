@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
@@ -42,7 +43,7 @@ namespace WebTorrent.Controllers
         {
             if (url.StartsWith("magnet:?xt=urn:btih:"))
             {
-                return Json(_torrentClient.AddUrlTorrent(url, DownLoadFolder));
+                return Json((await _torrentClient.AddUrlTorrent(url, DownLoadFolder)).TorrentName);
             }
 
             var response = await _client.GetAsync(url, HttpCompletionOption.ResponseContentRead);
@@ -53,7 +54,7 @@ namespace WebTorrent.Controllers
                 return BadRequest("Not application/x-bittorrent Mime type");
             }
 
-            return Json(_torrentClient.AddTorrent(content, DownLoadFolder));
+            return Json((await _torrentClient.AddTorrent(content, DownLoadFolder)).TorrentName);
         }
 
         [HttpPost("[action]")]
@@ -74,8 +75,8 @@ namespace WebTorrent.Controllers
                 }
 
                 return Json(string.IsNullOrEmpty(folder)
-                    ? new List<Content> {await _torrentClient.AddTorrent(content, folder)}
-                    : new List<Content> {await _torrentClient.AddTorrent(content, DownLoadFolder)});
+                    ? (await _torrentClient.AddTorrent(content, folder)).TorrentName
+                    : (await _torrentClient.AddTorrent(content, DownLoadFolder)).TorrentName);
             }
 
             return Ok("{}");
@@ -85,6 +86,18 @@ namespace WebTorrent.Controllers
         public async Task<IActionResult> GetTorrentInfo(string hash)
         {
             return Content(await _torrentClient.GetTorrentInfo(hash));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetTorrentStatus(string hash)
+        {
+            return Json(await _torrentClient.GetTorrentStatus(hash));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetTorrentDetails(string hash)
+        {
+            return Json(await _torrentClient.GetTorrentDetails(hash));
         }
 
         [HttpGet("[action]")]

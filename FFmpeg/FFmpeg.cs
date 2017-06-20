@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 
@@ -26,6 +27,27 @@ namespace WebTorrent
 
                 var process = Process.Start(processInfo);
                 process.WaitForExit();
+            });
+        }
+
+        //Todo review
+        private void ConvertVideo(object state)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                var fileToConvert = "";//Path.Combine(tor.Path, file.Name);
+
+                var processInfo = new ProcessStartInfo("/app/vendor/ffmpeg/ffmpeg")
+                {
+                    Arguments = string.Format(@"-i {0} -f mp4 -vcodec libx264 -preset ultrafast 
+                                                                                     -movflags faststart -profile:v main -acodec aac {1} -hide_banner",
+                        fileToConvert,
+                        string.Format("{0}.mp4", Path.ChangeExtension(fileToConvert, null)))
+                };
+
+                var process = Process.Start(processInfo);
+                process.WaitForExit();
+                //File.Delete(fileToConvert);
             });
         }
     }

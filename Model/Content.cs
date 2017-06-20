@@ -9,6 +9,7 @@ namespace WebTorrent.Model
         [JsonIgnore]
         public int Id { get; set; }
 
+        public string TorrentName { get; set; }
         public string Hash { get; set; }
         public bool IsInProgress { get; set; }
         public string CurrentFolder { get; set; }

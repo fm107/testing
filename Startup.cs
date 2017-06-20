@@ -32,6 +32,14 @@ namespace WebTorrent
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var config = new AutoMapper.MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<UTorrent.Api.Data.Torrent, Model.TorrentInfo>();
+            });
+
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddDbContext<ContentDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
 

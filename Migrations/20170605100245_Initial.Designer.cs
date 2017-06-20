@@ -8,7 +8,7 @@ using WebTorrent.Data;
 namespace WebTorrent.Migrations
 {
     [DbContext(typeof(ContentDbContext))]
-    [Migration("20170528171029_Initial")]
+    [Migration("20170605100245_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,8 @@ namespace WebTorrent.Migrations
                     b.Property<bool>("IsInProgress");
 
                     b.Property<string>("ParentFolder");
+
+                    b.Property<string>("TorrentName");
 
                     b.HasKey("Id");
 

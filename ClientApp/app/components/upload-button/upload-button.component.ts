@@ -1,7 +1,7 @@
 ﻿import { Component } from "@angular/core";
 
 import { TdLoadingService } from "@covalent/core";
-import { TdFileService, IUploadOptions, TdFileUploadComponent } from "@covalent/file-upload";
+import { TdFileUploadComponent } from "@covalent/file-upload";
 import { NotificationsService, SimpleNotificationsComponent, PushNotificationsService } from "angular2-notifications";
 
 import { ContentService } from "../../services/content.service";
@@ -10,19 +10,18 @@ import { DataService } from "../../services/data.service";
 @Component({
     selector: "upload-button",
     templateUrl: "./upload-button.component.html",
-    styleUrls: ["./upload-button.component.css"],
-    providers: [TdFileService]
+    styleUrls: ["./upload-button.component.css"]
 })
+
 export class UploadButtonComponent {
 
     constructor(private service: NotificationsService,
-        private fileUploadService: TdFileService,
         private content: ContentService,
         private data: DataService,
         private loadingService: TdLoadingService) {
     }
 
-    selectEvent(file: File, uploadComponent: TdFileUploadComponent): void {
+    private selectEvent(file: File, uploadComponent: TdFileUploadComponent): void {
         if (file.type != "application/x-bittorrent") {
             uploadComponent.cancel();
 
@@ -53,34 +52,20 @@ export class UploadButtonComponent {
         }
     };
 
-    uploadEvent(file: File, uploadComponent: TdFileUploadComponent) {
-        const options: IUploadOptions = {
-            url: `api/Torrent/UploadFile?folder=${this.content.currentFolder.getValue()}`,
-            method: "post",
-            file: file
-        };
+    private uploadEvent(file: File, uploadComponent: TdFileUploadComponent): void {
+        this.data.submitTorrentFile(file, this.content.currentFolder.getValue()).subscribe(response => {
+            this.service.success("File Uploaded",
+                `${response} uploaded successfully`,
+                {
+                    timeOut: 5000,
+                    showProgressBar: true,
+                    pauseOnHover: true,
+                    clickToClose: true,
+                    maxLength: 100
+                });
 
-        this.loadingService.register("query");
-        this.fileUploadService.upload(options).subscribe(
-            response => {
-                this.loadingService.resolve("query");
-                this.service.success("File Uploaded",
-                    `${file.name} uploaded successfully`,
-                    {
-                        timeOut: 5000,
-                        showProgressBar: true,
-                        pauseOnHover: true,
-                        clickToClose: true,
-                        maxLength: 100
-                    });
-
-                this.data.folderContent.next(JSON.stringify(response));
-                this.content.getContent(null, false, null);
-            },
-            error => {
-                this.loadingService.resolve("query");
-                console.error(`Error while file uploading: ${error}`);
-            });
+            this.content.getContent(null, false, null);
+        });
 
         uploadComponent.cancel();
     };

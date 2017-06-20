@@ -39,23 +39,38 @@ namespace WebTorrent.Repository
                 .AsNoTracking().ToListAsync();
 
             foreach (var content in contents)
+            {
                 content.FsItems = content.FsItems =
                     content.FsItems.Where(b => b.Type.Equals("folder")).ToList();
+            }
 
             return contents;
         }
 
         public async Task<Content> FindByHash(string hash, bool tracking, string include = null)
         {
-            return !string.IsNullOrEmpty(include) && tracking
-                ? await _context.Content.Include(include).FirstOrDefaultAsync(t => t.Hash.Equals(hash))
-                : (string.IsNullOrEmpty(include) || tracking
-                    ? (string.IsNullOrEmpty(include) && tracking
-                        ? await _context.Content.FirstOrDefaultAsync(t => t.Hash.Equals(hash))
-                        : await _context.Content.Include(include).AsNoTracking()
-                            .FirstOrDefaultAsync(t => t.Hash.Equals(hash)))
-                    : await _context.Content.Include(include).AsNoTracking()
-                        .FirstOrDefaultAsync(t => t.Hash.Equals(hash)));
+            if (!string.IsNullOrEmpty(include) && tracking)
+            {
+                return await _context.Content.Include(include).FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+            }
+
+            if (!string.IsNullOrEmpty(include) && !tracking)
+            {
+                return await _context.Content.Include(include).AsNoTracking()
+                    .FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+            }
+
+            if (string.IsNullOrEmpty(include) && tracking)
+            {
+                return await _context.Content.FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+            }
+
+            if (string.IsNullOrEmpty(include) && !tracking)
+            {
+                return await _context.Content.AsNoTracking().FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+            }
+
+            return null;
         }
 
         public async void Add(Content contentRecord)

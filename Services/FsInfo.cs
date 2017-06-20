@@ -71,6 +71,7 @@ namespace WebTorrent.Services
 
             content = new Content
             {
+                TorrentName = Path.ChangeExtension(torrent.Name, null),
                 FsItems = fsContent,
                 CurrentFolder = currentFolder,
                 ParentFolder = parentFolder,

@@ -17,7 +17,8 @@ namespace WebTorrent.Migrations
                     CurrentFolder = table.Column<string>(nullable: true),
                     Hash = table.Column<string>(nullable: true),
                     IsInProgress = table.Column<bool>(nullable: false),
-                    ParentFolder = table.Column<string>(nullable: true)
+                    ParentFolder = table.Column<string>(nullable: true),
+                    TorrentName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
