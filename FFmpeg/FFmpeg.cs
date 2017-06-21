@@ -16,12 +16,10 @@ namespace WebTorrent
 
         public void CreatePlayList(string fileToConvert, string outputPath, string playList)
         {
-            Process process = null;
-            Task.Factory
-                .StartNew(() => { process = CreatePlayListProcess(fileToConvert, outputPath, playList, false); })
-                .ContinueWith(_ =>
+            Task.Factory.StartNew(() => CreatePlayListProcess(fileToConvert, outputPath, playList, false))
+                .ContinueWith(task =>
                 {
-                    if (!string.IsNullOrEmpty(process?.StandardError.ReadLine()))
+                    if (task.Result.ExitCode != 0)
                         CreatePlayListProcess(fileToConvert, outputPath, playList, true);
                 });
         }
