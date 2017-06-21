@@ -18,20 +18,19 @@ import { DialogComponent } from './components/dialog/dialog.component';
 import { UploadButtonComponent } from "./components/upload-button/upload-button.component";
 import { UploadButtonUrlComponent } from "./components/upload-button-url/upload-button-url.component";
 import { VideoJSComponent } from "./components/videojs/videojs.component";
+import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.component";
+import { ProgressComponent } from "./components/progress/progress.component";
+import { DataPresenterComponent } from "./components/data-presenter/data-presenter.component";
 
 import { DataService } from "./services/data.service";
 import { WebSocketService } from "./services/websocket.service";
-import { DataPresenterComponent } from "./components/data-presenter/data-presenter.component";
 import { ContentService } from "./services/content.service";
-import {TorrentProgressService} from "./services/torrent-progress.service";
+import { TorrentProgressService } from "./services/torrent-progress.service";
 
 import { FilterPipe } from "./pipes/filter.pipe";
 import { SortPipe } from "./pipes/sort.pipe";
 import { FileSizePipe } from "./pipes/filesize.pipe";
 import { ShowFilesPipe } from "./pipes/show-files.pipe";
-import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.component";
-import {ProgressComponent} from "./components/progress/progress.component";
-
 
 @NgModule({
     bootstrap: [AppComponent],
