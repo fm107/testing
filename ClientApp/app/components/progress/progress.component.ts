@@ -25,32 +25,35 @@ export class ProgressComponent implements OnChanges {
 
     @Input("Item") item: ClickedItem;
 
-    constructor(private progressService: TorrentProgressService, private dataService: DataService) {
-    }
-
-    ngOnInit() {
-        this.torrentDetailsSub = Observable.timer(0, 5000).subscribe(() => {
-            this.dataService.getTorrentStatus(this.item.hash, `api/Torrent/GetTorrentDetails`).subscribe(
-                (res: Response) => {
-                    const response = JSON.parse(res.text()) as ITorrentInfo;
-                    let details = "";
-                    for (let key of Object.keys(response)) {
-                        details += `${key}: ${response[key]}
-                                `;
-                    }
-                    this.torrentDetails.next(details);
-
-                    if (!this.isInProgress.getValue()) {
-                        this.torrentDetailsSub.unsubscribe(); 
-                    }
-                });
-        });
+    constructor(private progressService: TorrentProgressService,
+                private dataService: DataService) {
     }
 
     ngOnChanges() {
         if (!this.progressSub) {
             this.progressSub = this.progressService.getUpdates(this.item.hash)
-                .subscribe(res => this.isInProgress.next(res));
+                .subscribe(progress => {
+                    this.isInProgress.next(progress);
+
+                    if (!this.torrentDetailsSub) {
+                        this.torrentDetailsSub = Observable.timer(0, 5000).subscribe(() => {
+                            this.dataService.getTorrentStatus(this.item.hash, `api/Torrent/GetTorrentDetails`).subscribe(
+                                (res: Response) => {
+                                    const response = JSON.parse(res.text()) as ITorrentInfo;
+                                    let details = "";
+                                    for (let key of Object.keys(response)) {
+                                        details += `${key}: ${response[key]}
+                                `;
+                                    }
+                                    this.torrentDetails.next(details);
+
+                                    if (!progress) {
+                                        this.torrentDetailsSub.unsubscribe();
+                                    }
+                                });
+                        });
+                    }
+                });
         }
     }
 
