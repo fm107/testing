@@ -22,6 +22,7 @@ export class ProgressComponent implements OnChanges {
     private torrentDetails = new Subject<any>();
     private progressSub: Subscription;
     private torrentDetailsSub: Subscription;
+    private progress: number;
 
     @Input("Item") item: ClickedItem;
 
@@ -32,14 +33,15 @@ export class ProgressComponent implements OnChanges {
     ngOnChanges() {
         if (!this.progressSub) {
             this.progressSub = this.progressService.getUpdates(this.item.hash)
-                .subscribe(progress => {
-                    this.isInProgress.next(progress);
+                .subscribe(isInProgress => {
+                    this.isInProgress.next(isInProgress);
 
                     if (!this.torrentDetailsSub) {
                         this.torrentDetailsSub = Observable.timer(0, 5000).subscribe(() => {
                             this.dataService.getTorrentStatus(this.item.hash, `api/Torrent/GetTorrentDetails`).subscribe(
                                 (res: Response) => {
                                     const response = JSON.parse(res.text()) as ITorrentInfo;
+                                    this.progress = response.progress;
                                     let details = "";
                                     for (let key of Object.keys(response)) {
                                         details += `${key}: ${response[key]}

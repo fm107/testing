@@ -7,14 +7,23 @@ namespace WebTorrent.Model
 {
     public class TorrentInfo
     {
+        private double _progress;
+
         /// <summary>
         /// Integer in bytes
         /// </summary>
         public long Size { get; set; }
+
         /// <summary>
         /// integer in per mils
         /// </summary>
-        public int Progress { get; set; }
+        public double Progress
+        {
+            get => _progress / 10.0;
+            set => _progress = value;
+        }
+
+       
         /// <summary>
         /// integer in bytes
         /// </summary>

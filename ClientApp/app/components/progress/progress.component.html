@@ -2,7 +2,7 @@
     <div class="cssProgress">
         <div class="progress2">
             <div class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">
-                <span class="cssProgress-label">Loading</span>
+                <span *ngIf="progress" class="cssProgress-label">{{progress}}%</span>
             </div>
         </div>
     </div>
