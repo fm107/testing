@@ -72,13 +72,13 @@ export class DataService {
             });
     }
 
-    getTorrentStatus(hash: string, query: string) {
+    getTorrentStatus(hash: string, url: string) {
         const params = new URLSearchParams();
         params.set("hash", hash);
 
         const options = new RequestOptions({ search: params });
 
-        return this.http.get(query, options)
+        return this.http.get(url, options)
             .map((response: Response) => {
                 return response;
             })

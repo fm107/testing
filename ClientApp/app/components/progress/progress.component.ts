@@ -18,11 +18,10 @@ import { ITorrentInfo } from "../../model/torrentInfo";
     styleUrls: ["./progress.component.css"]
 })
 export class ProgressComponent implements OnChanges {
-    private isInProgress = new Subject<boolean>();
+    private isInProgress = new BehaviorSubject<boolean>(null);
     private torrentDetails = new Subject<any>();
-    private subscriptions: Subscription;
-
-    arrayOfKeys;
+    private progressSub: Subscription;
+    private torrentDetailsSub: Subscription;
 
     @Input("Item") item: ClickedItem;
 
@@ -30,30 +29,37 @@ export class ProgressComponent implements OnChanges {
     }
 
     ngOnInit() {
-        Observable.timer(0, 5000).subscribe(() => {
+        this.torrentDetailsSub = Observable.timer(0, 5000).subscribe(() => {
             this.dataService.getTorrentStatus(this.item.hash, `api/Torrent/GetTorrentDetails`).subscribe(
                 (res: Response) => {
                     const response = JSON.parse(res.text()) as ITorrentInfo;
-                    let test = "";
+                    let details = "";
                     for (let key of Object.keys(response)) {
-                        test += `${key}: ${response[key]}
-`;
+                        details += `${key}: ${response[key]}
+                                `;
                     }
-                    this.torrentDetails.next(test);
+                    this.torrentDetails.next(details);
+
+                    if (!this.isInProgress.getValue()) {
+                        this.torrentDetailsSub.unsubscribe(); 
+                    }
                 });
         });
     }
 
     ngOnChanges() {
-        if (!this.subscriptions) {
-            this.subscriptions = this.progressService.getUpdates(this.item.hash)
+        if (!this.progressSub) {
+            this.progressSub = this.progressService.getUpdates(this.item.hash)
                 .subscribe(res => this.isInProgress.next(res));
         }
     }
 
     ngOnDestroy() {
-        if (this.subscriptions) {
-            this.subscriptions.unsubscribe();
+        if (this.progressSub) {
+            this.progressSub.unsubscribe();
+        }
+        if (this.torrentDetailsSub) {
+            this.torrentDetailsSub.unsubscribe();
         }
     }
 }
