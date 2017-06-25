@@ -47,7 +47,7 @@ export class ProgressComponent implements OnChanges {
                                     }
                                     this.torrentDetails.next(details);
 
-                                    if (!progress) {
+                                    if (this.isInProgress.getValue() === false) {
                                         this.torrentDetailsSub.unsubscribe();
                                     }
                                 });
