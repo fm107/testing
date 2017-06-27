@@ -1,8 +1,11 @@
 ﻿<div  mdTooltip="{{ torrentDetails | async }}" *ngIf="isInProgress | async" class="info-column">
     <div class="cssProgress">
         <div class="progress2">
-            <div class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">
-                <span *ngIf="progress" class="cssProgress-label">{{progress}}%</span>
+            <div *ngIf="progress" class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">
+                <span class="cssProgress-label">{{progress}}%</span>
+            </div>
+            <div *ngIf="!progress" class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">
+                <span class="cssProgress-label">Collecting Seeds</span>
             </div>
         </div>
     </div>
