@@ -29,8 +29,8 @@ namespace WebTorrent
             var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
             {
                 Arguments = string.Format(copyCodec
-                        ? @"-fflags +genpts -i ""{0}"" -preset ultrafast -threads 15 -shortest -c:a:0 aac -c:v libx264 -map 0 -f segment -segment_list_type m3u8 -segment_time 10 -segment_format mpegts -segment_list_flags live -segment_list ""{1}/{2}.m3u8"" ""{1}/{2}.%d.ts"""
-                        : @"-i ""{0}"" -codec:v libx264 -codec:a aac -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list_flags live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
+                        ? @"-i ""{0}"" -map 0 -c:a:0 aac -codec copy -preset ultrafast -profile:v baseline -level 3.0 -f segment -segment_list_type m3u8 -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" ""{1}/{2}.%d.ts"""
+                        : @"-i ""{0}"" -c:v:0 libx264 -c:a:0 aac -preset ultrafast -profile:v baseline -level 3.0 -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
                     fileToConvert, outputPath, playList)
             };
 
