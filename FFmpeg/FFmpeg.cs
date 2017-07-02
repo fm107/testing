@@ -16,7 +16,7 @@ namespace WebTorrent
 
         public void CreatePlayList(string fileToConvert, string outputPath, string playList)
         {
-            Task.Factory.StartNew(() => CreatePlayListProcess(fileToConvert, outputPath, playList, true))
+            Task.Factory.StartNew(() => CreatePlayListProcess(fileToConvert, outputPath, playList, false))
                 .ContinueWith(task =>
                 {
                     if (task.Result.ExitCode != 0)
