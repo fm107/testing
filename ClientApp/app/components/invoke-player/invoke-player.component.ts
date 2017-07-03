@@ -1,6 +1,7 @@
 import { Component, ViewContainerRef, ComponentRef, ViewChild } from "@angular/core";
 
 import {ComponentInjectorService} from "../../services/component-injector.service";
+import { FlowplayerComponent } from "../flowplayer/flowplayer.component";
 
 declare var $: any;
 declare var lity: any;
@@ -14,7 +15,7 @@ export class InvokePlayerComponent {
     url: string;
     showVideo: boolean;
 
-    @ViewChild('alignWithContainer', { read: ViewContainerRef }) injectContainer: ViewContainerRef;
+    @ViewChild('flowplayer') flowplayer: FlowplayerComponent;
 
     constructor(protected componentInjector: ComponentInjectorService) {
     }
@@ -33,7 +34,7 @@ export class InvokePlayerComponent {
             videojs.clear();
             component.destroy(); 
             $(`#video_${id}`).remove();
-            $(`#player1`).remove();
+            this.flowplayer.bitmovinPlayer.destroy();
         });
     }
 

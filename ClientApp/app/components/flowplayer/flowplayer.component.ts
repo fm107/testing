@@ -15,6 +15,8 @@ export class FlowplayerComponent {
     // video asset url
     @Input() url: any;
 
+    bitmovinPlayer: any;
+
     constructor(public zone: NgZone) {  }
 
     ngOnInit() {
@@ -28,8 +30,8 @@ export class FlowplayerComponent {
                     poster: "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/poster.jpg"
                 }
             };
-            var player = bitmovin.player("player1");
-            player.setup(conf).then(function (value) {
+            this.bitmovinPlayer = bitmovin.player("player1");
+            this.bitmovinPlayer.setup(conf).then(function (value) {
                 // Success
                 console.log("Successfully created bitmovin player instance");
             }, function (reason) {
