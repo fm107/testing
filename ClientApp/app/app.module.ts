@@ -21,16 +21,19 @@ import { VideoJSComponent } from "./components/videojs/videojs.component";
 import { InvokePlayerComponent } from "./components/invoke-player/invoke-player.component";
 import { ProgressComponent } from "./components/progress/progress.component";
 import { DataPresenterComponent } from "./components/data-presenter/data-presenter.component";
+import { FlowplayerComponent } from "./components/flowplayer/flowplayer.component";
 
 import { DataService } from "./services/data.service";
 import { WebSocketService } from "./services/websocket.service";
 import { ContentService } from "./services/content.service";
 import { TorrentProgressService } from "./services/torrent-progress.service";
+import { ComponentInjectorService } from "./services/component-injector.service";
 
 import { FilterPipe } from "./pipes/filter.pipe";
 import { SortPipe } from "./pipes/sort.pipe";
 import { FileSizePipe } from "./pipes/filesize.pipe";
 import { ShowFilesPipe } from "./pipes/show-files.pipe";
+
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -38,7 +41,7 @@ import { ShowFilesPipe } from "./pipes/show-files.pipe";
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent, InvokePlayerComponent, ProgressComponent,
+        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent, InvokePlayerComponent, ProgressComponent, FlowplayerComponent,
 
         FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe
     ],
@@ -56,14 +59,16 @@ import { ShowFilesPipe } from "./pipes/show-files.pipe";
         CovalentCoreModule,
         CovalentDialogsModule,
 
+        
+
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
             { path: '**', redirectTo: 'home' }
         ])
     ],
-    entryComponents: [HomeComponent, InvokePlayerComponent],
-    providers: [DataService, ContentService, TorrentProgressService, WebSocketService, TdLoadingService, SimpleTimer, TdFileService]
+    entryComponents: [HomeComponent, InvokePlayerComponent, FlowplayerComponent],
+    providers: [DataService, ContentService, TorrentProgressService, WebSocketService, TdLoadingService, SimpleTimer, TdFileService, ComponentInjectorService]
 })
 export class AppModule {
 }
