@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, NgZone } from '@angular/core';
 
 declare var videojs: any;
 
@@ -22,7 +22,7 @@ export class VideoJSComponent {
     player: any;
 
     // constructor initializes our declared vars
-    constructor() {
+    constructor(public zone: NgZone) {
         this.url = false;
         this.player = false;
     }
@@ -30,7 +30,7 @@ export class VideoJSComponent {
     // use ngAfterViewInit to make sure we initialize the videojs element
     // after the component template itself has been rendered
     ngAfterViewInit() {
-        this.init();
+        this.zone.run(() => { this.init()});
     }
 
     init() {
