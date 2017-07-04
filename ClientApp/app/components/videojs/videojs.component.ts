@@ -30,7 +30,7 @@ export class VideoJSComponent {
     // use ngAfterViewInit to make sure we initialize the videojs element
     // after the component template itself has been rendered
     ngAfterViewInit() {
-        this.zone.run(() => { this.init()});
+        this.zone.runOutsideAngular(() => { this.init()});
     }
 
     init() {
