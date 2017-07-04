@@ -1,46 +1,28 @@
 import { Component, AfterViewInit, ElementRef, Input, ViewChild, NgZone } from '@angular/core';
 
-declare var flowplayer: any;
-declare var $: any;
-declare var bitmovin: any;
+declare var Hls: any;
 
 @Component({
     selector: "flowplayer",
     templateUrl: "./flowplayer.component.html"
 })
 
-export class FlowplayerComponent {
-    @ViewChild("player") player: any;
+export class FlowplayerComponent implements AfterViewInit{
 
     // video asset url
-    @Input() url: any;
+    @Input() url: string;
 
-    bitmovinPlayer: any;
+    // index to create unique ID for component
+    @Input() idx: string;
+
+    hlsPlayer: any;
 
     constructor(public zone: NgZone) {  }
 
     ngOnInit() {
-        this.zone.runOutsideAngular(() => {
-            var conf = {
-                key: "34dee666-a6a0-4d62-8f1e-3c309e4b7cb6",
-                source: {
-
-                    hls: this.url,
-
-                    poster: "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/poster.jpg"
-                }
-            };
-            this.bitmovinPlayer = bitmovin.player("player1");
-            this.bitmovinPlayer.setup(conf).then(function (value) {
-                // Success
-                console.log("Successfully created bitmovin player instance");
-            }, function (reason) {
-                // Error!
-                console.log("Error while creating bitmovin player instance");
-            });
-        });
         
-
+        
+        
         ////const container = document.getElementById("player"); //this.player.nativeElement; //
         ////console.log(container);
         //const self = $("#player1")[0];
@@ -91,35 +73,16 @@ export class FlowplayerComponent {
     }
 
     ngAfterViewInit() {
-        
-
-        
+        this.zone.runOutsideAngular(() => {
+            if (Hls.isSupported()) {
+                var video = document.getElementById(`video_${this.idx}`);
+                this.hlsPlayer = new Hls();
+                this.hlsPlayer.loadSource(this.url);
+                this.hlsPlayer.attachMedia(video);
+                this.hlsPlayer.on(Hls.Events.MANIFEST_PARSED, () => {
+                    console.log("Successfully created hlsPlayer instance");
+                });
+            }
+        });
     }
-
-    //ngOnChanges() {
-    //    flowplayer(document.getElementById("fp-hlsjs"), {
-    //        splash: true,
-    //        ratio: 9 / 16,
-
-    //        // optional: HLS levels offered for manual selection
-    //        hlsQualities: [-1, 1, 3, 6],
-
-    //        clip: {
-    //            title: "...", // updated on ready
-    //            sources: [
-    //                {
-    //                    type: "application/x-mpegurl",
-    //                    src: this.url
-    //                }
-    //            ]
-    //        },
-    //        embed: false
-            
-    //    }).on("ready", (e, api, video) => {
-    //        console.log(this.url);
-    //        document.querySelector("fp-hlsjs.fp-title").innerHTML =
-    //            api.engine.engineName + " engine playing " + video.type;
-
-    //    });
-    //}
 }

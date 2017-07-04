@@ -34,7 +34,7 @@ export class InvokePlayerComponent {
             videojs.clear();
             component.destroy(); 
             $(`#video_${id}`).remove();
-            this.flowplayer.bitmovinPlayer.destroy();
+            this.flowplayer.hlsPlayer.destroy();
         });
     }
 
