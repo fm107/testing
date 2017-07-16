@@ -63,7 +63,7 @@ namespace WebTorrent.Services
             {
                 if (stopwatch.Elapsed < TimeSpan.FromMinutes(1))
                 {
-                    torrent = (await _client.GetListAsync()).Result.Torrents.FirstOrDefault(t => t.Hash.Equals(response.AddedTorrent.Hash)); //response.AddedTorrent;
+                    torrent = (await _client.GetListAsync()).Result.Torrents.FirstOrDefault(t => t.Hash.Equals(response.AddedTorrent.Hash));
                     Thread.Sleep(1000);
                 }
                 else
@@ -71,9 +71,7 @@ namespace WebTorrent.Services
                     return null;
                 }
 
-            } while (torrent?.Size <= 0);
-
-            //return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
+            } while (torrent.Size <= 0);
 
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(response.AddedTorrent.Hash));
         }
