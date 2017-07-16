@@ -53,8 +53,10 @@ namespace WebTorrent.Services
         public async Task<Content> AddUrlTorrent(string url, string path)
         {
             var response = _client.AddUrlTorrent(url, Path.Combine(path, GetTorrentName(url)));
-            var torrent = response.AddedTorrent;
-            return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
+            var torrent = await _client.GetTorrentAsync(response.AddedTorrent.Hash); //response.AddedTorrent;
+            //return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
+            return await _fsInfo.SaveFolderContent(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(response.AddedTorrent.Hash)),
+                await GetFiles(response.AddedTorrent.Hash));
         }
 
         public async Task<bool> IsTorrentType(Stream file)
