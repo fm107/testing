@@ -139,7 +139,7 @@ export class DataPresenterComponent {
         this.dataService.getTorrentInfo(hash).subscribe((response:Response) => {
             this.dialogService.openAlert(({
                 message: response.text(),
-                disableClose: false, 
+                disableClose: true, 
                 title: "Torrent is in progress"
             })).afterClosed().subscribe(()=> callback());
         });

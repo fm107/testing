@@ -16,7 +16,6 @@ namespace WebTorrent.Controllers
     public class ContentController : Controller
     {
         private const string UploadFolder = "uploads";
-
         private readonly IHostingEnvironment _environment;
         private readonly FsInfo _fsInfo;
         private readonly ILogger<ContentController> _log;
@@ -39,90 +38,6 @@ namespace WebTorrent.Controllers
 #endif
             var resp = await _fsInfo.GetFolderContent(folder, needFiles, hash);
             return Json(resp);
-        }
-
-        //[HttpGet("[action]")]
-        //public IActionResult GetFile(string hash)
-        //{
-        //    var fileStream = new FileStreamResult();
-        //}
-
-        [HttpGet("[action]")]
-        public string ShowDirectory()
-        {
-            string ret = null;
-            foreach (var file in Directory.EnumerateFiles(Path.Combine(_environment.WebRootPath, UploadFolder), "*",
-                SearchOption.AllDirectories))
-                ret += string.Format("{0} Size: {1}", file, new FileInfo(file).Length) + Environment.NewLine;
-            return ret;
-        }
-
-        [HttpGet("[action]")]
-        public IActionResult RunUTorrent()
-        {
-            var processInfo = new ProcessStartInfo("/app/utorrent-server/utserver")
-            {
-                Arguments =
-                    "-configfile /app/utorrent-server/utserver.conf -logfile /app/heroku_output/wwwroot/uploads/log.txt -daemon",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true
-            };
-
-            Process.Start(processInfo).StandardOutput.ReadToEndAsync()
-                .ContinueWith(response => { _log.LogInformation(response.Result); });
-
-            return Ok();
-        }
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> ShowProcess()
-        {
-            var processInfo = new ProcessStartInfo("ps")
-            {
-                Arguments = "-ef",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true
-            };
-
-            var process = Process.Start(processInfo);
-
-            return Ok(await process.StandardOutput.ReadToEndAsync());
-        }
-
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new[] {"value1", "value2"};
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 
