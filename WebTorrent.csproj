@@ -38,6 +38,7 @@
     <Compile Remove="ClientApp\app\listSortable\**" />
     <Compile Remove="ClientApp\dist\**" />
     <Compile Remove="TorrentClient\**" />
+    <Compile Remove="Unit Tests\**" />
     <Compile Remove="UTorrentClientApi\**" />
     <Compile Remove="wwwroot\css\themes\**" />
     <Content Remove="BitTorrent.Dht\**" />
@@ -46,6 +47,7 @@
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
     <Content Remove="ClientApp\**" />
     <Content Remove="TorrentClient\**" />
+    <Content Remove="Unit Tests\**" />
     <Content Remove="UTorrentClientApi\**" />
     <Content Remove="wwwroot\css\themes\**" />
     <EmbeddedResource Remove="BitTorrent.Dht\**" />
@@ -53,6 +55,7 @@
     <EmbeddedResource Remove="ClientApp\app\listSortable\**" />
     <EmbeddedResource Remove="ClientApp\dist\**" />
     <EmbeddedResource Remove="TorrentClient\**" />
+    <EmbeddedResource Remove="Unit Tests\**" />
     <EmbeddedResource Remove="UTorrentClientApi\**" />
     <EmbeddedResource Remove="wwwroot\css\themes\**" />
     <None Remove="BitTorrent.Dht\**" />
@@ -60,6 +63,7 @@
     <None Remove="ClientApp\app\listSortable\**" />
     <None Remove="ClientApp\dist\**" />
     <None Remove="TorrentClient\**" />
+    <None Remove="Unit Tests\**" />
     <None Remove="UTorrentClientApi\**" />
     <None Remove="wwwroot\css\themes\**" />
   </ItemGroup>
