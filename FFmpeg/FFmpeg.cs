@@ -25,7 +25,7 @@ namespace WebTorrent
         {
             Task.Factory.StartNew(async () =>
                 {
-                    GetStreams(fileToConvert);
+                    //GetStreams(fileToConvert);
                     return await CreatePlayListProcess(fileToConvert, outputPath, playList, false);
                 })
                 .ContinueWith(async task =>
@@ -41,7 +41,7 @@ namespace WebTorrent
             {
                 Arguments = string.Format(copyCodec
                         ? @"-i ""{0}"" -map 0:0 -map 0:1 -codec copy -f segment -segment_list_type m3u8 -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" ""{1}/{2}.%d.ts"""
-                        : @"-i ""{0}"" -map {3} -map {4} -c:v:0 libx264 -c:a:0 aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
+                        : @"-i ""{0}"" -c:v:0 libx264 -c:a:0 aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
                     fileToConvert, outputPath, playList, 
                     _builder.VideoList.FirstOrDefault().Value,
                     _builder.AudioList.FirstOrDefault().Value),
