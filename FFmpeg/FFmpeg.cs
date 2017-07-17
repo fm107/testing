@@ -23,35 +23,26 @@ namespace WebTorrent
 
         public void CreatePlayList(string fileToConvert, string outputPath, string playList)
         {
-            Task.Factory.StartNew(async () =>
+            Task.Factory.StartNew(() => CreatePlayListProcess(fileToConvert, outputPath, playList, false))
+                .ContinueWith(task =>
                 {
-                    //GetStreams(fileToConvert);
-                    return await CreatePlayListProcess(fileToConvert, outputPath, playList, false);
-                })
-                .ContinueWith(async task =>
-                {
-                    if (task.Result.Result.ExitCode != 0)
-                        await CreatePlayListProcess(fileToConvert, outputPath, playList, false);
+                    if (task.Result.ExitCode != 0)
+                        CreatePlayListProcess(fileToConvert, outputPath, playList, false);
                 });
         }
 
-        private async Task<Process> CreatePlayListProcess(string fileToConvert, string outputPath, string playList, bool copyCodec)
+        private Process CreatePlayListProcess(string fileToConvert, string outputPath, string playList, bool copyCodec)
         {
             var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
             {
                 Arguments = string.Format(copyCodec
                         ? @"-i ""{0}"" -map 0:0 -map 0:1 -codec copy -f segment -segment_list_type m3u8 -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" ""{1}/{2}.%d.ts"""
                         : @"-i ""{0}"" -c:v:0 libx264 -c:a:0 aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
-                    fileToConvert, outputPath, playList, 
-                    _builder.VideoList.FirstOrDefault().Value,
-                    _builder.AudioList.FirstOrDefault().Value),
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
+                    fileToConvert, outputPath, playList)
             };
 
             var process = Process.Start(processInfo);
             process.WaitForExit();
-            //_log.LogInformation(await process.StandardOutput.ReadToEndAsync());
             return process;
         }
 
