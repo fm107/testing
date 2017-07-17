@@ -51,7 +51,7 @@ namespace WebTorrent
 
             var process = Process.Start(processInfo);
             process.WaitForExit();
-            _log.LogInformation(await process.StandardOutput.ReadToEndAsync());
+            //_log.LogInformation(await process.StandardOutput.ReadToEndAsync());
             return process;
         }
 
