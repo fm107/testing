@@ -25,7 +25,6 @@ namespace UnitTests
             var ffmpeg = new FFmpeg(new FFmpegOptions(), logger);
             ffmpeg.CreatePlayList(filetoConvert, @"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\output", "output");
             
-            Thread.Sleep(TimeSpan.FromSeconds(30));
             Console.WriteLine("Ok123");
         }
         [TestMethod]

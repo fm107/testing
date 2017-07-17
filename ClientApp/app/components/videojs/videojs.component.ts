@@ -62,5 +62,7 @@ export class VideoJSComponent {
             // Then on resize call resizeVideoJS()
             window.onresize = resizeVideoJS;
         });
+
+        this.player.dvrseekbar();
     }
 }
