@@ -20,7 +20,7 @@ namespace UnitTests
         public void CreatePlayListProcess()
         {
             var factoryLogger= new LoggerFactory();
-            factoryLogger.AddFile(@"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\output\");
+            factoryLogger.CreateLogger<FFmpegTest>();
             var logger = new Logger<FFmpeg>(factoryLogger);
             var ffmpeg = new FFmpeg(new FFmpegOptions(), logger);
             ffmpeg.CreatePlayList(filetoConvert, @"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\output", "output");
@@ -32,7 +32,7 @@ namespace UnitTests
         public void CreatePlayList()
         {
             var factoryLogger= new LoggerFactory();
-            factoryLogger.AddFile(@"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\output\log.txt");
+            factoryLogger.CreateLogger<FFmpegTest>();
             var logger = new Logger<FFmpeg>(factoryLogger);
             var ffmpeg = new FFmpeg(new FFmpegOptions(), logger);
             ffmpeg.GetStreams(filetoConvert);
