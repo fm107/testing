@@ -46,8 +46,10 @@ namespace WebTorrent
             };
 
             var process = Process.Start(processInfo);
-            //process.WaitForExit();
-            _log.LogInformation(await process.StandardOutput.ReadToEndAsync());
+            var output = await process.StandardOutput.ReadToEndAsync();
+            process.WaitForExit();
+
+            _log.LogInformation(output);
         }
 
         public async Task GetStreams(string fileToConvert)
@@ -63,6 +65,7 @@ namespace WebTorrent
             var streamLine = new Regex("(Stream #(.*))");
             var streamChannel = new Regex(@"(Stream #)(\d+)(\W+)(\d+)");
             var output = await process.StandardError.ReadToEndAsync();
+            process.WaitForExit();
 
             foreach (Match match in streamLine.Matches(output))
             {
