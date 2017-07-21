@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace WebTorrent
 {
@@ -23,30 +24,33 @@ namespace WebTorrent
 
         public void CreatePlayList(string fileToConvert, string outputPath, string playList)
         {
-            Task.Factory.StartNew(() => CreatePlayListProcess(fileToConvert, outputPath, playList, false))
-                .ContinueWith(task =>
-                {
-                    if (task.Result.ExitCode != 0)
-                        CreatePlayListProcess(fileToConvert, outputPath, playList, false);
-                });
+            Task.Factory.StartNew(async () =>
+            {
+                await GetStreams(fileToConvert);
+                await CreatePlayListProcess(fileToConvert, outputPath, playList, false);
+            });
         }
 
-        private Process CreatePlayListProcess(string fileToConvert, string outputPath, string playList, bool copyCodec)
+        private async Task CreatePlayListProcess(string fileToConvert, string outputPath, string playList, bool copyCodec)
         {
             var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
             {
                 Arguments = string.Format(copyCodec
                         ? @"-i ""{0}"" -map 0:0 -map 0:1 -codec copy -f segment -segment_list_type m3u8 -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" ""{1}/{2}.%d.ts"""
-                        : @"-i ""{0}"" -c:v:0 libx264 -c:a:0 aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
-                    fileToConvert, outputPath, playList)
+                        : @"-i ""{0}"" -map {3} -map {4} -c:v libx264 -c:a aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
+                    fileToConvert, outputPath, playList,
+                    _builder.VideoList.FirstOrDefault().Key,
+                    _builder.AudioList.FirstOrDefault().Key),
+
+                RedirectStandardOutput = true
             };
 
             var process = Process.Start(processInfo);
-            process.WaitForExit();
-            return process;
+            //process.WaitForExit();
+            _log.LogInformation(await process.StandardOutput.ReadToEndAsync());
         }
 
-        public void GetStreams(string fileToConvert)
+        public async Task GetStreams(string fileToConvert)
         {
             var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
             {
@@ -58,7 +62,7 @@ namespace WebTorrent
 
             var streamLine = new Regex("(Stream #(.*))");
             var streamChannel = new Regex(@"(Stream #)(\d+)(\W+)(\d+)");
-            var output = process.StandardError.ReadToEnd();
+            var output = await process.StandardError.ReadToEndAsync();
 
             foreach (Match match in streamLine.Matches(output))
             {
@@ -80,6 +84,68 @@ namespace WebTorrent
                 }
             }
         }
+
+
+
+        //public void CreatePlayList(string fileToConvert, string outputPath, string playList)
+        //{
+        //    Task.Factory.StartNew(() => CreatePlayListProcess(fileToConvert, outputPath, playList, false))
+        //        .ContinueWith(task =>
+        //        {
+        //            if (task.Result.ExitCode != 0)
+        //                CreatePlayListProcess(fileToConvert, outputPath, playList, false);
+        //        });
+        //}
+
+        //private Process CreatePlayListProcess(string fileToConvert, string outputPath, string playList, bool copyCodec)
+        //{
+        //    var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
+        //    {
+        //        Arguments = string.Format(copyCodec
+        //                ? @"-i ""{0}"" -map 0:0 -map 0:1 -codec copy -f segment -segment_list_type m3u8 -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" ""{1}/{2}.%d.ts"""
+        //                : @"-i ""{0}"" -c:v:0 libx264 -c:a:0 aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
+        //            fileToConvert, outputPath, playList)
+        //    };
+
+        //    var process = Process.Start(processInfo);
+        //    process.WaitForExit();
+        //    return process;
+        //}
+
+        //public void GetStreams(string fileToConvert)
+        //{
+        //    var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
+        //    {
+        //        Arguments = string.Format(@"-i ""{0}""", fileToConvert),
+        //        RedirectStandardError = true
+        //    };
+
+        //    var process = Process.Start(processInfo);
+
+        //    var streamLine = new Regex("(Stream #(.*))");
+        //    var streamChannel = new Regex(@"(Stream #)(\d+)(\W+)(\d+)");
+        //    var output = process.StandardError.ReadToEnd();
+
+        //    foreach (Match match in streamLine.Matches(output))
+        //    {
+        //        if (match.Value.Contains("Video:"))
+        //        {
+        //            var channel = streamChannel.Match(match.Value).Value.Split('#').Last();
+        //            _builder.VideoList.Add(channel, channel);
+        //        }
+
+        //        if (match.Value.Contains("Audio:"))
+        //        {
+        //            var channel = streamChannel.Match(match.Value).Value.Split('#').Last();
+        //            _builder.AudioList.Add(channel, channel);
+        //        }
+        //        if (match.Value.Contains("Subtitle:"))
+        //        {
+        //            var channel = streamChannel.Match(match.Value).Value.Split('#').Last();
+        //            _builder.SubtitleList.Add(channel, channel);
+        //        }
+        //    }
+        //}
 
         //Todo review
         private void ConvertVideo(object state)
