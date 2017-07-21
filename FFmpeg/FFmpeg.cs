@@ -27,11 +27,11 @@ namespace WebTorrent
             Task.Factory.StartNew(async () =>
             {
                 await GetStreams(fileToConvert);
-                await CreatePlayListProcess(fileToConvert, outputPath, playList, false);
+                CreatePlayListProcess(fileToConvert, outputPath, playList, false);
             });
         }
 
-        private async Task CreatePlayListProcess(string fileToConvert, string outputPath, string playList, bool copyCodec)
+        private void CreatePlayListProcess(string fileToConvert, string outputPath, string playList, bool copyCodec)
         {
             var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
             {
@@ -45,11 +45,12 @@ namespace WebTorrent
                 RedirectStandardOutput = true
             };
 
-            var process = Process.Start(processInfo);
-            var output = await process.StandardOutput.ReadToEndAsync();
-            process.WaitForExit();
-
-            _log.LogInformation(output);
+            using (var process = Process.Start(processInfo))
+            {
+                process.WaitForExit();
+                var output = process.StandardOutput.ReadToEnd();
+                _log.LogInformation(output);
+            }
         }
 
         public async Task GetStreams(string fileToConvert)
