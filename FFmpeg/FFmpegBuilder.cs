@@ -21,13 +21,11 @@ namespace WebTorrent
         {
             _ffmpegPath = ffmpegPath;
             _inputFile = inputFile;
-            _builder = new StringBuilder(string.Format(@"-i ""{0}"" ", inputFile));
+            _builder = new StringBuilder(string.Format(@"-i ""{0}""", inputFile));
             _builderActions = new List<Action<FFmpegArguments>>();
             _videoList = new Dictionary<string, string>();
             _audioList = new Dictionary<string, string>();
             _subtitleList = new Dictionary<string, string>();
-
-            GetStreams(inputFile);
         }
 
         public static FFmpegBuilder CreateFFmpegBuilder(string ffmpegPath, string inputFile)
@@ -40,7 +38,7 @@ namespace WebTorrent
             _builderActions.Add(config =>
             {
                 foreach (var video in _videoList.Take(amountStreamsToMap))
-                    _builder.AppendFormat("-map {0} ", video.Value);
+                    _builder.AppendFormat(" -map {0}", video.Value);
 
                 config.CmdArguments = _builder.ToString();
             });
@@ -53,7 +51,7 @@ namespace WebTorrent
             _builderActions.Add(config =>
             {
                 foreach (var video in _audioList.Take(amountStreamsToMap))
-                    _builder.AppendFormat("-map {0} ", video.Value);
+                    _builder.AppendFormat(" -map {0}", video.Value);
 
                 config.CmdArguments = _builder.ToString();
             });
@@ -66,7 +64,7 @@ namespace WebTorrent
             _builderActions.Add(config =>
             {
                 _builder.AppendFormat(
-                    @"-c:v libx264 -c:a aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
+                    @" -c:v libx264 -c:a aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
                     _inputFile, outputPath, playList);
 
                 config.CmdArguments = _builder.ToString();
@@ -77,6 +75,8 @@ namespace WebTorrent
 
         public FFmpegArguments Build()
         {
+            GetStreams(inputFile);
+            
             var ffmpegArguments = new FFmpegArguments();
             _builderActions.ForEach(build => build(ffmpegArguments));
 
