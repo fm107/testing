@@ -23,7 +23,8 @@ namespace WebTorrent
             _ffmpeg = FFmpegBuilder.CreateFFmpegBuilder(_ffmpegSettings.FilePath, fileToConvert)
                 .MapVideoStream(1)
                 .MapAudioStream(1)
-                .CreateOnlinePlayList(outputPath, playList).Build();
+                .CreateOnlinePlayList(outputPath, playList)
+                .Build();
 
             var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
             {
