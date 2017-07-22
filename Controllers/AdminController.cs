@@ -69,6 +69,7 @@ namespace WebTorrent.Controllers
             };
 
             var process = Process.Start(processInfo);
+            process.WaitForExit();
 
             return Ok(await process.StandardOutput.ReadToEndAsync());
         }
