@@ -26,8 +26,8 @@ namespace WebTorrent.Services
         private readonly FsInfo _fsInfo;
         private readonly TaskSynchronizationScope _lock = new TaskSynchronizationScope();
         private readonly ILogger<TorrentClient> _log;
-        private readonly IContentRecordRepository _repository;
         private readonly IMapper _mapper;
+        private readonly IContentRecordRepository _repository;
         private Timer _timer;
 
         public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository, ILogger<TorrentClient> log,
@@ -40,13 +40,14 @@ namespace WebTorrent.Services
             _environment = environment;
             _mapper = mapper;
             _client = new UTorrentClient("admin", "");
-            _timer = new Timer(CheckStatus, null, 0, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
         }
 
         public async Task<Content> AddTorrent(Stream file, string path)
         {
             var response = _client.PostTorrent(file, Path.Combine(path, await GetTorrentName(file)));
             var torrent = response.AddedTorrent;
+
+            StartTimer(CheckStatus, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
         }
 
@@ -61,18 +62,19 @@ namespace WebTorrent.Services
 
             do
             {
-                if (stopwatch.Elapsed < TimeSpan.FromMinutes(1))
+                if (stopwatch.Elapsed < TimeSpan.FromMinutes(3))
                 {
-                    torrent = (await _client.GetListAsync()).Result.Torrents.FirstOrDefault(t => t.Hash.Equals(response.AddedTorrent.Hash));
-                    Thread.Sleep(1000);
+                    torrent = (await _client.GetListAsync()).Result.Torrents.FirstOrDefault(
+                        t => t.Hash.Equals(response.AddedTorrent.Hash));
+                    Thread.Sleep(500);
                 }
                 else
                 {
                     return null;
                 }
-
             } while (torrent.Size <= 0);
 
+            StartTimer(CheckStatus, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(response.AddedTorrent.Hash));
         }
 
@@ -107,6 +109,7 @@ namespace WebTorrent.Services
                 result = $"Progress: {tor.Progress / 10.0}%" + Environment.NewLine +
                          $"Remaining: {tor.Remaining} bytes";
             }
+
             return result;
         }
 
@@ -116,9 +119,25 @@ namespace WebTorrent.Services
             return _mapper.Map<TorrentInfo>(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash)));
         }
 
+        private void StartTimer(TimerCallback callback, int period)
+        {
+            if (_timer == null && _client.GetList().Result.Torrents.Any(t => t.Progress != 1000))
+            {
+                _timer = new Timer(callback, null, 0, period);
+            }
+        }
+
+        private void StopTimer()
+        {
+            _timer.Dispose();
+            _timer = null;
+        }
+
         private async void CheckStatus(object state)
         {
-            foreach (var tor in _client.GetList().Result.Torrents)
+            var torrents = (await _client.GetListAsync()).Result.Torrents;
+
+            foreach (var tor in torrents)
             {
                 if (tor.Progress != 1000)
                 {
@@ -136,6 +155,15 @@ namespace WebTorrent.Services
                 _log.LogInformation("Creating playing list for {0}", tor.Name);
                 ChangeStatus(content);
                 CreatePlayList(content);
+                ValidateStateTorrents(torrents);
+            }
+        }
+
+        private void ValidateStateTorrents(IEnumerable<UTorrent.Api.Data.Torrent> torrents)
+        {
+            if (_timer != null && torrents.All(t => t.Progress == 1000))
+            {
+                StopTimer();
             }
         }
 
@@ -168,50 +196,6 @@ namespace WebTorrent.Services
 
             _repository.Update(content);
             _repository.Save();
-        }
-
-        private void CreatePlayList(UTorrent.Api.Data.Torrent tor)
-        {
-            foreach (var files in _client.GetFiles(tor.Hash).Result.Files.Values)
-            {
-                foreach (var file in files)
-                {
-                    if (MimeTypes.GetMimeMapping(file.Name).Contains("video") |
-                        MimeTypes.GetMimeMapping(file.Name).Contains("audio"))
-                    {
-                        if (!file.NameWithoutPath.EndsWith(".mp4") &&
-                            tor.Path.Contains(Path.ChangeExtension(file.NameWithoutPath, null)))
-                        {
-                            var fileToConvert = Path.Combine(tor.Path, file.Name);
-
-                            _log.LogInformation("Start convert process for {0}", fileToConvert);
-                            _log.LogInformation("file path {0}", tor.Path);
-
-                            _ffmpeg.CreatePlayList(fileToConvert, tor.Path, "hkhgkipj");
-
-                            //     Task.Factory.StartNew(() =>
-                            //{
-                            //    var fileToConvert = Path.Combine(tor.Path, file.Name);
-
-                            //    _log.LogInformation("Start convert process for {0}", fileToConvert);
-                            //    _log.LogInformation("file path {0}", tor.Path);
-                            //    var processInfo = new ProcessStartInfo(@"/app/vendor/ffmpeg/ffmpeg")
-                            //    {
-                            //        Arguments = string.Format(
-                            //            @"-i {0} -codec:v libx264 -codec:a aac -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list_flags live -segment_list {1}/out.m3u8 -segment_list_type m3u8 {1}/%d.ts",
-                            //            fileToConvert, tor.Path)
-                            //    };
-
-                            //    var process = Process.Start(processInfo);
-                            //    process.WaitForExit();
-                            //     //await _client.DeleteTorrentAsync(tor.Hash);
-                            //     //await _repository.Delete((await _repository.FindByHash(tor.Hash)).Id);
-                            //     //File.Delete(fileToConvert);
-                            // });
-                        }
-                    }
-                }
-            }
         }
 
         private async Task<ICollection<FileCollection>> GetFiles(string hash)
