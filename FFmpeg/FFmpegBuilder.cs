@@ -75,7 +75,7 @@ namespace WebTorrent
 
         public FFmpegArguments Build()
         {
-            GetStreams(inputFile);
+            GetStreams(_inputFile);
             
             var ffmpegArguments = new FFmpegArguments();
             _builderActions.ForEach(build => build(ffmpegArguments));
