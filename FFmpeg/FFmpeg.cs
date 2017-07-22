@@ -20,24 +20,27 @@ namespace WebTorrent
 
         public void CreatePlayList(string fileToConvert, string outputPath, string playList)
         {
-            _ffmpeg = FFmpegBuilder.CreateFFmpegBuilder(_ffmpegSettings.FilePath, fileToConvert)
-                .MapVideoStream(1)
-                .MapAudioStream(1)
-                .CreateOnlinePlayList(outputPath, playList)
-                .Build();
-
-            var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
+            Task.Factory.StartNew(() =>
             {
-                Arguments = _ffmpeg.CmdArguments,
-                RedirectStandardOutput = true
-            };
+                _ffmpeg = FFmpegBuilder.CreateFFmpegBuilder(_ffmpegSettings.FilePath, fileToConvert)
+                    .MapVideoStream(1)
+                    .MapAudioStream(1)
+                    .CreateOnlinePlayList(outputPath, playList)
+                    .Build();
 
-            using (var process = Process.Start(processInfo))
-            {
-                process.WaitForExit();
-                var output = process.StandardOutput.ReadToEnd();
-                _log.LogInformation(output);
-            }
+                var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
+                {
+                    Arguments = _ffmpeg.CmdArguments,
+                    RedirectStandardOutput = true
+                };
+
+                using (var process = Process.Start(processInfo))
+                {
+                    process.WaitForExit();
+                    var output = process.StandardOutput.ReadToEnd();
+                    _log.LogInformation(output);
+                }
+            });
         }
 
         //public void CreatePlayList(string fileToConvert, string outputPath, string playList)
