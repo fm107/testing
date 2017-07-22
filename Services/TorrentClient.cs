@@ -47,7 +47,7 @@ namespace WebTorrent.Services
             var response = _client.PostTorrent(file, Path.Combine(path, await GetTorrentName(file)));
             var torrent = response.AddedTorrent;
 
-            StartTimer(CheckStatus, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
+            await StartTimer(CheckStatus, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(torrent.Hash));
         }
 
@@ -74,7 +74,7 @@ namespace WebTorrent.Services
                 }
             } while (torrent.Size <= 0);
 
-            StartTimer(CheckStatus, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
+            await StartTimer(CheckStatus, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(response.AddedTorrent.Hash));
         }
 
@@ -119,9 +119,9 @@ namespace WebTorrent.Services
             return _mapper.Map<TorrentInfo>(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash)));
         }
 
-        private void StartTimer(TimerCallback callback, int period)
+        private async Task StartTimer(TimerCallback callback, int period)
         {
-            if (_timer == null && _client.GetList().Result.Torrents.Any(t => t.Progress != 1000))
+            if (_timer == null && (await _client.GetListAsync()).Result.Torrents.Any(t => t.Progress != 1000))
             {
                 _timer = new Timer(callback, null, 0, period);
             }
