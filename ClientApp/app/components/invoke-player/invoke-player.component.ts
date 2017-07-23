@@ -15,7 +15,7 @@ export class InvokePlayerComponent {
     url: string;
     showVideo: boolean;
 
-    @ViewChild('flowplayer') flowplayer: FlowplayerComponent;
+    @ViewChild('videoPlayer') videoPlayer: any;
 
     constructor(protected componentInjector: ComponentInjectorService) {
     }
@@ -34,7 +34,7 @@ export class InvokePlayerComponent {
             videojs.clear();
             component.destroy(); 
             $(`#video_${id}`).remove();
-            //this.flowplayer.hlsPlayer.destroy();
+            this.videoPlayer.player.dispose();
         });
     }
 
