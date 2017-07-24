@@ -19,12 +19,6 @@ namespace WebTorrent
 
         public void CreatePlayList(string fileToConvert, string outputPath, string playList)
         {
-            _ffmpeg = new FFmpegBuilder(_ffmpegSettings.FilePath, fileToConvert)
-                .MapVideoStream(1)
-                .MapAudioStream(1)
-                .CreateOnlinePlayList(outputPath, playList)
-                .Build();
-
             Task.Factory.StartNew(() =>
             {
                 _ffmpeg = new FFmpegBuilder(_ffmpegSettings.FilePath, fileToConvert)
