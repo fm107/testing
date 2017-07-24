@@ -13,8 +13,7 @@ namespace UnitTests
     [TestClass]
     public class FFmpegTest
     {
-        private string filetoConvert =
-                @"D:\Temp\Logan.2017.BDRip(AVC).mkv";
+        private const string FiletoConvert = @"D:\Temp\Logan.2017.BDRip(AVC).mkv";
 
         [TestMethod]
         public void CreatePlayListProcess()
@@ -23,20 +22,9 @@ namespace UnitTests
             factoryLogger.CreateLogger<FFmpegTest>();
             var logger = new Logger<FFmpeg>(factoryLogger);
             var ffmpeg = new FFmpeg(new FFmpegOptions(), logger);
-            ffmpeg.CreatePlayList(filetoConvert, @"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\output", "output");
+            ffmpeg.CreatePlayList(FiletoConvert, @"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\output", "output");
             
-            Console.WriteLine("Ok123");
-        }
-        [TestMethod]
-        public void CreatePlayList()
-        {
-            var factoryLogger= new LoggerFactory();
-            factoryLogger.CreateLogger<FFmpegTest>();
-            var logger = new Logger<FFmpeg>(factoryLogger);
-            var ffmpeg = new FFmpeg(new FFmpegOptions(), logger);
-            ffmpeg.GetStreams(filetoConvert);
-            
-            Console.WriteLine("Ok123");
+            Console.WriteLine("Ok");
         }
     }
 }

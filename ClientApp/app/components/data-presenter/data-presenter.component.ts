@@ -2,7 +2,8 @@
 import { Response } from "@angular/http";
 
 import { Observable } from "rxjs/Observable";
-import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn, TdSearchBoxComponent, TdDialogService  } from "@covalent/core";
+import {TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn,
+    TdSearchBoxComponent, TdDialogService} from "@covalent/core";
 
 import { ClickedItem } from "./ClickedItem";
 import { IContent } from "../../model/content";
@@ -14,7 +15,6 @@ import { DataService } from "../../services/data.service";
     styleUrls: ["./data-presenter.component.css"],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class DataPresenterComponent {
     showFolder = true;
     filteredData: ClickedItem[];
@@ -28,7 +28,8 @@ export class DataPresenterComponent {
     @Input() data: IContent[];
     @Output() onItemClick = new EventEmitter<ClickedItem>(true);
 
-    @ViewChild("searchBox") searchBox: TdSearchBoxComponent;
+    @ViewChild("searchBox")
+    searchBox: TdSearchBoxComponent;
 
     constructor(private dataTableService: TdDataTableService,
         private cd: ChangeDetectorRef,
@@ -37,13 +38,25 @@ export class DataPresenterComponent {
     }
 
     private name: ITdDataTableColumn = {
-        name: "name", label: "NAME #", tooltip: "Folder or file name", sortable: true
+        name: "name",
+        label: "NAME #",
+        tooltip: "Folder or file name",
+        sortable: true
     }
     private size: ITdDataTableColumn = {
-        name: "size", label: "SIZE", tooltip: "Folder or file size", sortable: true, numeric: true, format: v => v.toFixed(2)
+        name: "size",
+        label: "SIZE",
+        tooltip: "Folder or file size",
+        sortable: true,
+        numeric: true,
+        format: v => v.toFixed(2)
     }
     private changed: ITdDataTableColumn = {
-        name: "lastChanged", label: "LAST CHANGED", tooltip: "Folder or file last changed date", sortable: true, numeric: true
+        name: "lastChanged",
+        label: "LAST CHANGED",
+        tooltip: "Folder or file last changed date",
+        sortable: true,
+        numeric: true
     }
 
     ngOnChanges(): void {
@@ -54,8 +67,9 @@ export class DataPresenterComponent {
 
     private sort(sortEvent: ITdDataTableSortChangeEvent): void {
         this.sortBy = sortEvent.name;
-        this.sortOrder = sortEvent.order === TdDataTableSortingOrder.Ascending ?
-            TdDataTableSortingOrder.Descending : TdDataTableSortingOrder.Ascending;
+        this.sortOrder = sortEvent.order === TdDataTableSortingOrder.Ascending
+            ? TdDataTableSortingOrder.Descending
+            : TdDataTableSortingOrder.Ascending;
     }
 
     private search(searchTerm: string): void {
@@ -90,44 +104,44 @@ export class DataPresenterComponent {
         const newData = this.tmpArray;
 
         switch (action) {
-            case "filter":
-                if (this.searchTerm) {
-                    this.filteredData = this.dataTableService.filterData(newData, this.searchTerm, true);
-                    if (this.filteredData && this.filteredData.length > 0) {
-                        this.hasData = true;
-                    } else {
-                        this.hasData = false;
-                    }
+        case "filter":
+            if (this.searchTerm) {
+                this.filteredData = this.dataTableService.filterData(newData, this.searchTerm, true);
+                if (this.filteredData && this.filteredData.length > 0) {
+                    this.hasData = true;
                 } else {
-                    this.filteredData = newData;
+                    this.hasData = false;
                 }
-                break;
-            default:
+            } else {
                 this.filteredData = newData;
-                break;
+            }
+            break;
+        default:
+            this.filteredData = newData;
+            break;
         }
     }
 
     private onUp(item) {
         setTimeout(() => {
-            this.showFolder = true;
-            this.cd.markForCheck();
-        }, 100);
-        
-            const itemObj = new ClickedItem();
-            itemObj.folder = item;
-            itemObj.showFiles = false;
-            this.onItemClick.emit(itemObj);
+                this.showFolder = true;
+                this.cd.markForCheck();
+            }, 100);
+
+        const itemObj = new ClickedItem();
+        itemObj.folder = item;
+        itemObj.showFiles = false;
+        this.onItemClick.emit(itemObj);
     }
 
     private onClick(item: ClickedItem) {
         setTimeout(() => {
-            this.showFolder = false;
-            this.cd.markForCheck();
-        }, 100);
+                this.showFolder = false;
+                this.cd.markForCheck();
+            }, 100);
 
         if (item.isInProgress) {
-            this.openAlert(item.hash, ()=> this.onUp(item.folder));
+            this.openAlert(item.hash, () => this.onUp(item.folder));
         }
 
         this.parentFolder = item.folder;
@@ -136,12 +150,12 @@ export class DataPresenterComponent {
     }
 
     private openAlert(hash: string, callback: Function): void {
-        this.dataService.getTorrentInfo(hash).subscribe((response:Response) => {
+        this.dataService.getTorrentInfo(hash).subscribe((response: Response) => {
             this.dialogService.openAlert(({
                 message: response.text(),
-                disableClose: true, 
+                disableClose: true,
                 title: "Torrent is in progress"
-            })).afterClosed().subscribe(()=> callback());
+            })).afterClosed().subscribe(() => callback());
         });
     }
 }

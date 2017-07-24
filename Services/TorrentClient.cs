@@ -24,11 +24,11 @@ namespace WebTorrent.Services
         private readonly IHostingEnvironment _environment;
         private readonly FFmpeg _ffmpeg;
         private readonly FsInfo _fsInfo;
-        private readonly TaskSynchronizationScope _lock = new TaskSynchronizationScope();
         private readonly ILogger<TorrentClient> _log;
         private readonly IMapper _mapper;
         private readonly IContentRecordRepository _repository;
         private Timer _timer;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository, ILogger<TorrentClient> log,
             FFmpeg ffmpeg, IHostingEnvironment environment, IMapper mapper)
@@ -144,18 +144,27 @@ namespace WebTorrent.Services
                     continue;
                 }
 
-                Content content = null;
-                await _lock.RunAsync(async () => { content = await _repository.FindByHash(tor.Hash, true); });
+                await _semaphore.WaitAsync();
 
-                if (content?.IsInProgress != true)
+                try
                 {
-                    continue;
-                }
+                    var content = await _repository.FindByHash(tor.Hash, true);
 
-                _log.LogInformation("Creating playing list for {0}", tor.Name);
-                ChangeStatus(content);
-                CreatePlayList(content);
-                ValidateStateTorrents(torrents);
+                    if (content?.IsInProgress != true)
+                    {
+                        continue;
+                    }
+
+                    _log.LogInformation("Creating playing list for {0}", tor.Name);
+
+                    ChangeStatus(content);
+                    CreatePlayList(content);
+                    ValidateStateTorrents(torrents);
+                }
+                finally
+                {
+                    _semaphore.Release();
+                }
             }
         }
 
