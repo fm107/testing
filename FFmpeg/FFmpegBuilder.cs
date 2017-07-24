@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,7 +18,7 @@ namespace WebTorrent
         private readonly Dictionary<string, string> _subtitleList;
         private readonly Dictionary<string, string> _videoList;
 
-        protected FFmpegBuilder(string ffmpegPath, string inputFile)
+        public FFmpegBuilder(string ffmpegPath, string inputFile)
         {
             _ffmpegPath = ffmpegPath;
             _inputFile = inputFile;
@@ -26,11 +27,6 @@ namespace WebTorrent
             _videoList = new Dictionary<string, string>();
             _audioList = new Dictionary<string, string>();
             _subtitleList = new Dictionary<string, string>();
-        }
-
-        public static FFmpegBuilder CreateFFmpegBuilder(string ffmpegPath, string inputFile)
-        {
-            return new FFmpegBuilder(ffmpegPath, inputFile);
         }
 
         public FFmpegBuilder MapVideoStream(int amountStreamsToMap)
@@ -59,13 +55,27 @@ namespace WebTorrent
             return this;
         }
 
+        public FFmpegBuilder ConvertToMp4()
+        {
+            _builderActions.Add(config =>
+            {
+                _builder.AppendFormat(
+                    @" -f mp4 -vcodec libx264 -preset ultrafast -movflags faststart -profile:v main -acodec aac {1} -hide_banner",
+                    _inputFile, string.Format("{0}.mp4", Path.ChangeExtension(_inputFile, null)));
+
+                config.CmdArguments = _builder.ToString();
+            });
+
+            return this;
+        }
+
         public FFmpegBuilder CreateOnlinePlayList(string outputPath, string playList)
         {
             _builderActions.Add(config =>
             {
                 _builder.AppendFormat(
-                    @" -c:v libx264 -c:a aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{1}/{2}.m3u8"" -segment_list_type m3u8 ""{1}/{2}.%d.ts""",
-                    _inputFile, outputPath, playList);
+                    @" -c:v libx264 -c:a aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{0}/{1}.m3u8"" -segment_list_type m3u8 ""{0}/{1}.%d.ts""",
+                     outputPath, playList.Replace(" ", "_"));
 
                 config.CmdArguments = _builder.ToString();
             });
@@ -76,7 +86,7 @@ namespace WebTorrent
         public FFmpegArguments Build()
         {
             GetStreams(_inputFile);
-            
+
             var ffmpegArguments = new FFmpegArguments();
             _builderActions.ForEach(build => build(ffmpegArguments));
 
