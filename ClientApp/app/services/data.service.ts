@@ -3,6 +3,7 @@ import { Http, URLSearchParams, Response } from "@angular/http";
 import { Headers, RequestOptions } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { Subject } from "rxjs/Subject";
+import { ReplaySubject } from "rxjs/ReplaySubject";
 import "rxjs/add/operator/map";
 import { Subscription } from "rxjs/Subscription";
 
@@ -15,7 +16,7 @@ import {ITorrentInfo} from "../model/torrentInfo";
 @Injectable()
 export class DataService {
     folderContent: Subject<any>;
-    fileUpload: Subject<any>;
+    fileUpload: ReplaySubject<any>;
 
     constructor(private http: Http,
         private loadingService: TdLoadingService,
@@ -30,7 +31,7 @@ export class DataService {
         });
 
         this.folderContent = new Subject<any>();
-        this.fileUpload = new Subject<any>();
+        this.fileUpload = new ReplaySubject<any>(1);
     }
 
     getFolderContent(folder: string, needFiles: boolean, hash: string) {
@@ -112,6 +113,7 @@ export class DataService {
         this.fileUploadService.upload(options).subscribe(
             result => {
                 this.fileUpload.next(result);
+                this.fileUpload.complete();
             },
             error => {
                 this.loadingService.resolve("query");

@@ -24,7 +24,7 @@ export class UploadButtonUrlComponent {
                     this.service.success("File Uploaded",
                         `${res.text()} uploaded successfully`,
                         {
-                            timeOut: 5000,
+                            timeOut: 3000,
                             showProgressBar: true,
                             pauseOnHover: true,
                             clickToClose: true,
@@ -39,7 +39,7 @@ export class UploadButtonUrlComponent {
                 this.service.error("File Error",
                     `No torrents detected in given URL`,
                     {
-                        timeOut: 5000,
+                        timeOut: 3000,
                         showProgressBar: true,
                         pauseOnHover: true,
                         clickToClose: true,
