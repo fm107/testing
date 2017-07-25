@@ -135,19 +135,19 @@ namespace WebTorrent.Services
 
         private async void CheckStatus(object state)
         {
-            var torrents = (await _client.GetListAsync()).Result.Torrents;
-
-            foreach (var tor in torrents)
-            {
+            await _semaphore.WaitAsync();
+            
+                 try
+                {
+                     var torrents = (await _client.GetListAsync()).Result.Torrents;
+                     
+                     foreach (var tor in torrents)
+                {
                 if (tor.Progress != 1000)
                 {
                     continue;
                 }
 
-                await _semaphore.WaitAsync();
-
-                try
-                {
                     var content = await _repository.FindByHash(tor.Hash, true);
 
                     if (content?.IsInProgress != true)
@@ -160,11 +160,14 @@ namespace WebTorrent.Services
                     ChangeStatus(content);
                     CreatePlayList(content);
                     ValidateStateTorrents(torrents);
+
+                }
+                     
                 }
                 finally
                 {
                     _semaphore.Release();
-                }
+
             }
         }
 
