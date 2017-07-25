@@ -66,7 +66,7 @@ namespace WebTorrent.Services
                 {
                     torrent = (await _client.GetListAsync()).Result.Torrents.FirstOrDefault(
                         t => t.Hash.Equals(response.AddedTorrent.Hash));
-                    Thread.Sleep(500);
+                    Thread.Sleep(1500);
                 }
                 else
                 {
