@@ -40,8 +40,7 @@ namespace WebTorrent.Repository
 
             foreach (var content in contents)
             {
-                content.FsItems = content.FsItems =
-                    content.FsItems.Where(b => b.Type.Equals("folder")).ToList();
+                content.FsItems = content.FsItems.Where(b => b.Type.Equals("folder")).ToList();
             }
 
             return contents;
