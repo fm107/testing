@@ -96,17 +96,18 @@ namespace WebTorrent.Services
 
             string parrent;
             string current;
+            
             if (indexToRemove > 0)
             {
                 current = tmpString.Remove(indexToRemove);
-                parrent = current.Substring(0, indexOfSeparator);
             }
             else
             {
                 current = tmpString;
-                parrent = current.Substring(0, indexOfSeparator);
             }
 
+            parrent = current.Substring(0, indexOfSeparator);
+            
             currentFolder = current;
             parentFolder = parrent;
         }
