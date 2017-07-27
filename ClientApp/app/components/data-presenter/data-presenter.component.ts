@@ -165,7 +165,7 @@ export class DataPresenterComponent {
         this.dialogService.openConfirm({
             message: "Please confirm you want to delete this torrent.",
             disableClose: true, 
-            title: "Confirmation Torrent Removal", 
+            title: "Confirm Removal", 
             cancelButton: "No", 
             acceptButton: "Yes" 
         }).afterClosed().subscribe((accept: boolean) => {
