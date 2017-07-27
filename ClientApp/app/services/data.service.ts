@@ -74,6 +74,14 @@ export class DataService {
     }
 
     getTorrentStatus(hash: string, url: string) {
+        return this.doGetRequest(hash, url);
+    }
+
+    deleteTorrent(hash: string, url: string) {
+        return this.doGetRequest(hash, url);
+    }
+    
+    private doGetRequest(hash: string, url: string): Observable<Response> {
         const params = new URLSearchParams();
         params.set("hash", hash);
 

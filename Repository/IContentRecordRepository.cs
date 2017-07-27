@@ -12,7 +12,8 @@ namespace WebTorrent.Repository
         Task<Content> FindByHash(string hash, bool tracking, string include = null);
         void Add(Content contentRecord);
         void Update(Content contentRecord);
-        Task Delete(int id);
-        void Save();
+        void Delete(params Content[] contentRecord);
+        void Delete(params FileSystemItem[] contentRecord);
+        Task Save();
     }
 }

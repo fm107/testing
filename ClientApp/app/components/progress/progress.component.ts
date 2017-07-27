@@ -1,16 +1,14 @@
-import { Component, OnInit, OnDestroy, ViewContainerRef, ComponentFactoryResolver, Input, ChangeDetectorRef, AfterViewInit, OnChanges } from "@angular/core";
+import { Component, Input, OnChanges } from "@angular/core";
 import { Response } from "@angular/http";
 import { Subscription } from "rxjs/Subscription";
 import { Subject } from "rxjs/Subject";
-import { AsyncSubject } from "rxjs/AsyncSubject";
 import { Observable } from 'rxjs/Rx';
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
-import { ClickedItem } from "../data-presenter/ClickedItem";
 import { DataService } from "../../services/data.service";
-import { IContent } from "../../model/content";
 import { TorrentProgressService } from "../../services/torrent-progress.service";
 import { ITorrentInfo } from "../../model/torrentInfo";
+import { ClickedItem } from "../../model/clicked-Item";
 
 @Component({
     selector: "torrentProgress",

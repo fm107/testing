@@ -66,7 +66,7 @@ namespace WebTorrent.Services
                 {
                     torrent = (await _client.GetListAsync()).Result.Torrents.FirstOrDefault(
                         t => t.Hash.Equals(response.AddedTorrent.Hash));
-                    Thread.Sleep(1500);
+                    Thread.Sleep(1000);
                 }
                 else
                 {
@@ -76,6 +76,28 @@ namespace WebTorrent.Services
 
             await StartTimer(CheckStatus, (int) TimeSpan.FromSeconds(10).TotalMilliseconds);
             return await _fsInfo.SaveFolderContent(torrent, await GetFiles(response.AddedTorrent.Hash));
+        }
+
+        public async Task<string> DeleteTorrent(string hash)
+        {
+            var contentbyHash = await _repository.FindByHash(hash, true, "FsItems");
+
+            var response = await _client.DeleteTorrentAsync(hash);
+            if (response.Error != null)
+            {
+                return response.Error.Message;
+            }
+
+            _repository.Delete(contentbyHash);
+            _repository.Delete(contentbyHash.FsItems.ToArray());
+
+            await _repository.Save();
+
+#pragma warning disable 4014
+            Task.Factory.StartNew(() => Directory.Delete(contentbyHash.FsItems.FirstOrDefault().FullName, true));
+#pragma warning restore 4014
+
+            return contentbyHash.TorrentName;
         }
 
         public async Task<bool> IsTorrentType(Stream file)

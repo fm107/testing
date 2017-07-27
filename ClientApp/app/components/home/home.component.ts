@@ -5,8 +5,8 @@ import { Subject } from "rxjs/Subject";
 import { IMessage } from "../../services/message";
 import { WebSocketService } from "../../services/websocket.service";
 import { ContentService } from "../../services/content.service";
-import { ClickedItem } from "../data-presenter/ClickedItem";
 import { InvokePlayerComponent } from "../invoke-player/invoke-player.component";
+import { ClickedItem } from "../../model/clicked-Item";
 
 @Component({
     selector: "home",

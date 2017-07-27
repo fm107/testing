@@ -34,7 +34,6 @@ namespace WebTorrent.Repository
                 return new[] {contentbyHash};
             }
 
-            //todo correct display parent/current folder. Was t => t.CurrentFolder.Equals(folder))
             var contents = await _context.Content.Where(t => t.ParentFolder.Equals(folder)).Include(f => f.FsItems)
                 .AsNoTracking().ToListAsync();
 
@@ -82,13 +81,19 @@ namespace WebTorrent.Repository
             _context.Content.Update(contentRecord);
         }
 
-        public async Task Delete(int id)
+        public void Delete(params Content[] contentRecord)
         {
-            var entity = await _context.Content.FirstOrDefaultAsync(t => t.Id == id);
-            _context.Content.Remove(entity);
+            //var entity = await _context.Content.FirstOrDefaultAsync(i => i.Id == id);
+            //_context.Content.Remove(entity);
+            
+            _context.Content.RemoveRange(contentRecord);
+        }
+        public void Delete(params FileSystemItem[] contentRecord)
+        {
+            _context.FsItem.RemoveRange(contentRecord);
         }
 
-        public async void Save()
+        public async Task Save()
         {
             await _context.SaveChangesAsync();
         }

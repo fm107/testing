@@ -27,7 +27,7 @@
             [name]="info"
             [active]="false"
             [sortable]="false">
-            <div layout="row" layout-align="center center">
+            <div class="disabled" layout="row" layout-align="center center">
                 <md-icon class="md-icon--home">add</md-icon>
                 <span (click)="getContent()"> Create Folder</span>
             </div>
@@ -49,7 +49,7 @@
             <span class="text-input--material__label--active" mdTooltip="{{changed.tooltip}}">{{changed.label}}</span>
         </th>
     </tr>
-    <tr td-data-table-row  [ngClass]="{'folder-up' : showFolder}">
+    <tr td-data-table-row [ngClass]="{'folder-up' : showFolder}">
         <td td-data-table-cell>
             <div class="icon-column">
                 <img src="/img/cycle.png">
@@ -71,17 +71,11 @@
             </div>
         </td>
         <td class="pointer--cursor" td-data-table-cell (click)="onClick(content)">{{content.name}}</td>
-        <td class="pointer--default" td-data-table-cell>
-            <torrentProgress [Item]="content"></torrentProgress>
-            <!--<div *ngIf="content.isInProgress" class="info-column">
-                <div class="cssProgress">
-                    <div class="progress2">
-                        <div class="cssProgress-bar cssProgress-success cssProgress-active-right" data-percent="100" style="width: 100%;">
-                            <span class="cssProgress-label">Loading</span>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
+        <td class="pointer--default" td-data-table-cell (mouseover)="hideMenuItems = false" (mouseleave)="hideMenuItems = true">
+            <div layout="row" layout-align="start center">
+                <torrentProgress [Item]="content"></torrentProgress>
+                <md-icon class="deleteTorrent" *ngIf="!hideMenuItems" (click)="onDelete(content.hash)">clear</md-icon>
+            </div>
         </td>
         <td class="pointer--default" td-data-table-cell>{{content.size | fileSize}}</td>
         <td class="pointer--default" td-data-table-cell>{{content.lastChanged | date :'short'}}</td>

@@ -1,13 +1,13 @@
 ﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { Response } from "@angular/http";
 
-import { Observable } from "rxjs/Observable";
 import {TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn,
     TdSearchBoxComponent, TdDialogService} from "@covalent/core";
 
-import { ClickedItem } from "./ClickedItem";
 import { IContent } from "../../model/content";
 import { DataService } from "../../services/data.service";
+import { ContentService } from "../../services/content.service";
+import { ClickedItem } from "../../model/clicked-Item";
 
 @Component({
     selector: "data-presenter",
@@ -16,6 +16,7 @@ import { DataService } from "../../services/data.service";
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataPresenterComponent {
+    hideMenuItems = true;
     showFolder = true;
     filteredData: ClickedItem[];
     tmpArray: ClickedItem[];
@@ -34,7 +35,8 @@ export class DataPresenterComponent {
     constructor(private dataTableService: TdDataTableService,
         private cd: ChangeDetectorRef,
         private dialogService: TdDialogService,
-        private dataService: DataService) {
+        private dataService: DataService,
+        private content: ContentService) {
     }
 
     private name: ITdDataTableColumn = {
@@ -156,6 +158,23 @@ export class DataPresenterComponent {
                 disableClose: true,
                 title: "Torrent is in progress"
             })).afterClosed().subscribe(() => callback());
+        });
+    }
+
+    private onDelete(hash: string): void {
+        this.dialogService.openConfirm({
+            message: "Please confirm you want to delete this torrent.",
+            disableClose: true, 
+            title: "Confirmation Torrent Removal", 
+            cancelButton: "No", 
+            acceptButton: "Yes" 
+        }).afterClosed().subscribe((accept: boolean) => {
+            if (accept) {
+                this.dataService.deleteTorrent(hash, `api/Torrent/DeleteTorrent`).subscribe(response => {
+                    console.log(response);
+                    this.content.getContent(null, false, null);
+                });
+            }
         });
     }
 }

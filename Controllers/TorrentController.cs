@@ -100,6 +100,12 @@ namespace WebTorrent.Controllers
         }
 
         [HttpGet("[action]")]
+        public async Task<IActionResult> DeleteTorrent(string hash)
+        {
+            return Json(await _torrentClient.DeleteTorrent(hash));
+        }
+
+        [HttpGet("[action]")]
         public async Task<IActionResult> Notifications()
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
