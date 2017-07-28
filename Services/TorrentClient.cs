@@ -94,7 +94,10 @@ namespace WebTorrent.Services
 
             await _repository.Save();
 
-            await DeleteDirectory(contentbyHash.FsItems.FirstOrDefault().FullName);
+#pragma warning disable 4014
+            Task.Factory.StartNew(() => DeleteDirectory(contentbyHash.FsItems.FirstOrDefault().FullName));
+#pragma warning restore 4014
+            
 
 //#pragma warning disable 4014
 //            Task.Factory.StartNew(() => Directory.Delete(contentbyHash.FsItems.FirstOrDefault().FullName, true));
@@ -123,7 +126,7 @@ namespace WebTorrent.Services
             {
                 try
                 {
-                    Directory.Delete(directoryPath, true);
+                    Directory.Delete(directoryPath, false);
                 }
                 catch (IOException)
                 {
