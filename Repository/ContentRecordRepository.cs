@@ -68,7 +68,7 @@ namespace WebTorrent.Repository
                 return await _context.Content.AsNoTracking().FirstOrDefaultAsync(t => t.Hash.Equals(hash));
             }
 
-            return null;
+            return await Task.FromResult<Content>(null);
         }
 
         public async void Add(Content contentRecord)
@@ -83,9 +83,6 @@ namespace WebTorrent.Repository
 
         public void Delete(params Content[] contentRecord)
         {
-            //var entity = await _context.Content.FirstOrDefaultAsync(i => i.Id == id);
-            //_context.Content.Remove(entity);
-            
             _context.Content.RemoveRange(contentRecord);
         }
         public void Delete(params FileSystemItem[] contentRecord)

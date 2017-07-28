@@ -108,21 +108,21 @@ namespace WebTorrent.Services
 
         private static async Task DeleteDirectory(string directoryPath,int maxRetries = 10,int millisecondsDelay = 30)
         {
-            string[] files = Directory.GetFiles(directoryPath);
-            string[] dirs = Directory.GetDirectories(directoryPath);
+            var files = Directory.GetFiles(directoryPath);
+            var dirs = Directory.GetDirectories(directoryPath);
 
-            foreach (string file in files)
+            foreach (var file in files)
             {
                 File.SetAttributes(file, FileAttributes.Normal);
                 File.Delete(file);
             }
 
-            foreach (string dir in dirs)
+            foreach (var dir in dirs)
             {
                 await DeleteDirectory(dir);
             }
             
-            for (int i = 0; i < maxRetries; ++i)
+            for (var i = 0; i < maxRetries; ++i)
             {
                 try
                 {
@@ -133,10 +133,6 @@ namespace WebTorrent.Services
                     await Task.Delay(millisecondsDelay);
                 }
                 catch (UnauthorizedAccessException)
-                {
-                    await Task.Delay(millisecondsDelay);
-                }
-                catch (Exception)
                 {
                     await Task.Delay(millisecondsDelay);
                 }
