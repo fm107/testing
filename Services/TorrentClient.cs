@@ -15,6 +15,7 @@ using UTorrent.Api;
 using UTorrent.Api.Data;
 using WebTorrent.Model;
 using WebTorrent.Repository;
+using File = System.IO.File;
 
 namespace WebTorrent.Services
 {
@@ -93,11 +94,50 @@ namespace WebTorrent.Services
 
             await _repository.Save();
 
-#pragma warning disable 4014
-            Task.Factory.StartNew(() => Directory.Delete(contentbyHash.FsItems.FirstOrDefault().FullName, true));
-#pragma warning restore 4014
+            await DeleteDirectory(contentbyHash.FsItems.FirstOrDefault().FullName);
+
+//#pragma warning disable 4014
+//            Task.Factory.StartNew(() => Directory.Delete(contentbyHash.FsItems.FirstOrDefault().FullName, true));
+//#pragma warning restore 4014
 
             return contentbyHash.TorrentName;
+        }
+
+        private static async Task DeleteDirectory(string directoryPath,int maxRetries = 10,int millisecondsDelay = 30)
+        {
+            string[] files = Directory.GetFiles(directoryPath);
+            string[] dirs = Directory.GetDirectories(directoryPath);
+
+            foreach (string file in files)
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+                File.Delete(file);
+            }
+
+            foreach (string dir in dirs)
+            {
+                await DeleteDirectory(dir);
+            }
+            
+            for (int i = 0; i < maxRetries; ++i)
+            {
+                try
+                {
+                    Directory.Delete(directoryPath, true);
+                }
+                catch (IOException)
+                {
+                    await Task.Delay(millisecondsDelay);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    await Task.Delay(millisecondsDelay);
+                }
+                catch (Exception)
+                {
+                    await Task.Delay(millisecondsDelay);
+                }
+            }
         }
 
         public async Task<bool> IsTorrentType(Stream file)
