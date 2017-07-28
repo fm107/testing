@@ -1,12 +1,10 @@
-﻿.upload-button {
-    top: 16px;
-}
+﻿.upload-button { top: 16px; }
 
 .button2 {
     min-height: 23px !important;
     min-width: 1% !important;
     font-size: 10px !important;
-    line-height: 0px; 
+    line-height: 0px;
 }
 
 .button1 {
@@ -63,13 +61,17 @@
     height: 70px;
     padding-top: 13px;
 }
+
 button label {
     cursor: crosshair;
     display: block;
     height: 100%;
     padding-left: 8px;
-    padding-right: 8px; }
+    padding-right: 8px;
+}
+
 button label md-icon {
     position: relative;
     top: 6px;
-    padding-right: 5px; }
+    padding-right: 5px;
+}

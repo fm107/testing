@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, Input, ViewChild, NgZone } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, Input, ViewChild, NgZone } from "@angular/core";
 
 declare var Hls: any;
 
@@ -6,28 +6,28 @@ declare var Hls: any;
     selector: "flowplayer",
     templateUrl: "./flowplayer.component.html"
 })
-
-export class FlowplayerComponent implements AfterViewInit{
+export class FlowplayerComponent implements AfterViewInit {
 
     // video asset url
-    @Input() url: string;
+    @Input()
+    url: string;
 
     // index to create unique ID for component
-    @Input() idx: string;
+    @Input()
+    idx: string;
 
     hlsPlayer: any;
 
-    constructor(public zone: NgZone) {  }
+    constructor(public zone: NgZone) {}
 
     ngOnInit() {
-        
-        
-        
+
+
         ////const container = document.getElementById("player"); //this.player.nativeElement; //
         ////console.log(container);
         //const self = $("#player1")[0];
         //console.log(self);
-        
+
 
         //    // install flowplayer into selected container
         //flowplayer(self,{
@@ -79,9 +79,10 @@ export class FlowplayerComponent implements AfterViewInit{
                 this.hlsPlayer = new Hls();
                 this.hlsPlayer.loadSource(this.url);
                 this.hlsPlayer.attachMedia(video);
-                this.hlsPlayer.on(Hls.Events.MANIFEST_PARSED, () => {
-                    console.log("Successfully created hlsPlayer instance");
-                });
+                this.hlsPlayer.on(Hls.Events.MANIFEST_PARSED,
+                    () => {
+                        console.log("Successfully created hlsPlayer instance");
+                    });
             }
         });
     }

@@ -1,10 +1,10 @@
-﻿import { Pipe, PipeTransform } from '@angular/core'
+﻿import { Pipe, PipeTransform } from "@angular/core"
 import {isNumeric} from "rxjs/util/isNumeric"
 
 import { TdDataTableSortingOrder} from "@covalent/core";
 
-@Pipe({name: 'sort'})
-export class SortPipe implements PipeTransform{
+@Pipe({ name: "sort" })
+export class SortPipe implements PipeTransform {
     transform(data: any[], sortBy, sortOrder) {
         if (data) {
             return data.sort((a, b) => {
@@ -13,12 +13,10 @@ export class SortPipe implements PipeTransform{
                 var direction = 0;
                 if (isNumeric(compA) && isNumeric(compB)) {
                     direction = compA - compB;
-                }
-                else {
+                } else {
                     if (compA < compB) {
                         direction = -1;
-                    }
-                    else if (compA > compB) {
+                    } else if (compA > compB) {
                         direction = 1;
                     }
                 }

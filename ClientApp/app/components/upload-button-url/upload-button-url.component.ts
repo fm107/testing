@@ -1,5 +1,5 @@
 ﻿import { Component } from "@angular/core";
-import { Response } from '@angular/http';
+import { Response } from "@angular/http";
 
 import { NotificationsService, SimpleNotificationsComponent, PushNotificationsService } from "angular2-notifications";
 

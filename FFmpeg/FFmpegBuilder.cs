@@ -76,7 +76,7 @@ namespace WebTorrent
                 var tsFileName = playList.Replace(" ", "_");
                 _builder.AppendFormat(
                     @" -c:v libx264 -c:a aac -preset ultrafast -profile:v baseline -level 3.0 -threads 0 -force_key_frames ""expr:gte(t,n_forced*10)"" -f segment -segment_time 10 -segment_format mpegts -segment_list_flags +live -segment_list ""{0}/{1}.m3u8"" -segment_list_type m3u8 ""{0}/{2}.%d.ts""",
-                     outputPath, playList, tsFileName);
+                    outputPath, playList, tsFileName);
 
                 config.CmdArguments = _builder.ToString();
             });

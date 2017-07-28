@@ -13,7 +13,6 @@ import { ClickedItem } from "../../model/clicked-Item";
     templateUrl: "./home.component.html",
     styleUrls: ["./home.component.css"]
 })
-
 export class HomeComponent implements OnInit {
     metaData = this.content.metaData;
     parentFolder = this.content.parentFolder;
@@ -23,7 +22,8 @@ export class HomeComponent implements OnInit {
 
     messagesObs: Subject<IMessage>;
 
-    @ViewChild("videojs", { read: ViewContainerRef }) parent: ViewContainerRef;
+    @ViewChild("videojs", { read: ViewContainerRef })
+    parent: ViewContainerRef;
     invokePlayerComponent: any;
 
     constructor(private content: ContentService,

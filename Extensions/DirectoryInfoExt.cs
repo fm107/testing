@@ -7,7 +7,8 @@ namespace WebTorrent.Extensions
 {
     public static class DirectoryInfoExt
     {
-        public static IEnumerable<FileInfo> GetFilesByExtensions(this DirectoryInfo dir, SearchOption option, params string[] extensions)
+        public static IEnumerable<FileInfo> GetFilesByExtensions(this DirectoryInfo dir, SearchOption option,
+            params string[] extensions)
         {
             if (extensions == null)
                 throw new ArgumentNullException(nameof(extensions));

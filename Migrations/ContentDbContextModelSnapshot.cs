@@ -16,61 +16,61 @@ namespace WebTorrent.Migrations
                 .HasAnnotation("ProductVersion", "1.1.2");
 
             modelBuilder.Entity("WebTorrent.Model.Content", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<string>("CurrentFolder");
+                b.Property<string>("CurrentFolder");
 
-                    b.Property<string>("Hash");
+                b.Property<string>("Hash");
 
-                    b.Property<bool>("IsInProgress");
+                b.Property<bool>("IsInProgress");
 
-                    b.Property<string>("ParentFolder");
+                b.Property<string>("ParentFolder");
 
-                    b.Property<string>("TorrentName");
+                b.Property<string>("TorrentName");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Content");
-                });
-
-            modelBuilder.Entity("WebTorrent.Model.FileSystemItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("ContentId");
-
-                    b.Property<string>("DownloadPath");
-
-                    b.Property<string>("FullName");
-
-                    b.Property<bool>("IsStreaming");
-
-                    b.Property<DateTime>("LastChanged");
-
-                    b.Property<string>("Name");
-
-                    b.Property<long>("Size");
-
-                    b.Property<string>("Stream");
-
-                    b.Property<string>("Type");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContentId");
-
-                    b.ToTable("FsItem");
-                });
+                b.ToTable("Content");
+            });
 
             modelBuilder.Entity("WebTorrent.Model.FileSystemItem", b =>
-                {
-                    b.HasOne("WebTorrent.Model.Content")
-                        .WithMany("FsItems")
-                        .HasForeignKey("ContentId");
-                });
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<int?>("ContentId");
+
+                b.Property<string>("DownloadPath");
+
+                b.Property<string>("FullName");
+
+                b.Property<bool>("IsStreaming");
+
+                b.Property<DateTime>("LastChanged");
+
+                b.Property<string>("Name");
+
+                b.Property<long>("Size");
+
+                b.Property<string>("Stream");
+
+                b.Property<string>("Type");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ContentId");
+
+                b.ToTable("FsItem");
+            });
+
+            modelBuilder.Entity("WebTorrent.Model.FileSystemItem", b =>
+            {
+                b.HasOne("WebTorrent.Model.Content")
+                    .WithMany("FsItems")
+                    .HasForeignKey("ContentId");
+            });
         }
     }
 }

@@ -95,18 +95,13 @@ namespace WebTorrent.Services
             await _repository.Save();
 
 #pragma warning disable 4014
-            Task.Factory.StartNew(() => DeleteDirectory(contentbyHash.FsItems.FirstOrDefault().FullName));
+            Task.Factory.StartNew(() => DeleteDirectory(contentbyHash.FsItems.FirstOrDefault()?.FullName));
 #pragma warning restore 4014
-            
-
-//#pragma warning disable 4014
-//            Task.Factory.StartNew(() => Directory.Delete(contentbyHash.FsItems.FirstOrDefault().FullName, true));
-//#pragma warning restore 4014
 
             return contentbyHash.TorrentName;
         }
 
-        private static async Task DeleteDirectory(string directoryPath,int maxRetries = 10,int millisecondsDelay = 30)
+        private static async Task DeleteDirectory(string directoryPath, int maxRetries = 10, int millisecondsDelay = 30)
         {
             var files = Directory.GetFiles(directoryPath);
             var dirs = Directory.GetDirectories(directoryPath);
@@ -121,7 +116,7 @@ namespace WebTorrent.Services
             {
                 await DeleteDirectory(dir);
             }
-            
+
             for (var i = 0; i < maxRetries; ++i)
             {
                 try
@@ -177,7 +172,7 @@ namespace WebTorrent.Services
         public async Task<TorrentInfo> GetTorrentDetails(string hash)
         {
             var torrent = await _client.GetTorrentAsync(hash);
-            return _mapper.Map<TorrentInfo>(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash)));
+            return _mapper.Map<TorrentInfo>(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash))) ?? new TorrentInfo();
         }
 
         private async Task StartTimer(TimerCallback callback, int period)

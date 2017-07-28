@@ -8,7 +8,8 @@ namespace UTorrent.Api
     {
         #region Properties
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
+            "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly UrlActionCollection AuthorizedList = new UrlActionCollection(GenerateAuthorizedUrl());
 
         #endregion

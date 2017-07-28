@@ -1,5 +1,4 @@
-﻿
-namespace UTorrent.Api.Data
+﻿namespace UTorrent.Api.Data
 {
     public class Label
     {

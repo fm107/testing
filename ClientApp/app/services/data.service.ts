@@ -21,7 +21,7 @@ export class DataService {
     constructor(private http: Http,
         private loadingService: TdLoadingService,
         private fileUploadService: TdFileService,
-        private st: SimpleTimer) {
+        public st: SimpleTimer) {
 
         this.loadingService.create({
             name: "query",
@@ -80,7 +80,7 @@ export class DataService {
     deleteTorrent(hash: string, url: string) {
         return this.doGetRequest(hash, url);
     }
-    
+
     private doGetRequest(hash: string, url: string): Observable<Response> {
         const params = new URLSearchParams();
         params.set("hash", hash);
@@ -137,7 +137,8 @@ export class DataService {
     getStatusByTime(hash: string): Observable<IContent> {
         return Observable.create(observer => {
             if (this.st.newTimer(hash, 5)) {
-                const timerId = this.st.subscribe(hash, e => this.getTorrentStatus(hash, `api/Torrent/GetTorrentStatus`)
+                const timerId = this.st.subscribe(hash,
+                    e => this.getTorrentStatus(hash, `api/Torrent/GetTorrentStatus`)
                     .subscribe((result: Response) => {
                         const content = result.json() as IContent;
                         observer.next(content);
@@ -155,7 +156,8 @@ export class DataService {
     getDetailsByTime(hash: string): Observable<ITorrentInfo> {
         return Observable.create(observer => {
             if (this.st.newTimer(hash, 5)) {
-                const timerId = this.st.subscribe(hash, e => this.getTorrentStatus(hash, `api/Torrent/GetTorrentDetails`)
+                const timerId = this.st.subscribe(hash,
+                    e => this.getTorrentStatus(hash, `api/Torrent/GetTorrentDetails`)
                     .subscribe((result: Response) => {
                         const content = result.json() as ITorrentInfo;
                         observer.next(content);

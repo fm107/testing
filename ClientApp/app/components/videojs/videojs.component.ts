@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Input, NgZone } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, NgZone } from "@angular/core";
 
 declare var videojs: any;
 
@@ -6,17 +6,18 @@ declare var videojs: any;
     selector: "videojs",
     templateUrl: "./videojs.component.html"
 })
-
 export class VideoJSComponent {
 
     // reference to the element itself, we use this to access events and methods
     private _elementRef: ElementRef;
 
     // index to create unique ID for component
-    @Input() idx: string;
+    @Input()
+    idx: string;
 
     // video asset url
-    @Input() url: any;
+    @Input()
+    url: any;
 
     // declare player var
     player: any;
@@ -30,7 +31,7 @@ export class VideoJSComponent {
     // use ngAfterViewInit to make sure we initialize the videojs element
     // after the component template itself has been rendered
     ngAfterViewInit() {
-        this.zone.runOutsideAngular(() => { this.init()});
+        this.zone.runOutsideAngular(() => { this.init() });
     }
 
     init() {
@@ -41,27 +42,29 @@ export class VideoJSComponent {
 
         // setup the player via the unique element ID
         this.player = videojs(el);
-        
-        this.player = videojs(document.getElementById(el), {}, function () {
 
-            // Store the video object
-            var myPlayer = this, id = myPlayer.id();
+        this.player = videojs(document.getElementById(el),
+            {},
+            function() {
 
-            // Make up an aspect ratio
-            var aspectRatio = 364 / 540;
+                // Store the video object
+                var myPlayer = this, id = myPlayer.id();
 
-            // internal method to handle a window resize event to adjust the video player
-            function resizeVideoJS() {
-                var width = document.getElementById(id).parentElement.offsetWidth;
-                myPlayer.width(width).height(width * aspectRatio);
-            }
+                // Make up an aspect ratio
+                var aspectRatio = 364 / 540;
 
-            // Initialize resizeVideoJS()
-            resizeVideoJS();
+                // internal method to handle a window resize event to adjust the video player
+                function resizeVideoJS() {
+                    var width = document.getElementById(id).parentElement.offsetWidth;
+                    myPlayer.width(width).height(width * aspectRatio);
+                }
 
-            // Then on resize call resizeVideoJS()
-            window.onresize = resizeVideoJS;
-        });
+                // Initialize resizeVideoJS()
+                resizeVideoJS();
+
+                // Then on resize call resizeVideoJS()
+                window.onresize = resizeVideoJS;
+            });
 
         this.player.dvrseekbar();
     }

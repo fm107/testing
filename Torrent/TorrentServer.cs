@@ -6,7 +6,8 @@ namespace WebTorrent.Torrent
 {
     public class TorrentServer
     {
-        private static readonly ILogger Log = new LoggerConfiguration().WriteTo.File("wwwroot/logs/TorrentServer.txt").CreateLogger();
+        private static readonly ILogger Log = new LoggerConfiguration().WriteTo.File("wwwroot/logs/TorrentServer.txt")
+            .CreateLogger();
 
         public static void Start()
         {

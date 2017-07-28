@@ -25,6 +25,7 @@
                 return Decode(br);
             }
         }
+
         public static IBElement[] Decode(Stream input)
         {
             if (input == null)
@@ -52,8 +53,14 @@
 
                 return rootElements.ToArray();
             }
-            catch (BencodingException) { throw; }
-            catch (Exception e) { throw Error(e); }
+            catch (BencodingException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
         }
 
         private static IBElement ReadElement(BinaryReader binaryReader)
@@ -95,7 +102,7 @@
 
             try
             {
-                for (int c = binaryReader.PeekChar(); ; c = binaryReader.PeekChar())
+                for (int c = binaryReader.PeekChar();; c = binaryReader.PeekChar())
                 {
                     if (c == -1) throw Error();
                     if (c == 'e')
@@ -108,8 +115,14 @@
                     dict.Add(k, v);
                 }
             }
-            catch (BencodingException) { throw; }
-            catch (Exception e) { throw Error(e); }
+            catch (BencodingException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
 
             return dict;
         }
@@ -128,7 +141,7 @@
 
             try
             {
-                for (int c = binaryReader.PeekChar(); ; c = binaryReader.PeekChar())
+                for (int c = binaryReader.PeekChar();; c = binaryReader.PeekChar())
                 {
                     if (c == -1) throw Error();
                     if (c == 'e')
@@ -139,8 +152,14 @@
                     lst.Add(ReadElement(binaryReader));
                 }
             }
-            catch (BencodingException) { throw; }
-            catch (Exception e) { throw Error(e); }
+            catch (BencodingException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
 
             return lst;
         }
@@ -164,15 +183,19 @@
                     break;
                 }
 
-                numList.Add((char)b);
+                numList.Add((char) b);
             }
 
             try
             {
-                var integer = Convert.ToInt64(new string(numList.ToArray()), System.Globalization.CultureInfo.InvariantCulture);
+                var integer = Convert.ToInt64(new string(numList.ToArray()),
+                    System.Globalization.CultureInfo.InvariantCulture);
                 return new BInteger(integer);
             }
-            catch (Exception e) { throw Error(e); }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
         }
 
         private static BString ReadString(BinaryReader binaryReader)
@@ -191,12 +214,13 @@
 
                 if (b < '0' || b > '9') throw Error();
 
-                sizeList.Add((char)b);
+                sizeList.Add((char) b);
             }
 
             try
             {
-                var length = Convert.ToInt32(new string(sizeList.ToArray()), System.Globalization.CultureInfo.InvariantCulture);
+                var length = Convert.ToInt32(new string(sizeList.ToArray()),
+                    System.Globalization.CultureInfo.InvariantCulture);
 
                 char[] strArray = new char[length];
                 var bytes = binaryReader.ReadBytes(length);
@@ -206,7 +230,10 @@
                 string str = new string(strArray);
                 return new BString(str);
             }
-            catch (Exception e) { throw Error(e); }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
         }
 
         private static Exception Error(Exception e)

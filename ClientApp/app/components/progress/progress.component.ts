@@ -2,7 +2,7 @@ import { Component, Input, OnChanges } from "@angular/core";
 import { Response } from "@angular/http";
 import { Subscription } from "rxjs/Subscription";
 import { Subject } from "rxjs/Subject";
-import { Observable } from 'rxjs/Rx';
+import { Observable } from "rxjs/Rx";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import { DataService } from "../../services/data.service";
@@ -22,10 +22,11 @@ export class ProgressComponent implements OnChanges {
     private torrentDetailsSub: Subscription;
     private progress: number;
 
-    @Input("Item") item: ClickedItem;
+    @Input("Item")
+    item: ClickedItem;
 
     constructor(private progressService: TorrentProgressService,
-                private dataService: DataService) {
+        private dataService: DataService) {
     }
 
     ngOnChanges() {
@@ -36,21 +37,22 @@ export class ProgressComponent implements OnChanges {
 
                     if (!this.torrentDetailsSub) {
                         this.torrentDetailsSub = Observable.timer(0, 5000).subscribe(() => {
-                            this.dataService.getTorrentStatus(this.item.hash, `api/Torrent/GetTorrentDetails`).subscribe(
-                                (res: Response) => {
-                                    const response = JSON.parse(res.text()) as ITorrentInfo;
-                                    this.progress = response.progress;
-                                    let details = "";
-                                    for (let key of Object.keys(response)) {
-                                        details += `${key}: ${response[key]}
+                            this.dataService.getTorrentStatus(this.item.hash, `api/Torrent/GetTorrentDetails`)
+                                .subscribe(
+                                    (res: Response) => {
+                                        const response = JSON.parse(res.text()) as ITorrentInfo;
+                                        this.progress = response.progress;
+                                        let details = "";
+                                        for (let key of Object.keys(response)) {
+                                            details += `${key}: ${response[key]}
                                 `;
-                                    }
-                                    this.torrentDetails.next(details);
+                                        }
+                                        this.torrentDetails.next(details);
 
-                                    if (this.isInProgress.getValue() === false) {
-                                        this.torrentDetailsSub.unsubscribe();
-                                    }
-                                });
+                                        if (this.isInProgress.getValue() === false) {
+                                            this.torrentDetailsSub.unsubscribe();
+                                        }
+                                    });
                         });
                     }
                 });

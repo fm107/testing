@@ -26,9 +26,7 @@
 }
 
 @media (min-width: 768px) {
-    .dialog {
-        top: 40px;
-    }
+    .dialog { top: 40px; }
 }
 
 .dialog__close-btn {

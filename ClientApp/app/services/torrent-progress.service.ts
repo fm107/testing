@@ -1,6 +1,6 @@
 ﻿import { Injectable, ChangeDetectorRef } from "@angular/core";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { SimpleTimer } from 'ng2-simple-timer';
+import { SimpleTimer } from "ng2-simple-timer";
 import { Http, URLSearchParams, Response } from "@angular/http";
 import { Headers, RequestOptions } from "@angular/http";
 import { Observable } from "rxjs/Observable";
@@ -39,5 +39,20 @@ export class TorrentProgressService {
             this.torrents.set(hash, sub);
         }
         return this.torrents.get(hash);
+    }
+
+    unSibscribe(hash: string) {
+        if (this.subscriptions.has(hash)) {
+            this.subscriptions.get(hash).unsubscribe();
+            this.subscriptions.delete(hash);
+            this.dataService.st.delTimer(hash);
+            console.log("subscriptions - " + this.subscriptions.size);
+        }
+
+        if (this.torrents.has(hash)) {
+            this.torrents.get(hash).unsubscribe();
+            this.torrents.delete(hash);
+            console.log("torrents - " + this.torrents.size);
+        }
     }
 }

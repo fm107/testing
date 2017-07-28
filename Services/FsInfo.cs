@@ -33,7 +33,8 @@ namespace WebTorrent.Services
                 : await _repository.FindByFolder(UploadFolder, needFiles, hash);
         }
 
-        public async Task<Content> SaveFolderContent(UTorrent.Api.Data.Torrent torrent, ICollection<FileCollection> collection)
+        public async Task<Content> SaveFolderContent(UTorrent.Api.Data.Torrent torrent,
+            ICollection<FileCollection> collection)
         {
             var content = await _repository.FindByHash(torrent.Hash, false, "FsItems");
 
@@ -47,7 +48,8 @@ namespace WebTorrent.Services
             {
                 fsContent.AddRange(col.Select(file => new FileSystemItem
                 {
-                    DownloadPath = Path.Combine(directoryInfo.FullName.Replace(_environment.WebRootPath, string.Empty), file.NameWithoutPath),
+                    DownloadPath = Path.Combine(directoryInfo.FullName.Replace(_environment.WebRootPath, string.Empty),
+                        file.NameWithoutPath),
                     Name = file.NameWithoutPath,
                     FullName = directoryInfo.FullName,
                     LastChanged = DateTime.Now,
@@ -90,15 +92,12 @@ namespace WebTorrent.Services
             var separator = path.FullName.FirstOrDefault(c => _directorySeparators.Contains(c));
 
             var tmpString = path.FullName.Replace(_environment.WebRootPath, string.Empty)
-                                         .TrimStart(_directorySeparators);
+                .TrimStart(_directorySeparators);
             var indexOfSeparator = tmpString.IndexOf(separator);
             var indexToRemove = tmpString.IndexOf(separator, indexOfSeparator + 1);
 
-            var current = indexToRemove > 0 ? tmpString.Remove(indexToRemove) : tmpString;
-            var parrent = current.Substring(0, indexOfSeparator);
-            
-            currentFolder = current;
-            parentFolder = parrent;
+            currentFolder = indexToRemove > 0 ? tmpString.Remove(indexToRemove) : tmpString;
+            parentFolder = currentFolder.Substring(0, indexOfSeparator);
         }
     }
 }

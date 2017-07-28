@@ -11,7 +11,7 @@ namespace UTorrent.Api.Tools
                 throw new ArgumentNullException(nameof(input));
 
             input = input.TrimEnd('='); //remove padding characters
-            var byteCount = input.Length*5/8; //this must be TRUNCATED
+            var byteCount = input.Length * 5 / 8; //this must be TRUNCATED
             var returnArray = new byte[byteCount];
 
             byte curByte = 0, bitsRemaining = 8;

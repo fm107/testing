@@ -1,4 +1,5 @@
-﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from "@angular/core";
+﻿import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from
+    "@angular/core";
 import { Response } from "@angular/http";
 
 import {TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn,
@@ -8,6 +9,7 @@ import { IContent } from "../../model/content";
 import { DataService } from "../../services/data.service";
 import { ContentService } from "../../services/content.service";
 import { ClickedItem } from "../../model/clicked-Item";
+import { TorrentProgressService } from "../../services/torrent-progress.service";
 
 @Component({
     selector: "data-presenter",
@@ -24,10 +26,14 @@ export class DataPresenterComponent {
     sortBy: string;
     hasData = true;
     sortOrder: TdDataTableSortingOrder;
-    @Input() parentFolder: string;
-    @Input() currentFolder: string;
-    @Input() data: IContent[];
-    @Output() onItemClick = new EventEmitter<ClickedItem>(true);
+    @Input()
+    parentFolder: string;
+    @Input()
+    currentFolder: string;
+    @Input()
+    data: IContent[];
+    @Output()
+    onItemClick = new EventEmitter<ClickedItem>(true);
 
     @ViewChild("searchBox")
     searchBox: TdSearchBoxComponent;
@@ -36,7 +42,8 @@ export class DataPresenterComponent {
         private cd: ChangeDetectorRef,
         private dialogService: TdDialogService,
         private dataService: DataService,
-        private content: ContentService) {
+        private content: ContentService,
+        private torrentProgress: TorrentProgressService) {
     }
 
     private name: ITdDataTableColumn = {
@@ -128,7 +135,8 @@ export class DataPresenterComponent {
         setTimeout(() => {
                 this.showFolder = true;
                 this.cd.markForCheck();
-            }, 100);
+            },
+            100);
 
         const itemObj = new ClickedItem();
         itemObj.folder = item;
@@ -140,7 +148,8 @@ export class DataPresenterComponent {
         setTimeout(() => {
                 this.showFolder = false;
                 this.cd.markForCheck();
-            }, 100);
+            },
+            100);
 
         if (item.isInProgress) {
             this.openAlert(item.hash, () => this.onUp(item.folder));
@@ -164,14 +173,15 @@ export class DataPresenterComponent {
     private onDelete(hash: string): void {
         this.dialogService.openConfirm({
             message: "Please confirm you want to delete this torrent.",
-            disableClose: true, 
-            title: "Confirm Removal", 
-            cancelButton: "No", 
-            acceptButton: "Yes" 
+            disableClose: true,
+            title: "Confirm Removal",
+            cancelButton: "No",
+            acceptButton: "Yes"
         }).afterClosed().subscribe((accept: boolean) => {
             if (accept) {
                 this.dataService.deleteTorrent(hash, `api/Torrent/DeleteTorrent`).subscribe(response => {
                     console.log(response);
+                    this.torrentProgress.unSibscribe(hash);
                     this.content.getContent(null, false, null);
                 });
             }

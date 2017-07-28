@@ -95,7 +95,7 @@ namespace UTorrent.Api
                     int priority = jfile[3] != null ? jfile[3].Value<int>() : 0;
                     if (priority <= 3 && priority >= 0)
                     {
-                        file.Priority = (Priority)priority;
+                        file.Priority = (Priority) priority;
                     }
                     files.Add(file);
                 }
@@ -113,7 +113,7 @@ namespace UTorrent.Api
             var list = obj.Select(t => new Torrent
             {
                 Hash = t[0].Value<string>().ToUpperInvariant(),
-                Status = (Status)t[1].Value<int>(),
+                Status = (Status) t[1].Value<int>(),
                 Name = t[2].Value<string>(),
                 Size = t[3].Value<long>(),
                 Progress = t[4].Value<int>(),
@@ -131,7 +131,9 @@ namespace UTorrent.Api
                 Availability = t[16].Value<int>(),
                 TorrentQueueOrder = t[17].Value<int>(),
                 Remaining = t[18].Value<long>(),
-                AddedDate = (t.Count() <= 23) ? DateTime.MinValue : new DateTime(1970, 1, 1).AddSeconds(t[23].Value<int>()),
+                AddedDate = (t.Count() <= 23)
+                    ? DateTime.MinValue
+                    : new DateTime(1970, 1, 1).AddSeconds(t[23].Value<int>()),
                 Path = (t.Count() <= 26) ? "" : t[26].Value<string>(),
             }).ToList();
 
@@ -159,7 +161,7 @@ namespace UTorrent.Api
                 rssFedd.CustomAlias = l[2].Value<bool>();
 
                 var urlAlias = l[6].Value<string>();
-                var tabUrlAlias = urlAlias.Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                var tabUrlAlias = urlAlias.Split(new[] {"|"}, StringSplitOptions.RemoveEmptyEntries);
                 if (tabUrlAlias.Length >= 2)
                 {
                     rssFedd.Alias = tabUrlAlias[0];
@@ -173,12 +175,14 @@ namespace UTorrent.Api
             }).ToList();
             return result;
         }
+
         private static IList<Label> ParseLabels(JToken obj)
         {
             if (obj == null)
                 throw new ArgumentNullException("obj");
 
-            List<Label> result = obj.Select(l => new Label { Count = l[1].Value<int>(), Name = l[0].Value<string>() }).ToList();
+            List<Label> result = obj.Select(l => new Label {Count = l[1].Value<int>(), Name = l[0].Value<string>()})
+                .ToList();
             return result;
         }
 
@@ -197,7 +201,7 @@ namespace UTorrent.Api
             var list = oTorrents.Select(t => new Torrent
             {
                 Hash = t[0].Value<string>().ToUpperInvariant(),
-                Status = (Status)t[1].Value<int>(),
+                Status = (Status) t[1].Value<int>(),
                 Name = t[2].Value<string>(),
                 Size = t[3].Value<long>(),
                 Progress = t[4].Value<int>(),
@@ -215,7 +219,9 @@ namespace UTorrent.Api
                 Availability = t[16].Value<int>(),
                 TorrentQueueOrder = t[17].Value<int>(),
                 Remaining = t[18].Value<long>(),
-                AddedDate = (t.Count() <= 23) ? DateTime.MinValue : new DateTime(1970, 1, 1).AddSeconds(t[23].Value<int>()),
+                AddedDate = (t.Count() <= 23)
+                    ? DateTime.MinValue
+                    : new DateTime(1970, 1, 1).AddSeconds(t[23].Value<int>()),
                 Path = (t.Count() <= 26) ? "" : t[26].Value<string>(),
             }).ToList();
 
@@ -239,7 +245,7 @@ namespace UTorrent.Api
                 Name = f[0].Value<string>(),
                 Size = f[1].Value<long>(),
                 Downloaded = f[2].Value<long>(),
-                Priority = (Priority)f[3].Value<int>(),
+                Priority = (Priority) f[3].Value<int>(),
             }).ToList();
 
             return files;
@@ -254,7 +260,7 @@ namespace UTorrent.Api
             {
                 Setting setting = new Setting();
                 setting.Key = jToken[0].Value<string>();
-                setting.Type = (SettingType)jToken[1].Value<int>();
+                setting.Type = (SettingType) jToken[1].Value<int>();
 
                 string value = jToken[2].Value<string>();
                 switch (setting.Type)

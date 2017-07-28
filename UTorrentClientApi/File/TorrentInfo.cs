@@ -25,6 +25,7 @@ namespace UTorrent.Api.File
         public long PieceLength { get; set; }
 
         private readonly IList<TorrentFileInfo> _files = new List<TorrentFileInfo>();
+
         public IList<TorrentFileInfo> Files
         {
             get { return _files; }
@@ -98,7 +99,8 @@ namespace UTorrent.Api.File
             return torrent;
         }
 
-        private static void ParseInfo(TorrentInfo torrent, TorrentFileInfo singleFile, ref bool isSingleFile, BDictionary dictionary)
+        private static void ParseInfo(TorrentInfo torrent, TorrentFileInfo singleFile, ref bool isSingleFile,
+            BDictionary dictionary)
         {
             Contract.Requires(torrent != null);
             Contract.Requires(singleFile != null);
@@ -223,9 +225,11 @@ namespace UTorrent.Api.File
             var torrent = new TorrentInfo();
 
             string queryString = uri.Query.Substring(1);
-            var queryParams = ParseQueryString((queryString.Length > 0 && queryString[0] == '?') ? queryString.Substring(1) : queryString);
+            var queryParams = ParseQueryString((queryString.Length > 0 && queryString[0] == '?')
+                ? queryString.Substring(1)
+                : queryString);
 
-            List <string> annouces = new List<string>();
+            List<string> annouces = new List<string>();
             foreach (string key in queryParams.Keys)
             {
                 if (key == "dn")

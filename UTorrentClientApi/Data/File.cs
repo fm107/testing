@@ -16,8 +16,8 @@ namespace UTorrent.Api.Data
                 if (Size == 0)
                     return 0;
 
-                double x = Downloaded / (double)Size;
-                return (int)(x * 100);
+                double x = Downloaded / (double) Size;
+                return (int) (x * 100);
             }
         }
 

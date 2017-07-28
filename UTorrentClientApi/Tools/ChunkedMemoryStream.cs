@@ -12,11 +12,13 @@ namespace UTorrent.Api.Tools
     internal sealed class ChunkedMemoryStream : Stream
     {
         private List<byte[]> _chunks = new List<byte[]>();
+
         /// <summary>
         /// Defines the default chunk size. Currently defined as 0x10000.
         /// 
         /// </summary>
         public const int DefaultChunkSize = 65536;
+
         private long _position;
         private int _chunkSize;
         private int _lastChunkPos;
@@ -45,10 +47,7 @@ namespace UTorrent.Api.Tools
         /// </returns>
         public override bool CanRead
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         /// <summary>
@@ -64,10 +63,7 @@ namespace UTorrent.Api.Tools
         /// </returns>
         public override bool CanSeek
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         /// <summary>
@@ -83,10 +79,7 @@ namespace UTorrent.Api.Tools
         /// </returns>
         public override bool CanWrite
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         /// <summary>
@@ -123,10 +116,7 @@ namespace UTorrent.Api.Tools
         /// </value>
         public int ChunkSize
         {
-            get
-            {
-                return _chunkSize;
-            }
+            get { return _chunkSize; }
             set
             {
                 if (value <= 0 || value >= 85000)
@@ -266,11 +256,11 @@ namespace UTorrent.Api.Tools
             if (buffer.Length - offset < count)
                 throw new ArgumentException(null, "count");
             CheckDisposed();
-            int index = (int)(_position / ChunkSize);
+            int index = (int) (_position / ChunkSize);
             if (index == _chunks.Count)
                 return 0;
-            int srcOffset = (int)(_position % ChunkSize);
-            count = (int)Math.Min(count, Length - _position);
+            int srcOffset = (int) (_position % ChunkSize);
+            count = (int) Math.Min(count, Length - _position);
             if (count == 0)
                 return 0;
             int val1 = count;
@@ -295,8 +285,7 @@ namespace UTorrent.Api.Tools
                 }
                 else
                     srcOffset += count1;
-            }
-            while (val1 > 0);
+            } while (val1 > 0);
             _position += num;
             return num;
         }
@@ -317,7 +306,7 @@ namespace UTorrent.Api.Tools
             CheckDisposed();
             if (_position >= Length)
                 return -1;
-            byte num = _chunks[(int)(_position / ChunkSize)][_position % ChunkSize];
+            byte num = _chunks[(int) (_position / ChunkSize)][_position % ChunkSize];
             ++_position;
             return num;
         }
@@ -377,11 +366,11 @@ namespace UTorrent.Api.Tools
                 throw new ArgumentOutOfRangeException("value");
             if (num1 < this._chunks.Count)
             {
-                int num2 = (int)(_chunks.Count - num1);
+                int num2 = (int) (_chunks.Count - num1);
                 for (int index = 0; index < num2; ++index)
                     _chunks.RemoveAt(_chunks.Count - 1);
             }
-            _lastChunkPos = (int)(value % ChunkSize);
+            _lastChunkPos = (int) (value % ChunkSize);
         }
 
         /// <summary>
@@ -429,8 +418,8 @@ namespace UTorrent.Api.Tools
             if (buffer.Length - offset < count)
                 throw new ArgumentException(null, "count");
             CheckDisposed();
-            int dstOffset = (int)(_position % ChunkSize);
-            int index = (int)(_position / ChunkSize);
+            int dstOffset = (int) (_position % ChunkSize);
+            int index = (int) (_position / ChunkSize);
             if (index == _chunks.Count)
                 _chunks.Add(new byte[ChunkSize]);
             int val1 = count;
@@ -450,10 +439,10 @@ namespace UTorrent.Api.Tools
                 }
                 else
                     dstOffset += count1;
-            }
-            while (val1 > 0);
+            } while (val1 > 0);
             _position += count;
-            if (index != _chunks.Count - 1 || index <= _lastChunkPosIndex && (index != _lastChunkPosIndex || dstOffset <= _lastChunkPos))
+            if (index != _chunks.Count - 1 || index <= _lastChunkPosIndex &&
+                (index != _lastChunkPosIndex || dstOffset <= _lastChunkPos))
                 return;
             _lastChunkPos = dstOffset;
             _lastChunkPosIndex = index;
@@ -468,8 +457,8 @@ namespace UTorrent.Api.Tools
         public override void WriteByte(byte value)
         {
             CheckDisposed();
-            int index1 = (int)(_position / ChunkSize);
-            int num1 = (int)(_position % ChunkSize);
+            int index1 = (int) (_position / ChunkSize);
+            int num1 = (int) (_position % ChunkSize);
             if (num1 > ChunkSize - 1)
             {
                 ++index1;
@@ -482,9 +471,10 @@ namespace UTorrent.Api.Tools
             int num2 = 1;
             int num3 = index2 + num2;
             int num4 = value;
-            numArray[index2] = (byte)num4;
+            numArray[index2] = (byte) num4;
             ++_position;
-            if (index1 != _chunks.Count - 1 || index1 <= _lastChunkPosIndex && (index1 != _lastChunkPosIndex || num3 <= _lastChunkPos))
+            if (index1 != _chunks.Count - 1 || index1 <= _lastChunkPosIndex &&
+                (index1 != _lastChunkPosIndex || num3 <= _lastChunkPos))
                 return;
             _lastChunkPos = num3;
             _lastChunkPosIndex = index1;

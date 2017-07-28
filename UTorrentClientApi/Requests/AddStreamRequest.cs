@@ -12,6 +12,7 @@ namespace UTorrent.Api
         #region Properties
 
         private System.IO.Stream _inputStream;
+
         public System.IO.Stream InputStream
         {
             get { return _inputStream; }
@@ -26,12 +27,10 @@ namespace UTorrent.Api
         }
 
         private TorrentInfo _torrentInfo;
+
         public TorrentInfo TorrentInfo
         {
-            get
-            {
-                return _torrentInfo;
-            }
+            get { return _torrentInfo; }
         }
 
         #endregion
@@ -60,7 +59,7 @@ namespace UTorrent.Api
                 throw new InvalidOperationException("Invalid torrent stream");
             }
 
-            var torrent = TorrentInfo.Parse((File.Bencoding.BDictionary)result[0]);
+            var torrent = TorrentInfo.Parse((File.Bencoding.BDictionary) result[0]);
 
             _torrentInfo = torrent;
             return this;
@@ -85,7 +84,8 @@ namespace UTorrent.Api
 
             if (InputStream != null)
             {
-                string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
+                string boundary = "---------------------------" +
+                                  DateTime.Now.Ticks.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
                 byte[] boundarybytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
                 wr.ContentType = "multipart/form-data; boundary=" + boundary;
@@ -94,8 +94,10 @@ namespace UTorrent.Api
                 using (var ms = new Tools.ChunkedMemoryStream())
                 {
                     ms.Write(boundarybytes, 0, boundarybytes.Length);
-                    const string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n";
-                    string header = string.Format(System.Globalization.CultureInfo.InvariantCulture, headerTemplate, "torrent_file", "file.torrent", "application/octet-stream");
+                    const string headerTemplate =
+                        "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n";
+                    string header = string.Format(System.Globalization.CultureInfo.InvariantCulture, headerTemplate,
+                        "torrent_file", "file.torrent", "application/octet-stream");
                     byte[] headerbytes = Encoding.UTF8.GetBytes(header);
                     ms.Write(headerbytes, 0, headerbytes.Length);
 
@@ -123,7 +125,6 @@ namespace UTorrent.Api
                     //ms.Position = 0;
                     //var srMs = new System.IO.StreamReader(ms);
                     //string post = srMs.ReadToEnd();
-
 
 
 #if !PORTABLE
@@ -160,7 +161,6 @@ namespace UTorrent.Api
         protected override bool CheckAction(UrlAction action)
         {
             return (action == UrlAction.AddFile);
-
         }
 
         protected override Data.Torrent FindAddedTorrent(AddStreamResponse result)
@@ -172,7 +172,8 @@ namespace UTorrent.Api
                 return null;
 
             string infoName = ClearString(_torrentInfo.Name);
-            var torrent = result.Result.Torrents.OrderByDescending(t => t.AddedDate).FirstOrDefault(item => ClearString(item.Name) == infoName);
+            var torrent = result.Result.Torrents.OrderByDescending(t => t.AddedDate)
+                .FirstOrDefault(item => ClearString(item.Name) == infoName);
             return torrent;
         }
 
@@ -180,10 +181,14 @@ namespace UTorrent.Api
         {
             Contract.Requires(input != null);
 
-            char[] valideChar = {
-                         'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-                         'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
-                         '0','1','2','3','4','5','6','7','8','9'};
+            char[] valideChar =
+            {
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+                'V', 'W', 'X', 'Y', 'Z',
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+                'v', 'w', 'x', 'y', 'z',
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+            };
             StringBuilder result = new StringBuilder(input.Length);
             foreach (var car in input)
             {

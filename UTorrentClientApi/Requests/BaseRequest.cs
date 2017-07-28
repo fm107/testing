@@ -13,6 +13,7 @@ namespace UTorrent.Api
         #region Properties
 
         private string _baseUrl;
+
         protected Uri BaseUrl
         {
             get
@@ -21,13 +22,11 @@ namespace UTorrent.Api
                     return null;
                 return new Uri(_baseUrl);
             }
-            set
-            {
-                _baseUrl = value == null ? null : value.ToString();
-            }
+            set { _baseUrl = value == null ? null : value.ToString(); }
         }
 
         private string _token;
+
         protected string Token
         {
             get { return _token; }
@@ -35,6 +34,7 @@ namespace UTorrent.Api
         }
 
         private UrlAction _urlAction = UrlAction.Default;
+
         protected UrlAction UrlAction
         {
             get { return _urlAction; }
@@ -42,12 +42,14 @@ namespace UTorrent.Api
         }
 
         private readonly IList<String> _torrentHash = new List<String>();
+
         protected IList<String> TorrentHash
         {
             get { return _torrentHash; }
         }
 
         private readonly Dictionary<string, string> _settings = new Dictionary<string, string>();
+
         protected Dictionary<string, string> Settings
         {
             get { return _settings; }
@@ -61,6 +63,7 @@ namespace UTorrent.Api
         #region Output
 
         private bool _useCacheId = true;
+
         protected bool UseCacheId
         {
             get { return _useCacheId; }
@@ -68,6 +71,7 @@ namespace UTorrent.Api
         }
 
         private int _cacheId;
+
         protected int CacheId
         {
             get { return _cacheId; }
@@ -75,6 +79,7 @@ namespace UTorrent.Api
         }
 
         private bool _hasTorrentList;
+
         protected bool HasTorrentList
         {
             get { return _hasTorrentList; }
@@ -82,7 +87,6 @@ namespace UTorrent.Api
         }
 
         #endregion
-
 
         #endregion
 
@@ -197,7 +201,8 @@ namespace UTorrent.Api
             return ToUrl(_token);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Lower case required")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization",
+            "CA1308:NormalizeStringsToUppercase", Justification = "Lower case required")]
         public Uri ToUrl(string token)
         {
             if (token == null)
@@ -240,7 +245,7 @@ namespace UTorrent.Api
         public T ProcessRequest(string token, string logOn, string password, System.Net.Cookie cookie)
         {
             Uri uri = ToUrl(token);
-            System.Net.HttpWebRequest wr = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(uri);
+            System.Net.HttpWebRequest wr = (System.Net.HttpWebRequest) System.Net.WebRequest.Create(uri);
             wr.Credentials = new System.Net.NetworkCredential(logOn, password);
             wr.CookieContainer = new System.Net.CookieContainer();
             if (cookie != null)
@@ -255,7 +260,7 @@ namespace UTorrent.Api
             using (var response = wr.GetResponse())
             using (var stream = response.GetResponseStream())
 #else
-            using(var stream = wr.GetResponseAsync().Result.GetResponseStream())
+            using (var stream = wr.GetResponseAsync().Result.GetResponseStream())
 #endif
             {
                 if (stream == null)
@@ -269,11 +274,10 @@ namespace UTorrent.Api
                 if (result != null && result.CacheId != 0)
                     _cacheId = result.CacheId;
 
-                var ret = new T { Result = result };
+                var ret = new T {Result = result};
                 OnProcessedRequest(ret);
                 return ret;
             }
         }
-
     }
 }

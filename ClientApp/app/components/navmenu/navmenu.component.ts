@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { Router } from '@angular/router';
+import { Router } from "@angular/router";
 
 import {ContentService} from "../../services/content.service";
 
@@ -9,7 +9,7 @@ import {ContentService} from "../../services/content.service";
     styleUrls: ["./navmenu.component.css"]
 })
 export class NavMenuComponent {
-    constructor(private content: ContentService) { }
+    constructor(private content: ContentService) {}
 
     onNavClick() {
         this.content.getContent(null, false, null);

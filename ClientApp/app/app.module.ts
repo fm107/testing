@@ -1,20 +1,20 @@
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { UniversalModule } from 'angular2-universal';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { NgModule } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { UniversalModule } from "angular2-universal";
+import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
-import { MaterialModule, MdTooltipModule } from '@angular/material';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { CovalentCoreModule, TdLoadingService, CovalentDialogsModule } from '@covalent/core';
+import { MaterialModule, MdTooltipModule } from "@angular/material";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { CovalentCoreModule, TdLoadingService, CovalentDialogsModule } from "@covalent/core";
 import { TdFileService } from "@covalent/file-upload";
-import { SimpleNotificationsModule } from 'angular2-notifications';
-import { SimpleTimer } from 'ng2-simple-timer';
+import { SimpleNotificationsModule } from "angular2-notifications";
+import { SimpleTimer } from "ng2-simple-timer";
 
-import { AppComponent } from './components/app/app.component'
-import { NavMenuComponent } from './components/navmenu/navmenu.component';
-import { HomeComponent } from './components/home/home.component';
-import { DialogComponent } from './components/dialog/dialog.component';
+import { AppComponent } from "./components/app/app.component"
+import { NavMenuComponent } from "./components/navmenu/navmenu.component";
+import { HomeComponent } from "./components/home/home.component";
+import { DialogComponent } from "./components/dialog/dialog.component";
 import { UploadButtonComponent } from "./components/upload-button/upload-button.component";
 import { UploadButtonUrlComponent } from "./components/upload-button-url/upload-button-url.component";
 import { VideoJSComponent } from "./components/videojs/videojs.component";
@@ -41,34 +41,31 @@ import { ShowFilesPipe } from "./pipes/show-files.pipe";
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent, InvokePlayerComponent, ProgressComponent, FlowplayerComponent,
-
+        UploadButtonComponent, UploadButtonUrlComponent, DialogComponent, DataPresenterComponent, VideoJSComponent,
+        InvokePlayerComponent, ProgressComponent, FlowplayerComponent,
         FilterPipe, SortPipe, FileSizePipe, ShowFilesPipe
     ],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         FormsModule,
         CommonModule,
-
         MaterialModule,
         MdTooltipModule,
         FlexLayoutModule,
-
         SimpleNotificationsModule.forRoot(),
-
         CovalentCoreModule,
         CovalentDialogsModule,
-
-        
-
         RouterModule.forRoot([
-            { path: '', redirectTo: 'home', pathMatch: 'full' },
-            { path: 'home', component: HomeComponent },
-            { path: '**', redirectTo: 'home' }
+            { path: "", redirectTo: "home", pathMatch: "full" },
+            { path: "home", component: HomeComponent },
+            { path: "**", redirectTo: "home" }
         ])
     ],
     entryComponents: [HomeComponent, InvokePlayerComponent, FlowplayerComponent],
-    providers: [DataService, ContentService, TorrentProgressService, WebSocketService, TdLoadingService, SimpleTimer, TdFileService, ComponentInjectorService]
+    providers: [
+        DataService, ContentService, TorrentProgressService, WebSocketService, TdLoadingService, SimpleTimer,
+        TdFileService, ComponentInjectorService
+    ]
 })
 export class AppModule {
 }

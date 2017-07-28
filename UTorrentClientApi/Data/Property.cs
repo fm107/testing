@@ -1,5 +1,4 @@
-﻿
-namespace UTorrent.Api.Data
+﻿namespace UTorrent.Api.Data
 {
     public class Property
     {
@@ -15,6 +14,7 @@ namespace UTorrent.Api.Data
         public long SeedingTime { get; set; }
         public int UploadSlots { get; set; }
     }
+
     public enum PropertyPriority
     {
         NotAllowed = -1,

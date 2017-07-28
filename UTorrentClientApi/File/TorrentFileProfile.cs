@@ -8,5 +8,7 @@ namespace UTorrent.Api.File
         public string Value { get; set; }
     }
 
-    public class TorrentFileProfileCollection : List<TorrentFileProfile> { }
+    public class TorrentFileProfileCollection : List<TorrentFileProfile>
+    {
+    }
 }

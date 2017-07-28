@@ -14,12 +14,10 @@ namespace UTorrent.Api
         public Uri InputUrl { get; protected set; }
 
         private TorrentInfo _torrentInfo;
+
         public TorrentInfo TorrentInfo
         {
-            get
-            {
-                return _torrentInfo;
-            }
+            get { return _torrentInfo; }
         }
 
         #endregion
@@ -88,7 +86,8 @@ namespace UTorrent.Api
                 if (match.Success)
                 {
                     string hash = match.Groups[1].Value;
-                    var torrent = result.Result.Torrents.OrderByDescending(t => t.AddedDate).FirstOrDefault(item => string.Equals(item.Hash, hash, StringComparison.OrdinalIgnoreCase));
+                    var torrent = result.Result.Torrents.OrderByDescending(t => t.AddedDate)
+                        .FirstOrDefault(item => string.Equals(item.Hash, hash, StringComparison.OrdinalIgnoreCase));
                     return torrent;
                 }
                 else
@@ -102,7 +101,8 @@ namespace UTorrent.Api
 
                     var data = Base32Helper.ToBytes(match.Groups[1].Value);
                     string hash = BitConverter.ToString(data).Replace("-", string.Empty);
-                    var torrent = result.Result.Torrents.OrderByDescending(t => t.AddedDate).FirstOrDefault(item => string.Equals(item.Hash, hash, StringComparison.OrdinalIgnoreCase));
+                    var torrent = result.Result.Torrents.OrderByDescending(t => t.AddedDate)
+                        .FirstOrDefault(item => string.Equals(item.Hash, hash, StringComparison.OrdinalIgnoreCase));
                     return torrent;
                 }
             }

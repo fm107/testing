@@ -8,9 +8,7 @@
     width: 90px;
 }
 
-.indent-column {
-    margin-left: 20%;
-}
+.indent-column { margin-left: 20%; }
 
 .indent {
     margin-left: 5%;
@@ -24,8 +22,4 @@
     width: 40%;
 }
 
-.popup-dialog {
-    top: 40%
-}
-
-
+.popup-dialog { top: 40% }

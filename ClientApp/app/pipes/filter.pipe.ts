@@ -1,7 +1,7 @@
-﻿import { Pipe, PipeTransform } from '@angular/core'
+﻿import { Pipe, PipeTransform } from "@angular/core"
 
-@Pipe({name: "filter"})
-export class FilterPipe implements PipeTransform{
+@Pipe({ name: "filter" })
+export class FilterPipe implements PipeTransform {
     transform(data, searchTerm, ignoreCase = true) {
         var filter = searchTerm ? (ignoreCase ? searchTerm.toLowerCase() : searchTerm) : "";
         if (filter) {
@@ -14,7 +14,7 @@ export class FilterPipe implements PipeTransform{
                 return !(typeof res === "undefined");
             });
         }
-        
+
         return data;
     }
 }

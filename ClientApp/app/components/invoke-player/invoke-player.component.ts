@@ -9,13 +9,13 @@ declare var lity: any;
 @Component({
     templateUrl: "./invoke-player.component.html"
 })
-
 export class InvokePlayerComponent {
     idx: string;
     url: string;
     showVideo: boolean;
 
-    @ViewChild('videoPlayer') videoPlayer: any;
+    @ViewChild("videoPlayer")
+    videoPlayer: any;
 
     constructor(protected componentInjector: ComponentInjectorService) {
     }
@@ -28,24 +28,26 @@ export class InvokePlayerComponent {
 
         $("#video").click();
 
-        $(document).on("lity:close", (event, instance) => {
-            console.log("Lightbox closed");
-            
-            videojs.clear();
-            component.destroy(); 
-            $(`#video_${id}`).remove();
-            this.videoPlayer.player.dispose();
-        });
+        $(document).on("lity:close",
+            (event, instance) => {
+                console.log("Lightbox closed");
+
+                videojs.clear();
+                component.destroy();
+                $(`#video_${id}`).remove();
+                this.videoPlayer.player.dispose();
+            });
     }
 
     initContent(component: ComponentRef<{}>, videojs: ViewContainerRef) {
         lity(this.url);
 
-        $(document).on("lity:close", () => {
-            console.log("Lightbox closed");
+        $(document).on("lity:close",
+            () => {
+                console.log("Lightbox closed");
 
-            videojs.clear();
-            component.destroy();
-        });
+                videojs.clear();
+                component.destroy();
+            });
     }
 }

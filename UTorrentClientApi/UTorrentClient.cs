@@ -37,10 +37,7 @@ namespace UTorrent.Api
 
         protected Uri TokenUrl
         {
-            get
-            {
-                return new Uri(BaseUrl + "token.html");
-            }
+            get { return new Uri(BaseUrl + "token.html"); }
         }
 
         /// <summary>
@@ -48,10 +45,9 @@ namespace UTorrent.Api
         /// </summary>
         public bool UseCache { get; set; }
 
-#if !PORTABLE
-        /// <summary>
-        /// Create new <see cref="UTorrentClient"/> instence with credential from configuration's AppSettings.
-        /// </summary>
+#if !PORTABLE /// <summary>
+/// Create new <see cref="UTorrentClient"/> instence with credential from configuration's AppSettings.
+/// </summary>
         public UTorrentClient()
         {
             UseCache = false;
@@ -88,10 +84,9 @@ namespace UTorrent.Api
             InitBaseUrl(ip, port);
         }
 
-#if !PORTABLE
-        /// <summary>
-        /// Create new <see cref="UTorrentClient"/>
-        /// </summary>
+#if !PORTABLE /// <summary>
+/// Create new <see cref="UTorrentClient"/>
+/// </summary>
         public UTorrentClient(IPAddress ipAddress, int port, string logOn, string password)
             : this(logOn, password)
         {
@@ -223,7 +218,7 @@ namespace UTorrent.Api
             return Task.Factory.StartNew(() => GetFiles(hash));
         }
 
-#region Command
+        #region Command
 
         /// <summary>
         /// Start the torrent
@@ -560,10 +555,9 @@ namespace UTorrent.Api
             return ProcessRequest(request);
         }
 
+        #endregion
 
-#endregion
-
-#region New Torrent
+        #region New Torrent
 
         /// <summary>
         /// Send torrent url to the µTorrent client
@@ -691,9 +685,9 @@ namespace UTorrent.Api
             return result;
         }
 
-#endregion
+        #endregion
 
-#region Settings
+        #region Settings
 
         public Response GetSettings()
         {
@@ -742,11 +736,11 @@ namespace UTorrent.Api
             return ProcessRequest(request);
         }
 
-#endregion
+        #endregion
 
         private void GetToken()
         {
-            var wr = (HttpWebRequest)WebRequest.Create(TokenUrl);
+            var wr = (HttpWebRequest) WebRequest.Create(TokenUrl);
             wr.Method = "GET";
             wr.Credentials = new NetworkCredential(_logOn, _password);
 
@@ -779,7 +773,7 @@ namespace UTorrent.Api
                             var cookiestab = tab1[0].Split('=');
                             if (cookiestab.Length >= 2)
                             {
-                                _cookie = new Cookie(cookiestab[0], cookiestab[1]) { Domain = BaseUrl };
+                                _cookie = new Cookie(cookiestab[0], cookiestab[1]) {Domain = BaseUrl};
                             }
                         }
                     }
@@ -862,12 +856,15 @@ namespace UTorrent.Api
             if (response.Result.Torrents == null || response.Result.Torrents.Count == 0)
                 return null;
 
-            var torrent = response.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash, StringComparison.OrdinalIgnoreCase));
+            var torrent =
+                response.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash, StringComparison.OrdinalIgnoreCase));
 
-            if (torrent != null && response.Result.Files != null && response.Result.Files.Keys.Any(k => k.Equals(hash, StringComparison.OrdinalIgnoreCase)))
+            if (torrent != null && response.Result.Files != null &&
+                response.Result.Files.Keys.Any(k => k.Equals(hash, StringComparison.OrdinalIgnoreCase)))
             {
                 torrent.Files.Clear();
-                torrent.Files.AddRangeIfNotNull(response.Result.Files.First(pair => pair.Key.Equals(hash, StringComparison.OrdinalIgnoreCase)).Value);
+                torrent.Files.AddRangeIfNotNull(response.Result.Files
+                    .First(pair => pair.Key.Equals(hash, StringComparison.OrdinalIgnoreCase)).Value);
             }
 
             return torrent;

@@ -85,6 +85,7 @@ namespace WebTorrent.Repository
         {
             _context.Content.RemoveRange(contentRecord);
         }
+
         public void Delete(params FileSystemItem[] contentRecord)
         {
             _context.FsItem.RemoveRange(contentRecord);

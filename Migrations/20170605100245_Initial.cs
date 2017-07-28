@@ -20,10 +20,7 @@ namespace WebTorrent.Migrations
                     ParentFolder = table.Column<string>(nullable: true),
                     TorrentName = table.Column<string>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Content", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Content", x => x.Id); });
 
             migrationBuilder.CreateTable(
                 name: "FsItem",

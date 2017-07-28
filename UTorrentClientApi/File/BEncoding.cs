@@ -70,8 +70,14 @@ namespace UTorrent.Api.File.Bencoding
 
                 return rootElements.ToArray();
             }
-            catch (BencodingException) { throw; }
-            catch (Exception e) { throw Error(e); }
+            catch (BencodingException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
         }
 
         private static IBElement ReadElement(ref string bencodedString, ref int index)
@@ -127,8 +133,14 @@ namespace UTorrent.Api.File.Bencoding
                 }
                 index = tmpIndex;
             }
-            catch (BencodingException) { throw; }
-            catch (Exception e) { throw Error(e); }
+            catch (BencodingException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
 
             index++;
             return dict;
@@ -153,8 +165,14 @@ namespace UTorrent.Api.File.Bencoding
                 }
                 index = tmpIndex;
             }
-            catch (BencodingException) { throw; }
-            catch (Exception e) { throw Error(e); }
+            catch (BencodingException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
 
             index++;
             return lst;
@@ -177,10 +195,14 @@ namespace UTorrent.Api.File.Bencoding
 
             try
             {
-                integer = Convert.ToInt64(bencodedString.Substring(index, end - index), System.Globalization.CultureInfo.InvariantCulture);
+                integer = Convert.ToInt64(bencodedString.Substring(index, end - index),
+                    System.Globalization.CultureInfo.InvariantCulture);
                 index = end + 1;
             }
-            catch (Exception e) { throw Error(e); }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
 
             return new BInteger(integer);
         }
@@ -199,9 +221,13 @@ namespace UTorrent.Api.File.Bencoding
             {
                 colon = bencodedString.IndexOf(":", index, StringComparison.OrdinalIgnoreCase);
                 if (colon == -1) throw Error();
-                length = Convert.ToInt32(bencodedString.Substring(index, colon - index), System.Globalization.CultureInfo.InvariantCulture);
+                length = Convert.ToInt32(bencodedString.Substring(index, colon - index),
+                    System.Globalization.CultureInfo.InvariantCulture);
             }
-            catch (Exception e) { throw Error(e); }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
 
             index = colon + 1;
             int tmpIndex = index;
@@ -211,7 +237,10 @@ namespace UTorrent.Api.File.Bencoding
             {
                 return new BString(bencodedString.Substring(tmpIndex, length));
             }
-            catch (Exception e) { throw Error(e); }
+            catch (Exception e)
+            {
+                throw Error(e);
+            }
         }
 
         private static Exception Error(Exception e)
@@ -349,19 +378,21 @@ namespace UTorrent.Api.File.Bencoding
             }
             return left.Equals(right);
         }
+
         public static bool operator !=(BInteger left, BInteger right)
         {
             return !(left == right);
         }
+
         public static bool operator <(BInteger left, BInteger right)
         {
             return (Compare(left, right) < 0);
         }
+
         public static bool operator >(BInteger left, BInteger right)
         {
             return (Compare(left, right) > 0);
         }
-
     }
 
     /// <summary>
@@ -487,7 +518,6 @@ namespace UTorrent.Api.File.Bencoding
         {
             return (Compare(left, right) > 0);
         }
-
     }
 
     /// <summary>
@@ -620,14 +650,8 @@ namespace UTorrent.Api.File.Bencoding
         /// <returns>The value assosiated with the specified key.</returns>
         public IBElement this[string key]
         {
-            get
-            {
-                return this[new BString(key)];
-            }
-            set
-            {
-                this[new BString(key)] = value;
-            }
+            get { return this[new BString(key)]; }
+            set { this[new BString(key)] = value; }
         }
     }
 
@@ -642,20 +666,26 @@ namespace UTorrent.Api.File.Bencoding
         /// <summary>
         /// Creates a new BencodingException.
         /// </summary>
-        public BencodingException() { }
+        public BencodingException()
+        {
+        }
 
         /// <summary>
         /// Creates a new BencodingException.
         /// </summary>
         /// <param name="message">The message.</param>
-        public BencodingException(string message) : base(message) { }
+        public BencodingException(string message) : base(message)
+        {
+        }
 
         /// <summary>
         /// Creates a new BencodingException.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="inner">The inner exception.</param>
-        public BencodingException(string message, Exception inner) : base(message, inner) { }
+        public BencodingException(string message, Exception inner) : base(message, inner)
+        {
+        }
 
 #if !PORTABLE
         protected BencodingException(SerializationInfo info, StreamingContext context) : base(info, context) { }

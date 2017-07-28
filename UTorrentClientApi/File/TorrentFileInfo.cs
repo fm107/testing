@@ -14,27 +14,32 @@ namespace UTorrent.Api.File
             Contract.Invariant(this.Media != null);
             Contract.Invariant(this.Profiles != null);
         }
+
         public long Length { get; set; }
 
         private readonly IList<string> _path = new List<String>();
+
         public IList<string> Path
         {
             get { return _path; }
         }
 
         private readonly IList<long> _duration = new List<long>();
+
         public IList<long> Duration
         {
             get { return _duration; }
         }
 
         private readonly IList<long> _media = new List<long>();
+
         public IList<long> Media
         {
             get { return _media; }
         }
 
         private readonly IList<TorrentFileProfileCollection> _profiles = new List<TorrentFileProfileCollection>();
+
         public IList<TorrentFileProfileCollection> Profiles
         {
             get { return _profiles; }

@@ -9,6 +9,7 @@
     font-size: 13px;
     margin-left: 10%
 }
+
 .deleteTorrent:hover {
     transform: scale(1.5, 1.25);
     -moz-transform: scale(1.5, 1.25);

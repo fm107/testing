@@ -1,5 +1,4 @@
-﻿
-namespace UTorrent.Api
+﻿namespace UTorrent.Api
 {
     public class AddUrlResponse : BaseAddResponse
     {

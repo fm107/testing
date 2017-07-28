@@ -12,7 +12,6 @@ import { DataService } from "../../services/data.service";
     templateUrl: "./upload-button.component.html",
     styleUrls: ["./upload-button.component.css"]
 })
-
 export class UploadButtonComponent {
 
     constructor(private service: NotificationsService,
@@ -53,19 +52,19 @@ export class UploadButtonComponent {
     };
 
     private uploadEvent(file: File, uploadComponent: TdFileUploadComponent): void {
-            this.data.submitTorrentFile(file, this.content.currentFolder.getValue()).subscribe(response => {
-                this.service.success("File Uploaded",
-                    `${response} uploaded successfully`,
-                    {
-                        timeOut: 3000,
-                        showProgressBar: true,
-                        pauseOnHover: true,
-                        clickToClose: true,
-                        maxLength: 100
-                    });
+        this.data.submitTorrentFile(file, this.content.currentFolder.getValue()).subscribe(response => {
+            this.service.success("File Uploaded",
+                `${response} uploaded successfully`,
+                {
+                    timeOut: 3000,
+                    showProgressBar: true,
+                    pauseOnHover: true,
+                    clickToClose: true,
+                    maxLength: 100
+                });
 
-                this.content.getContent(null, false, null);
-            });
+            this.content.getContent(null, false, null);
+        });
 
         uploadComponent.cancel();
     };

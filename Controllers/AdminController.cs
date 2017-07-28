@@ -83,7 +83,8 @@ namespace WebTorrent.Controllers
             var httpClientHandler = new HttpClientHandler
             {
                 Credentials = new NetworkCredential("admin", ""),
-                CookieContainer = new CookieContainer(), UseCookies = true, 
+                CookieContainer = new CookieContainer(),
+                UseCookies = true,
             };
 
             var webRequest = new HttpClient(httpClientHandler);
@@ -92,7 +93,6 @@ namespace WebTorrent.Controllers
             {
                 fileStream = new FileStreamResult(await webRequest.GetStreamAsync(url),
                     new MediaTypeHeaderValue("text/html"));
-               
             }
             catch (Exception e)
             {

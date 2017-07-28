@@ -15,6 +15,7 @@ namespace UnitTests
                 FilePath = @"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\ffmpeg.exe"
             };
         }
+
         public FFmpegSettings Value { get; }
     }
 }

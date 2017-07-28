@@ -18,12 +18,13 @@ namespace UnitTests
         [TestMethod]
         public void CreatePlayListProcess()
         {
-            var factoryLogger= new LoggerFactory();
+            var factoryLogger = new LoggerFactory();
             factoryLogger.CreateLogger<FFmpegTest>();
             var logger = new Logger<FFmpeg>(factoryLogger);
             var ffmpeg = new FFmpeg(new FFmpegOptions(), logger);
-            ffmpeg.CreatePlayList(FiletoConvert, @"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\output", "output");
-            
+            ffmpeg.CreatePlayList(FiletoConvert, @"D:\Temp\New folder\ffmpeg-20170628-c1d1274-win32-static\bin\output",
+                "output");
+
             Console.WriteLine("Ok");
         }
     }
