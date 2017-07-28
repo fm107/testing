@@ -80,7 +80,7 @@ namespace WebTorrent.Services
             };
 
             _repository.Add(content);
-            _repository.Save();
+            await _repository.Save();
 
             return content;
         }
@@ -94,19 +94,8 @@ namespace WebTorrent.Services
             var indexOfSeparator = tmpString.IndexOf(separator);
             var indexToRemove = tmpString.IndexOf(separator, indexOfSeparator + 1);
 
-            string parrent;
-            string current;
-            
-            if (indexToRemove > 0)
-            {
-                current = tmpString.Remove(indexToRemove);
-            }
-            else
-            {
-                current = tmpString;
-            }
-
-            parrent = current.Substring(0, indexOfSeparator);
+            var current = indexToRemove > 0 ? tmpString.Remove(indexToRemove) : tmpString;
+            var parrent = current.Substring(0, indexOfSeparator);
             
             currentFolder = current;
             parentFolder = parrent;

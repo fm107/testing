@@ -14,9 +14,8 @@ machine:
 
 compile: 
   override:
-    - dotnet restore
-    - dotnet build    
-    - dotnet publish -o publish
+    - dotnet restore  
+    - dotnet publish WebTorrent.csproj 
 
 test:
 override:
