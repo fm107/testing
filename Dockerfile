@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:1.1.0-sdk-msbuild
+FROM microsoft/dotnet:1.1.2-sdk-jessie
 
 RUN apt-get update
 RUN wget -qO- https://deb.nodesource.com/setup_6.x | bash -
