@@ -18,7 +18,7 @@ namespace WebTorrent
             _log = log;
             _ffmpegSettings = ffmpegOptions.Value;
 
-            _factory = new TaskFactory(new LimitedConcurrencyLevelTaskScheduler(6));
+            _factory = new TaskFactory(new LimitedConcurrencyLevelTaskScheduler(4));
         }
 
         public void CreatePlayList(string fileToConvert, string outputPath, string playList)
