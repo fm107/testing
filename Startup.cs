@@ -25,6 +25,11 @@ namespace WebTorrent
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+
+            if (!Directory.Exists(Path.Combine(env.WebRootPath, "logs")))
+            {
+                Directory.CreateDirectory(Path.Combine(env.WebRootPath, "logs"));
+            }
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -60,11 +65,6 @@ namespace WebTorrent
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (!Directory.Exists(Path.Combine(env.WebRootPath, "logs")))
-            {
-                Directory.CreateDirectory(Path.Combine(env.WebRootPath, "logs"));
-            }
-
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             loggerFactory.AddFile("wwwroot/logs/log.txt");

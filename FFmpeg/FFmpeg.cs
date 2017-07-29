@@ -10,16 +10,42 @@ namespace WebTorrent
         private readonly FFmpegSettings _ffmpegSettings;
         private readonly ILogger<FFmpeg> _log;
         private FFmpegArguments _ffmpeg;
+        
+        private readonly TaskFactory _factory;
 
         public FFmpeg(IOptions<FFmpegSettings> ffmpegOptions, ILogger<FFmpeg> log)
         {
             _log = log;
             _ffmpegSettings = ffmpegOptions.Value;
+
+            _factory = new TaskFactory(new LimitedConcurrencyLevelTaskScheduler(4));
         }
 
         public void CreatePlayList(string fileToConvert, string outputPath, string playList)
         {
-            Task.Factory.StartNew(() =>
+            //Task.Factory.StartNew(() =>
+            //{
+            //    _ffmpeg = new FFmpegBuilder(_ffmpegSettings.FilePath, fileToConvert)
+            //        .MapVideoStream(1)
+            //        .MapAudioStream(1)
+            //        .CreateOnlinePlayList(outputPath, playList)
+            //        .Build();
+
+            //    var processInfo = new ProcessStartInfo(_ffmpegSettings.FilePath)
+            //    {
+            //        Arguments = _ffmpeg.CmdArguments,
+            //        RedirectStandardOutput = true
+            //    };
+
+            //    using (var process = Process.Start(processInfo))
+            //    {
+            //        process.WaitForExit();
+            //        var output = process.StandardOutput.ReadToEnd();
+            //        _log.LogInformation(output);
+            //    }
+            //});
+
+            _factory.StartNew(() =>
             {
                 _ffmpeg = new FFmpegBuilder(_ffmpegSettings.FilePath, fileToConvert)
                     .MapVideoStream(1)
