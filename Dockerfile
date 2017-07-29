@@ -9,7 +9,7 @@ COPY . /app
 WORKDIR /app
 
 RUN ["dotnet", "restore"]
-RUN ["dotnet", "build /app/WebTorrent.csproj"]
+RUN ["dotnet", "build", "/app/WebTorrent.csproj"]
 
 EXPOSE 5000/tcp
 
