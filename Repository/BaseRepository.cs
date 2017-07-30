@@ -33,12 +33,12 @@ namespace WebTorrent.Repository
             _context.Set<T>().Remove(entity);
         }
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
             _context.Set<T>().Update(entity);
         }
 
-        public IQueryable<T> FindBy(Expression<Func<T, bool>> predicate)
+        public virtual IQueryable<T> FindBy(Expression<Func<T, bool>> predicate)
         {
             var query = _context.Set<T>().Where(predicate);
             return query;
