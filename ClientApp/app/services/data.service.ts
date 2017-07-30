@@ -16,7 +16,6 @@ import {ITorrentInfo} from "../model/torrentInfo";
 @Injectable()
 export class DataService {
     folderContent: Subject<any>;
-    fileUpload: ReplaySubject<any>;
 
     constructor(private http: Http,
         private loadingService: TdLoadingService,
@@ -31,7 +30,6 @@ export class DataService {
         });
 
         this.folderContent = new Subject<any>();
-        this.fileUpload = new ReplaySubject<any>(1);
     }
 
     getFolderContent(folder: string, needFiles: boolean, hash: string) {
@@ -117,21 +115,22 @@ export class DataService {
             file: file
         };
 
-        this.loadingService.register("query");
-        this.fileUploadService.upload(options).subscribe(
-            result => {
-                this.fileUpload.next(result);
-                this.fileUpload.complete();
-            },
-            error => {
-                this.loadingService.resolve("query");
-                this.handleError(error);
-            },
-            () => {
-                this.loadingService.resolve("query");
-            });
+        return Observable.create(observer => {
+            this.loadingService.register("query");
+            this.fileUploadService.upload(options).subscribe(
+                result => {
+                    observer.next(result);
+                    observer.complete();
+                },
+                error => {
+                    this.loadingService.resolve("query");
+                    this.handleError(error);
+                },
+                () => {
+                    this.loadingService.resolve("query");
+                });
 
-        return this.fileUpload.asObservable();
+        });
     }
 
     getStatusByTime(hash: string): Observable<IContent> {
