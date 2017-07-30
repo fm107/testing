@@ -1,19 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebTorrent.Model;
 
 namespace WebTorrent.Repository
 {
-    public interface IContentRecordRepository
+    public interface IContentRecordRepository : IRepository<Content>
     {
-        IQueryable<Content> GetAll();
         Task<IList<Content>> FindByFolder(string folder, bool needFiles, string hash);
         Task<Content> FindByHash(string hash, bool tracking, string include = null);
-        void Add(Content contentRecord);
-        void Update(Content contentRecord);
         void Delete(params Content[] contentRecord);
-        void Delete(params FileSystemItem[] contentRecord);
+        void Delete(params FileSystemItem[] fsItemsRecord);
         Task Save();
     }
 }

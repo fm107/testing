@@ -22,8 +22,7 @@ namespace WebTorrent.Model
             get => _progress / 10.0;
             set => _progress = value;
         }
-
-
+        
         /// <summary>
         /// integer in bytes
         /// </summary>

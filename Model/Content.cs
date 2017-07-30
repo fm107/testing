@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace WebTorrent.Model
 {
-    public class Content
+    public class Content : IEntity
     {
         [JsonIgnore]
         public int Id { get; set; }
@@ -17,7 +17,7 @@ namespace WebTorrent.Model
         public virtual List<FileSystemItem> FsItems { get; set; }
     }
 
-    public class FileSystemItem
+    public class FileSystemItem : IEntity
     {
         public int Id { get; set; }
 

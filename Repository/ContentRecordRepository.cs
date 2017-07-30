@@ -1,28 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using WebTorrent.Data;
 using WebTorrent.Model;
 
 namespace WebTorrent.Repository
 {
-    internal class ContentRecordRepository : IContentRecordRepository
+    internal class ContentRecordRepository : BaseRepository<ContentDbContext, Content>, IContentRecordRepository
     {
         private readonly ContentDbContext _context;
 
-        private readonly ILogger<ContentRecordRepository> _log;
-
-        public ContentRecordRepository(ContentDbContext context, ILogger<ContentRecordRepository> log)
+        public ContentRecordRepository(ContentDbContext context) : base(context)
         {
             _context = context;
-            _log = log;
-        }
-
-        public IQueryable<Content> GetAll()
-        {
-            return _context.Content;
         }
 
         public async Task<IList<Content>> FindByFolder(string folder, bool needFiles, string hash)
@@ -45,6 +37,7 @@ namespace WebTorrent.Repository
             return contents;
         }
 
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         public async Task<Content> FindByHash(string hash, bool tracking, string include = null)
         {
             if (!string.IsNullOrEmpty(include) && tracking)
@@ -71,27 +64,17 @@ namespace WebTorrent.Repository
             return await Task.FromResult<Content>(null);
         }
 
-        public async void Add(Content contentRecord)
-        {
-            await _context.Content.AddAsync(contentRecord);
-        }
-
-        public void Update(Content contentRecord)
-        {
-            _context.Content.Update(contentRecord);
-        }
-
         public void Delete(params Content[] contentRecord)
         {
             _context.Content.RemoveRange(contentRecord);
         }
 
-        public void Delete(params FileSystemItem[] contentRecord)
+        public void Delete(params FileSystemItem[] fsItemsRecord)
         {
-            _context.FsItem.RemoveRange(contentRecord);
+            _context.FsItem.RemoveRange(fsItemsRecord);
         }
 
-        public async Task Save()
+        async Task IContentRecordRepository.Save()
         {
             await _context.SaveChangesAsync();
         }

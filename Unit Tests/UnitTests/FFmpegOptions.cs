@@ -1,12 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using WebTorrent;
 
 namespace UnitTests
 {
-    class FFmpegOptions : IOptions<FFmpegSettings>
+    internal class FFmpegOptions : IOptions<FFmpegSettings>
     {
         public FFmpegOptions()
         {
