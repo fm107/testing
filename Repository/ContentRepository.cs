@@ -37,7 +37,7 @@ namespace WebTorrent.Repository
                 }
 
                 return contents;
-            }
+            
         }
 
         [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
@@ -66,7 +66,7 @@ namespace WebTorrent.Repository
                 }
 
                 return await Task.FromResult<Content>(null);
-            }
+            
         }
 
         public void Delete(params Content[] contentRecord)
