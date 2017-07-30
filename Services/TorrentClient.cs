@@ -27,11 +27,11 @@ namespace WebTorrent.Services
         private readonly FsInfo _fsInfo;
         private readonly ILogger<TorrentClient> _log;
         private readonly IMapper _mapper;
-        private readonly IContentRecordRepository _repository;
+        private readonly IContentRepository _repository;
         private Timer _timer;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-        public TorrentClient(FsInfo fsInfo, IContentRecordRepository repository, ILogger<TorrentClient> log,
+        public TorrentClient(FsInfo fsInfo, IContentRepository repository, ILogger<TorrentClient> log,
             FFmpeg ffmpeg, IHostingEnvironment environment, IMapper mapper)
         {
             _fsInfo = fsInfo;

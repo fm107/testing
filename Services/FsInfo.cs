@@ -15,9 +15,9 @@ namespace WebTorrent.Services
         private readonly char[] _directorySeparators = {'\u005C', '\u002F'};
         private const string UploadFolder = "uploads";
         private readonly IHostingEnvironment _environment;
-        private readonly IContentRecordRepository _repository;
+        private readonly IContentRepository _repository;
 
-        public FsInfo(IHostingEnvironment environment, IContentRecordRepository repository)
+        public FsInfo(IHostingEnvironment environment, IContentRepository repository)
         {
             _environment = environment;
             _repository = repository;

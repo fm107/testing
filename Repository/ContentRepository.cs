@@ -8,11 +8,11 @@ using WebTorrent.Model;
 
 namespace WebTorrent.Repository
 {
-    internal class ContentRecordRepository : BaseRepository<ContentDbContext, Content>, IContentRecordRepository
+    internal class ContentRepository : BaseRepository<ContentDbContext, Content>, IContentRepository
     {
         private readonly ContentDbContext _context;
 
-        public ContentRecordRepository(ContentDbContext context) : base(context)
+        public ContentRepository(ContentDbContext context) : base(context)
         {
             _context = context;
         }
@@ -74,7 +74,7 @@ namespace WebTorrent.Repository
             _context.FsItem.RemoveRange(fsItemsRecord);
         }
 
-        async Task IContentRecordRepository.Save()
+        async Task IContentRepository.Save()
         {
             await _context.SaveChangesAsync();
         }

@@ -48,7 +48,7 @@ namespace WebTorrent
             services.AddDbContext<ContentDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
 
-            services.AddScoped<IContentRecordRepository, ContentRecordRepository>();
+            services.AddScoped<IContentRepository, ContentRepository>();
 
             services.AddSingleton<FsInfo, FsInfo>();
             services.AddSingleton<TorrentClient, TorrentClient>();
