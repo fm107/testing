@@ -1,4 +1,5 @@
 using System.IO;
+using Exceptionless;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -102,6 +103,9 @@ namespace WebTorrent
             });
 
             app.UseWebSockets();
+
+            //store unhandled exceptions https://be.exceptionless.io/dashboard
+            app.UseExceptionless("XA6U77cTOrVkt1J23Wh9Hs0IO34PDYUGCYLzXyCC");
 
             app.UseMvc(routes =>
             {
