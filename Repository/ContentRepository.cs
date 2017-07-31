@@ -12,7 +12,6 @@ namespace WebTorrent.Repository
     internal class ContentRepository : BaseRepository<ContentDbContext, Content>, IContentRepository
     {
         private readonly ContentDbContext _context;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public ContentRepository(ContentDbContext context) : base(context)
         {
@@ -21,10 +20,7 @@ namespace WebTorrent.Repository
 
         public async Task<IList<Content>> FindByFolder(string folder, bool needFiles, string hash)
         {
-            await _semaphore.WaitAsync();
-
-            try
-            {
+          
                 if (needFiles)
                 {
                     var contentbyHash = await FindByHash(hash, false, "FsItems");
@@ -41,20 +37,13 @@ namespace WebTorrent.Repository
                 }
 
                 return contents;
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            
         }
 
         [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         public async Task<Content> FindByHash(string hash, bool tracking, string include = null)
         {
-            await _semaphore.WaitAsync();
-
-            try
-            {
+           
                 if (!string.IsNullOrEmpty(include) && tracking)
                 {
                     return await _context.Content.Include(include).FirstOrDefaultAsync(t => t.Hash.Equals(hash));
@@ -77,11 +66,7 @@ namespace WebTorrent.Repository
                 }
 
                 return await Task.FromResult<Content>(null);
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            
         }
 
         public void Delete(params Content[] contentRecord)
