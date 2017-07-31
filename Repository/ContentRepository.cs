@@ -24,7 +24,7 @@ namespace WebTorrent.Repository
         {
             try
             {
-                await _semaphore.WaitAsync();
+                await _semaphore.WaitAsync(TimeSpan.FromSeconds(1));
 
                 if (needFiles)
                 {
@@ -54,7 +54,7 @@ namespace WebTorrent.Repository
         {
             try
             {
-                await _semaphore.WaitAsync();
+                await _semaphore.WaitAsync(TimeSpan.FromSeconds(1));
 
                 if (!string.IsNullOrEmpty(include) && tracking)
                 {
