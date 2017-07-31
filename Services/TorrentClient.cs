@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MimeMapping;
 using UTorrent.Api;
@@ -27,12 +28,13 @@ namespace WebTorrent.Services
         private readonly FsInfo _fsInfo;
         private readonly ILogger<TorrentClient> _log;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
         private readonly IContentRepository _repository;
         private Timer _timer;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public TorrentClient(FsInfo fsInfo, IContentRepository repository, ILogger<TorrentClient> log,
-            FFmpeg ffmpeg, IHostingEnvironment environment, IMapper mapper)
+            FFmpeg ffmpeg, IHostingEnvironment environment, IMapper mapper, IMemoryCache memoryCache)
         {
             _fsInfo = fsInfo;
             _repository = repository;
@@ -40,6 +42,7 @@ namespace WebTorrent.Services
             _ffmpeg = ffmpeg;
             _environment = environment;
             _mapper = mapper;
+            _memoryCache = memoryCache;
             _client = new UTorrentClient("admin", "");
         }
 
@@ -153,7 +156,34 @@ namespace WebTorrent.Services
 
         public async Task<Content> GetTorrentStatus(string hash)
         {
-            return await _repository.FindByHash(hash, false);
+            object content;
+            var isExist = _memoryCache.TryGetValue(string.Format("{0}-TorrentStatus", hash), out content);
+
+            if (isExist) return (Content) content;
+
+            content = await _repository.FindByHash(hash, false);
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(10));
+
+            _memoryCache.Set(hash, content, cacheEntryOptions);
+            return (Content) content;
+        }
+        
+        public async Task<TorrentInfo> GetTorrentDetails(string hash)
+        {
+            object status;
+            var isExist = _memoryCache.TryGetValue(string.Format("{0}-TorrentDetails", hash), out status);
+
+            if (isExist) return (TorrentInfo) status;
+
+            var torrent = await _client.GetTorrentAsync(hash);
+            status = _mapper.Map<TorrentInfo>(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash))) ?? new TorrentInfo();
+
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(10));
+
+            _memoryCache.Set(hash, status, cacheEntryOptions);
+            return (TorrentInfo)status;
         }
 
         public async Task<string> GetTorrentInfo(string hash)
@@ -167,12 +197,6 @@ namespace WebTorrent.Services
             }
 
             return result;
-        }
-
-        public async Task<TorrentInfo> GetTorrentDetails(string hash)
-        {
-            var torrent = await _client.GetTorrentAsync(hash);
-            return _mapper.Map<TorrentInfo>(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash))) ?? new TorrentInfo();
         }
 
         private async Task StartTimer(TimerCallback callback, int period)

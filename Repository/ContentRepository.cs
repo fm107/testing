@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebTorrent.Data;
@@ -11,6 +13,7 @@ namespace WebTorrent.Repository
     internal class ContentRepository : BaseRepository<ContentDbContext, Content>, IContentRepository
     {
         private readonly ContentDbContext _context;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public ContentRepository(ContentDbContext context) : base(context)
         {
@@ -19,49 +22,67 @@ namespace WebTorrent.Repository
 
         public async Task<IList<Content>> FindByFolder(string folder, bool needFiles, string hash)
         {
-            if (needFiles)
+            try
             {
-                var contentbyHash = await FindByHash(hash, false, "FsItems");
-                contentbyHash.FsItems = contentbyHash.FsItems.Where(b => b.Type.Equals("file")).ToList();
-                return new[] {contentbyHash};
+                await _semaphore.WaitAsync();
+
+                if (needFiles)
+                {
+                    var contentbyHash = await FindByHash(hash, false, "FsItems");
+                    contentbyHash.FsItems = contentbyHash.FsItems.Where(b => b.Type.Equals("file")).ToList();
+                    return new[] {contentbyHash};
+                }
+
+                var contents = await _context.Content.Where(t => t.ParentFolder.Equals(folder)).Include(f => f.FsItems)
+                    .AsNoTracking().ToListAsync();
+
+                foreach (var content in contents)
+                {
+                    content.FsItems = content.FsItems.Where(b => b.Type.Equals("folder")).ToList();
+                }
+
+                return contents;
             }
-
-            var contents = await _context.Content.Where(t => t.ParentFolder.Equals(folder)).Include(f => f.FsItems)
-                .AsNoTracking().ToListAsync();
-
-            foreach (var content in contents)
+            finally
             {
-                content.FsItems = content.FsItems.Where(b => b.Type.Equals("folder")).ToList();
+                _semaphore.Release();
             }
-
-            return contents;
         }
 
         [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         public async Task<Content> FindByHash(string hash, bool tracking, string include = null)
         {
-            if (!string.IsNullOrEmpty(include) && tracking)
+            try
             {
-                return await _context.Content.Include(include).FirstOrDefaultAsync(t => t.Hash.Equals(hash));
-            }
+                await _semaphore.WaitAsync();
 
-            if (!string.IsNullOrEmpty(include) && !tracking)
+                if (!string.IsNullOrEmpty(include) && tracking)
+                {
+                    return await _context.Content.Include(include).FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+                }
+
+                if (!string.IsNullOrEmpty(include) && !tracking)
+                {
+                    return await _context.Content.Include(include).AsNoTracking()
+                        .FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+                }
+
+                if (string.IsNullOrEmpty(include) && tracking)
+                {
+                    return await _context.Content.FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+                }
+
+                if (string.IsNullOrEmpty(include) && !tracking)
+                {
+                    return await _context.Content.AsNoTracking().FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+                }
+
+                return await Task.FromResult<Content>(null);
+            }
+            finally
             {
-                return await _context.Content.Include(include).AsNoTracking()
-                    .FirstOrDefaultAsync(t => t.Hash.Equals(hash));
+                _semaphore.Release();
             }
-
-            if (string.IsNullOrEmpty(include) && tracking)
-            {
-                return await _context.Content.FirstOrDefaultAsync(t => t.Hash.Equals(hash));
-            }
-
-            if (string.IsNullOrEmpty(include) && !tracking)
-            {
-                return await _context.Content.AsNoTracking().FirstOrDefaultAsync(t => t.Hash.Equals(hash));
-            }
-
-            return await Task.FromResult<Content>(null);
         }
 
         public void Delete(params Content[] contentRecord)

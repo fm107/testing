@@ -59,6 +59,8 @@ namespace WebTorrent
             // Configure FFmpeg using appsettings.json file.
             services.Configure<FFmpegSettings>(Configuration.GetSection("FFmpeg"));
 
+            services.AddMemoryCache();
+
             // Add framework services.
             services.AddMvc();
         }
