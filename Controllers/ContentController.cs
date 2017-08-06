@@ -17,10 +17,10 @@ namespace WebTorrent.Controllers
     {
         private const string UploadFolder = "uploads";
         private readonly IHostingEnvironment _environment;
-        private readonly FsInfo _fsInfo;
+        private readonly FsInfoService _fsInfo;
         private readonly ILogger<ContentController> _log;
 
-        public ContentController(ILogger<ContentController> log, IHostingEnvironment environment, FsInfo fsInfo)
+        public ContentController(ILogger<ContentController> log, IHostingEnvironment environment, FsInfoService fsInfo)
         {
             _environment = environment;
             _fsInfo = fsInfo;

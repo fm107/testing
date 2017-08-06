@@ -10,14 +10,14 @@ using WebTorrent.Repository;
 
 namespace WebTorrent.Services
 {
-    public class FsInfo
+    public class FsInfoService
     {
         private readonly char[] _directorySeparators = {'\u005C', '\u002F'};
         private const string UploadFolder = "uploads";
         private readonly IHostingEnvironment _environment;
         private readonly IContentRepository _repository;
 
-        public FsInfo(IHostingEnvironment environment, IContentRepository repository)
+        public FsInfoService(IHostingEnvironment environment, IContentRepository repository)
         {
             _environment = environment;
             _repository = repository;

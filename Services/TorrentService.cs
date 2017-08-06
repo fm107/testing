@@ -20,20 +20,20 @@ using File = System.IO.File;
 
 namespace WebTorrent.Services
 {
-    public class TorrentClient
+    public class TorrentService
     {
         private readonly UTorrentClient _client;
         private readonly IHostingEnvironment _environment;
         private readonly FFmpeg _ffmpeg;
-        private readonly FsInfo _fsInfo;
-        private readonly ILogger<TorrentClient> _log;
+        private readonly FsInfoService _fsInfo;
+        private readonly ILogger<TorrentService> _log;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
         private readonly IContentRepository _repository;
-        private Timer _timer;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private Timer _timer;
 
-        public TorrentClient(FsInfo fsInfo, IContentRepository repository, ILogger<TorrentClient> log,
+        public TorrentService(FsInfoService fsInfo, IContentRepository repository, ILogger<TorrentService> log,
             FFmpeg ffmpeg, IHostingEnvironment environment, IMapper mapper, IMemoryCache memoryCache)
         {
             _fsInfo = fsInfo;
@@ -84,24 +84,33 @@ namespace WebTorrent.Services
 
         public async Task<string> DeleteTorrent(string hash)
         {
-            var contentbyHash = await _repository.FindByHash(hash, true, "FsItems");
-
-            var response = await _client.DeleteTorrentAsync(hash);
-            if (response.Error != null)
+            try
             {
-                return response.Error.Message;
-            }
+                await _semaphore.WaitAsync();
 
-            _repository.Delete(contentbyHash);
-            _repository.Delete(contentbyHash.FsItems.ToArray());
+                var contentbyHash = await _repository.FindByHash(hash, true, "FsItems");
 
-            await _repository.Save();
+                var response = await _client.DeleteTorrentAsync(hash);
+                if (response.Error != null)
+                {
+                    return response.Error.Message;
+                }
+
+                _repository.Delete(contentbyHash);
+                _repository.Delete(contentbyHash.FsItems.ToArray());
+
+                await _repository.Save();
 
 #pragma warning disable 4014
-            Task.Factory.StartNew(() => DeleteDirectory(contentbyHash.FsItems.FirstOrDefault()?.FullName));
+                Task.Run(() => DeleteDirectory(contentbyHash.FsItems.FirstOrDefault()?.FullName));
 #pragma warning restore 4014
 
-            return contentbyHash.TorrentName;
+                return contentbyHash.TorrentName;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         private static async Task DeleteDirectory(string directoryPath, int maxRetries = 10, int millisecondsDelay = 30)
@@ -161,14 +170,25 @@ namespace WebTorrent.Services
 
             if (isExist) return (Content) content;
 
-            content = await _repository.FindByHash(hash, false);
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(10));
+            try
+            {
+                await _semaphore.WaitAsync();
 
-            _memoryCache.Set(hash, content, cacheEntryOptions);
-            return (Content) content;
+                content = await _repository.FindByHash(hash, false);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(10));
+
+                _memoryCache.Set(hash, content, cacheEntryOptions);
+
+                return (Content) content;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
-        
+
         public async Task<TorrentInfo> GetTorrentDetails(string hash)
         {
             object status;
@@ -177,13 +197,16 @@ namespace WebTorrent.Services
             if (isExist) return (TorrentInfo) status;
 
             var torrent = await _client.GetTorrentAsync(hash);
-            status = _mapper.Map<TorrentInfo>(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash))) ?? new TorrentInfo();
+
+            status = _mapper.Map<TorrentInfo>(torrent.Result.Torrents.FirstOrDefault(t => t.Hash.Equals(hash))) ??
+                     new TorrentInfo();
 
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSlidingExpiration(TimeSpan.FromSeconds(10));
 
             _memoryCache.Set(hash, status, cacheEntryOptions);
-            return (TorrentInfo)status;
+
+            return (TorrentInfo) status;
         }
 
         public async Task<string> GetTorrentInfo(string hash)
@@ -215,10 +238,10 @@ namespace WebTorrent.Services
 
         private async void CheckStatus(object state)
         {
-            await _semaphore.WaitAsync();
-
             try
             {
+                await _semaphore.WaitAsync();
+
                 var torrents = (await _client.GetListAsync()).Result.Torrents;
 
                 foreach (var tor in torrents)

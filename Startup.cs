@@ -51,8 +51,8 @@ namespace WebTorrent
 
             services.AddScoped<IContentRepository, ContentRepository>();
 
-            services.AddSingleton<FsInfo, FsInfo>();
-            services.AddSingleton<TorrentClient, TorrentClient>();
+            services.AddSingleton<FsInfoService, FsInfoService>();
+            services.AddSingleton<TorrentService, TorrentService>();
 
             services.AddSingleton<FFmpeg, FFmpeg>();
 

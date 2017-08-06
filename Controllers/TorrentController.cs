@@ -25,12 +25,12 @@ namespace WebTorrent.Controllers
         private const string DownLoadFolder = @"wwwroot/uploads";
         private readonly HttpClient _client;
         private readonly ILogger<TorrentController> _log;
-        private readonly TorrentClient _torrentClient;
+        private readonly TorrentService _torrentClient;
 
         private WebSocket _webSocket;
 
         public TorrentController(ILogger<TorrentController> log, IHostingEnvironment environment,
-            TorrentClient torrentClient)
+            TorrentService torrentClient)
         {
             _torrentClient = torrentClient;
             _client = new HttpClient();
