@@ -19,7 +19,7 @@ RUN cat /etc/os-release
 RUN curl -sL https://deb.nodesource.com/setup_12.x | sh - 
 RUN apt install -y nodejs
 
-RUN cp -R ./node_modules/reflect-metadata/* ./node_modules/angular2-universal-polyfills/node_modules/reflect-metadata/
+RUN cp -R node_modules/reflect-metadata/* node_modules/angular2-universal-polyfills/node_modules/reflect-metadata/
 
 RUN dotnet publish "WebTorrent.csproj" -c Release -o /app/publish
 
