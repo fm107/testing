@@ -17,7 +17,7 @@ FROM build AS publish
 
 RUN cat /etc/os-release
 RUN curl -sL https://deb.nodesource.com/setup_12.x | sh - 
-RUN apt install nodejs npm
+RUN apt install -y nodejs
 
 RUN dotnet publish "WebTorrent.csproj" -c Release -o /app/publish
 
