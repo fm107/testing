@@ -16,7 +16,7 @@ RUN dotnet build "WebTorrent.csproj" -c Release -o /app/build
 FROM build AS publish
 
 RUN cat /etc/os-release
-RUN uname -r
+RUN apt install nodejs npm
 
 RUN dotnet publish "WebTorrent.csproj" -c Release -o /app/publish
 
