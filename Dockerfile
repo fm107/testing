@@ -15,9 +15,8 @@ RUN dotnet build "WebTorrent.csproj" -c Release -o /app/build
 
 FROM build AS publish
 
-RUN add-apt-repository ppa:chris-lea/node.js
-RUN apt-get update
-RUN apt-get install -y nodejs
+RUN cat /etc/os-release
+RUN uname -r
 
 RUN dotnet publish "WebTorrent.csproj" -c Release -o /app/publish
 
