@@ -14,6 +14,12 @@ WORKDIR "/src/"
 RUN dotnet build "WebTorrent.csproj" -c Release -o /app/build
 
 FROM build AS publish
+
+RUN apt-get install -y curl \
+  && curl -sL https://deb.nodesource.com/setup_9.x | bash - \
+  && apt-get install -y nodejs \
+  && curl -L https://www.npmjs.com/install.sh | sh
+
 RUN dotnet publish "WebTorrent.csproj" -c Release -o /app/publish
 
 FROM base AS final
