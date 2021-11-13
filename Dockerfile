@@ -1,10 +1,10 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM microsoft/aspnetcore:latest AS base
+FROM mcr.microsoft.com/dotnet/aspnet AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM microsoft/aspnetcore-build:latest AS build
+FROM mcr.microsoft.com/dotnet/aspnet AS build
 WORKDIR /src
 COPY ["WebTorrent.csproj", "."]
 COPY ["TorrentClient/Torrent.Client.csproj", "TorrentClient/"]
