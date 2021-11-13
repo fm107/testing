@@ -21,6 +21,8 @@ RUN apt install -y nodejs
 
 RUN npm install --force
 RUN cp -R node_modules/reflect-metadata/* node_modules/angular2-universal-polyfills/node_modules/reflect-metadata/
+RUN node node_modules/webpack/bin/webpack.js --config webpack.config.vendor.js
+RUN node node_modules/webpack/bin/webpack.js
 
 RUN dotnet publish "WebTorrent.csproj" -c Release -o /app/publish
 
