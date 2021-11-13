@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31829.152
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTorrent", "WebTorrent.csproj", "{69758668-0342-4E6A-9803-2BFD1DB0CF09}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Torrent.Client", "TorrentClient\Torrent.Client.csproj", "{FA1B0D43-DA9A-4A9E-9CB4-968FCE8DF741}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,8 +43,23 @@ Global
 		{FA1B0D43-DA9A-4A9E-9CB4-968FCE8DF741}.Release|x64.Build.0 = Release|Any CPU
 		{FA1B0D43-DA9A-4A9E-9CB4-968FCE8DF741}.Release|x86.ActiveCfg = Release|x86
 		{FA1B0D43-DA9A-4A9E-9CB4-968FCE8DF741}.Release|x86.Build.0 = Release|x86
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Debug|x64.Build.0 = Debug|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Debug|x86.Build.0 = Debug|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Release|x64.ActiveCfg = Release|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Release|x64.Build.0 = Release|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Release|x86.ActiveCfg = Release|Any CPU
+		{ED43ED0D-39B1-42A9-BAC7-391E4EEDDBC3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B2869D2A-3C4F-478F-AF77-C3276AB7DD18}
 	EndGlobalSection
 EndGlobal

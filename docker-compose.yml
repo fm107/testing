@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  webtorrent:
+    image: ${DOCKER_REGISTRY-}webtorrent
+    build:
+      context: .
+      dockerfile: Dockerfile

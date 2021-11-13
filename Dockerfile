@@ -1,16 +1,22 @@
-FROM microsoft/dotnet:1.1.0-sdk-msbuild
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-RUN apt-get update
-RUN wget -qO- https://deb.nodesource.com/setup_6.x | bash -
-RUN apt-get install -y build-essential nodejs
-
-COPY . /app
-
+FROM microsoft/aspnetcore:latest AS base
 WORKDIR /app
+EXPOSE 80
 
-RUN ["dotnet", "restore"]
-RUN ["dotnet", "build"]
+FROM microsoft/aspnetcore-build:latest AS build
+WORKDIR /src
+COPY ["WebTorrent.csproj", "."]
+COPY ["TorrentClient/Torrent.Client.csproj", "TorrentClient/"]
+RUN dotnet restore "WebTorrent.csproj"
+COPY . .
+WORKDIR "/src/"
+RUN dotnet build "WebTorrent.csproj" -c Release -o /app/build
 
-EXPOSE 5000/tcp
+FROM build AS publish
+RUN dotnet publish "WebTorrent.csproj" -c Release -o /app/publish
 
-CMD ["dotnet", "run", "--server.urls", "http://*:5000"]
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "WebTorrent.dll"]
